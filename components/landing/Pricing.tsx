@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import ShineBorder from '@/components/ShineBorder';
 import { useRef, useState } from "react";
 import { CheckCircle2, Sparkles, ArrowRight } from "lucide-react";
 import { useAuth } from "@/components/AuthContext";
@@ -145,6 +146,8 @@ export function Pricing() {
               transition={{ duration: 0.6, delay: 0.3 + i * 0.15, ease: [0.21, 1.11, 0.81, 0.99] }}
   className="relative"
             >
+              {plan.badge && <ShineBorder borderRadius={24} className="absolute inset-0 pointer-events-none z-0" />}
+              <div className={`relative z-10 rounded-3xl p-8 h-full ${plan.badge ? 'bg-[#0c1120] border border-[#4ADE80]/10' : 'border border-white/[0.07]'}`} style={plan.badge ? {} : {background:'rgba(255,255,255,0.025)'}}>
               {plan.badge && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                   <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-green-700 to-green-500 text-white text-xs font-bold shadow-lg">
@@ -217,6 +220,7 @@ export function Pricing() {
                     <span className="text-gray-300 text-sm">{feature}</span>
                   </div>
                 ))}
+              </div>
               </div>
             </motion.div>
           ))}

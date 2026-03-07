@@ -6,7 +6,7 @@ interface ShineBorderProps {
   duration?: number
   borderWidth?: number
   className?: string
-  children: ReactNode
+  children?: ReactNode
   borderRadius?: number
 }
 

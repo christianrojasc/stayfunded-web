@@ -453,37 +453,13 @@ export default function ProgressPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function load() {
-      const storedRules = getRulesFromStorage()
-      setRules(storedRules)
-
-      if (!isSetupDone() && storedRules.length === 0) {
-        setShowOnboarding(true)
-      }
-
-      const sd = getTodaySessionDate()
-      try {
-        const cl = await dl.getChecklist(sd)
-        setTodayChecklist(cl)
-      } catch {}
-
-      const lists: DailyChecklist[] = []
-      try {
-        const today = new Date()
-        for (let i = 0; i < 90; i++) {
-          const d = new Date(today)
-          d.setDate(d.getDate() - i)
-          const dateStr = sessionDateStr(d)
-          try {
-            const c = await dl.getChecklist(dateStr)
-            if (c && c.savedAt) lists.push(c)
-          } catch {}
-        }
-      } catch {}
-      setAllChecklists(lists)
-      setLoading(false)
+    // Load rules from localStorage instantly — no async DB calls needed
+    const storedRules = getRulesFromStorage()
+    setRules(storedRules)
+    if (!isSetupDone() && storedRules.length === 0) {
+      setShowOnboarding(true)
     }
-    load()
+    setLoading(false)
   }, [])
 
   const todayChecked = todayChecklist?.items.filter(i => i.checked).length ?? 0

@@ -14,8 +14,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   const router = useRouter()
 
-  // Show spinner only while auth state is loading (not blocking unauthenticated users)
-  if (loading) {
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login')
+    }
+  }, [loading, user, router])
+
+  if (loading || !user) {
     return (
       <div className="min-h-screen bg-[#050810] flex flex-col items-center justify-center gap-4">
         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-600 to-green-400 flex items-center justify-center shadow-lg shadow-green-500/30 animate-pulse">

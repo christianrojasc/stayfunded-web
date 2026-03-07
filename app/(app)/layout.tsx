@@ -7,6 +7,7 @@ import { SidebarProvider } from '@/components/SidebarContext'
 import { AccountFilterProvider } from '@/components/AccountFilterContext'
 import { TradeProvider } from '@/components/TradeContext'
 import Sidebar from '@/components/Sidebar'
+import MobileBottomNav from '@/components/MobileBottomNav'
 import MainContent from '@/components/MainContent'
 import { Loader2, TrendingUp, AlertCircle } from 'lucide-react'
 
@@ -54,6 +55,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <AccountFilterProvider>
         <TradeProvider>
           <Sidebar />
+          <MobileBottomNav />
           <MainContent>{children}</MainContent>
         </TradeProvider>
       </AccountFilterProvider>

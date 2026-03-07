@@ -7,7 +7,6 @@ import { CheckCircle2, Zap } from "lucide-react";
 const firms = [
   { name: "Apex Trader Funding", abbr: "APEX", rules: "Trailing Drawdown" },
   { name: "Tradeify", abbr: "TFY", rules: "Static EOD + Daily Loss" },
-  { name: "Tradeify Selects", abbr: "TFYS", rules: "EOD Trailing" },
   { name: "TopStep", abbr: "TS", rules: "Trailing + Consistency" },
   { name: "Take Profit Trader", abbr: "TPT", rules: "Static EOD" },
   { name: "My Funded Futures", abbr: "MFFU", rules: "Trailing Drawdown" },

@@ -88,7 +88,7 @@ export default function Sidebar() {
     <aside
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`sidebar-transition fixed top-0 left-0 h-screen z-40 flex flex-col ${
+      className={`sidebar-transition fixed top-0 left-0 h-screen z-40 hidden lg:flex flex-col ${
         collapsed ? 'w-[64px]' : 'w-[220px]'
       }`}
       style={{

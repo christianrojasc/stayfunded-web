@@ -286,8 +286,8 @@ export default function Dashboard() {
       <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
       {/* Upgrade banner */}
       {!isPro && !bannerDismissed && (
-        <div className="relative flex items-center justify-between gap-4 px-5 py-4 rounded-2xl border border-[#4ADE80]/15" style={{background:'linear-gradient(135deg, rgba(74,222,128,0.06) 0%, rgba(34,197,94,0.03) 100%)'}}>
-          <div className="flex items-center gap-3">
+        <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4 rounded-2xl border border-[#4ADE80]/15" style={{background:'linear-gradient(135deg, rgba(74,222,128,0.06) 0%, rgba(34,197,94,0.03) 100%)'}}>
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <div className="w-8 h-8 rounded-xl bg-[#4ADE80]/10 flex items-center justify-center flex-shrink-0">
               <Sparkles className="w-4 h-4 text-[#4ADE80]" />
             </div>
@@ -316,7 +316,7 @@ export default function Dashboard() {
             <SessionClock />
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <AccountSelector />
           {todayStats && (
             <div className={`px-4 py-2 rounded-xl text-sm font-semibold border ${

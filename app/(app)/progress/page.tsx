@@ -703,64 +703,75 @@ export default function ProgressPage() {
         </motion.div>
 
         {/* Right: Heatmap */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className={`lg:col-span-5 ${GLASS} p-6 flex flex-col`}>
-          <div className="flex items-center justify-between mb-5">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className={`lg:col-span-5 ${GLASS} p-6 flex flex-col gap-5`}>
+
+          {/* Header */}
+          <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-sm font-bold text-white tracking-tight">Progress Heatmap</h2>
+              <h2 className="text-sm font-bold text-white">Consistency Heatmap</h2>
               <p className="text-xs text-[#64748B] mt-0.5">Rule follow-through · last 13 weeks</p>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] text-[#64748B]">
-              <div className="flex gap-1 items-center">
-                {HEATMAP_COLORS.map((col, i) => (
-                  <div key={i} className={`w-3 h-3 rounded-sm ${col}`} />
-                ))}
-              </div>
-              <span className="ml-1">More</span>
+            <div className="flex items-center gap-1 text-[10px] text-[#64748B]">
+              <span>Less</span>
+              {['bg-white/[0.06]','bg-[#14532d]','bg-[#166534]','bg-[#16a34a]','bg-[#22c55e]','bg-[#4ade80]'].map((col, i) => (
+                <div key={i} className={`w-[10px] h-[10px] rounded-[2px] ${col}`} />
+              ))}
+              <span>More</span>
             </div>
           </div>
 
-          {/* Month labels */}
-          <div className="relative h-4 mb-1" style={{marginLeft:'28px'}}>
-            {(() => {
-              const months: { label: string; col: number }[] = []
-              let lastMonth = -1
-              heatmapWeeks.forEach((week, wi) => {
-                const d = week[0]?.date
-                if (d && d.getMonth() !== lastMonth) {
-                  lastMonth = d.getMonth()
-                  months.push({ label: d.toLocaleString('en-US', { month: 'short' }), col: wi })
-                }
-              })
-              return months.map(m => (
-                <span key={m.col} className="text-[11px] font-medium text-[#64748B] absolute" style={{ left: `${m.col * 16}px` }}>
-                  {m.label}
-                </span>
-              ))
-            })()}
+          {/* Month labels row */}
+          <div className="flex">
+            <div className="w-7 shrink-0" />
+            <div className="relative flex-1 h-4">
+              {(() => {
+                const months: { label: string; pct: number }[] = []
+                let lastMonth = -1
+                heatmapWeeks.forEach((week, wi) => {
+                  const d = week[0]?.date
+                  if (d && d.getMonth() !== lastMonth) {
+                    lastMonth = d.getMonth()
+                    months.push({ label: d.toLocaleString('en-US', { month: 'short' }), pct: (wi / heatmapWeeks.length) * 100 })
+                  }
+                })
+                return months.map((m, i) => (
+                  <span key={i} className="absolute text-[11px] font-medium text-[#475569]" style={{ left: `${m.pct}%` }}>{m.label}</span>
+                ))
+              })()}
+            </div>
           </div>
 
-          <div className="flex gap-[3px] flex-1">
+          {/* Grid */}
+          <div className="flex gap-1">
             {/* Day labels */}
-            <div className="flex flex-col gap-[3px] mr-1 justify-start pt-0">
+            <div className="flex flex-col gap-1 w-7 shrink-0">
               {['S','M','T','W','T','F','S'].map((d, i) => (
-                <div key={i} className="h-[13px] flex items-center">
-                  <span className="text-[10px] text-[#374151] w-5 text-right pr-1">{i % 2 === 1 ? d : ''}</span>
+                <div key={i} className="h-[18px] flex items-center justify-end pr-1.5">
+                  <span className="text-[10px] text-[#374151]">{i % 2 === 1 ? d : ''}</span>
                 </div>
               ))}
             </div>
-            {/* Grid */}
-            <div className="flex gap-[3px]">
+            {/* Cells */}
+            <div className="flex gap-1 flex-1">
               {heatmapWeeks.map((week, wi) => (
-                <div key={wi} className="flex flex-col gap-[3px]">
+                <div key={wi} className="flex flex-col gap-1 flex-1">
                   {week.map((day, di) => {
-                    const colorIdx = day.pct < 0 ? 0 : getColorIndex(day.pct)
+                    const pct = day.pct
+                    const isEmpty = pct < 0
                     const isToday = day.date.toDateString() === new Date().toDateString()
-                    const tooltip = day.pct < 0 ? 'No data' : `${day.checked}/${day.total} rules — ${Math.round(day.pct)}%`
+                    const bg = isEmpty ? 'rgba(255,255,255,0.04)'
+                      : pct < 25 ? '#14532d'
+                      : pct < 50 ? '#166534'
+                      : pct < 75 ? '#16a34a'
+                      : pct < 90 ? '#22c55e'
+                      : '#4ade80'
+                    const tooltip = isEmpty ? 'No data' : `${day.checked}/${day.total} rules · ${Math.round(pct)}%`
                     return (
                       <div
                         key={di}
                         title={`${day.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${tooltip}`}
-                        className={`w-[13px] h-[13px] rounded-[3px] cursor-pointer transition-all hover:scale-125 hover:z-10 relative ${HEATMAP_COLORS[colorIdx]} ${isToday ? 'ring-1 ring-white/50' : ''}`}
+                        className={`h-[18px] rounded-[4px] cursor-pointer transition-all duration-150 hover:opacity-80 hover:scale-105 ${isToday ? 'ring-1 ring-white/40' : ''}`}
+                        style={{ background: bg }}
                       />
                     )
                   })}
@@ -769,22 +780,18 @@ export default function ProgressPage() {
             </div>
           </div>
 
-          {/* Stats row */}
-          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-white/[0.05]">
-            <div className="text-center">
-              <p className="text-lg font-bold text-white">{streak}</p>
-              <p className="text-[10px] text-[#64748B]">day streak</p>
-            </div>
-            <div className="w-px h-8 bg-white/[0.06]" />
-            <div className="text-center">
-              <p className="text-lg font-bold text-white">{allChecklists.filter(c => c.items?.every(i => i.checked)).length}</p>
-              <p className="text-[10px] text-[#64748B]">perfect days</p>
-            </div>
-            <div className="w-px h-8 bg-white/[0.06]" />
-            <div className="text-center">
-              <p className="text-lg font-bold text-white">{allChecklists.length}</p>
-              <p className="text-[10px] text-[#64748B]">days tracked</p>
-            </div>
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/[0.05]">
+            {[
+              { value: streak, label: 'Day streak' },
+              { value: allChecklists.length, label: 'Days tracked' },
+              { value: allChecklists.filter(c => (c.items?.filter(i => i.checked).length ?? 0) === (c.items?.length ?? 0) && (c.items?.length ?? 0) > 0).length, label: 'Perfect days' },
+            ].map((s, i) => (
+              <div key={i} className="text-center py-2 rounded-2xl" style={{background:'rgba(255,255,255,0.03)'}}>
+                <p className="text-xl font-black text-white">{s.value}</p>
+                <p className="text-[10px] text-[#64748B] mt-0.5">{s.label}</p>
+              </div>
+            ))}
           </div>
         </motion.div>
       </div>

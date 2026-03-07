@@ -65,8 +65,8 @@ export default function LoginPage() {
           setError(error.message.includes('Invalid') ? 'Incorrect email or password.' : error.message)
           setFailed(f => f + 1); setCooldown(true); setTimeout(() => setCooldown(false), 2000)
         } else {
-          setReverse(true)
-          setTimeout(() => { setStep('success'); setTimeout(() => router.replace('/dashboard'), 1200) }, 1500)
+          setStep('success')
+          setTimeout(() => { window.location.href = '/dashboard' }, 800)
         }
       } else {
         const { error } = await signUp(email, password, displayName.trim() || undefined)

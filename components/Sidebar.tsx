@@ -29,7 +29,6 @@ const NAV_SECTIONS = [
     label: 'TOOLS',
     items: [
       { href: '/journal',   icon: BookOpen,       label: 'Journal' },
-      { href: '/checklist', icon: ClipboardCheck, label: 'Checklist' },
       { href: '/progress', icon: Target, label: 'Progress' },
       { href: '/import',    icon: Upload,         label: 'Import' },
     ],

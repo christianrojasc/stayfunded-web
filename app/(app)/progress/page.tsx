@@ -462,20 +462,24 @@ export default function ProgressPage() {
       }
 
       const sd = getTodaySessionDate()
-      const cl = await dl.getChecklist(sd)
-      setTodayChecklist(cl)
+      try {
+        const cl = await dl.getChecklist(sd)
+        setTodayChecklist(cl)
+      } catch {}
 
       const lists: DailyChecklist[] = []
-      const today = new Date()
-      for (let i = 0; i < 90; i++) {
-        const d = new Date(today)
-        d.setDate(d.getDate() - i)
-        const dateStr = sessionDateStr(d)
-        try {
-          const c = await dl.getChecklist(dateStr)
-          if (c && c.savedAt) lists.push(c)
-        } catch {}
-      }
+      try {
+        const today = new Date()
+        for (let i = 0; i < 90; i++) {
+          const d = new Date(today)
+          d.setDate(d.getDate() - i)
+          const dateStr = sessionDateStr(d)
+          try {
+            const c = await dl.getChecklist(dateStr)
+            if (c && c.savedAt) lists.push(c)
+          } catch {}
+        }
+      } catch {}
       setAllChecklists(lists)
       setLoading(false)
     }

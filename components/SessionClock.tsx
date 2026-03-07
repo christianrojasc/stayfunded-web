@@ -1,28 +1,33 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { getSessionInfo, SessionInfo } from '@/lib/session'
+import { getSessionInfo, isMarketOpen, SessionInfo } from '@/lib/session'
 
 export default function SessionClock() {
   const [session, setSession] = useState<SessionInfo | null>(null)
+  const [liveTime, setLiveTime] = useState('')
 
   useEffect(() => {
-    setSession(getSessionInfo())
-    const interval = setInterval(() => setSession(getSessionInfo()), 1000)
+    const tick = () => {
+      setSession(getSessionInfo())
+      const now = new Date()
+      setLiveTime(now.toLocaleTimeString('en-US', {
+        timeZone: 'America/New_York',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: true,
+      }) + ' EST')
+    }
+    tick()
+    const interval = setInterval(tick, 1000)
     return () => clearInterval(interval)
   }, [])
 
-  if (!session) {
-    return (
-      <div className="flex items-center gap-2 text-[#6B7E91] dark:text-[#8b949e] text-xs">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#6B7E91]" />
-        <span>6 PM – 5 PM EST</span>
-      </div>
-    )
-  }
+  if (!session) return null
 
-  const statusColor = (() => {
+  const isWeekend = !isMarketOpen()
+
+  const statusColor = isWeekend ? '#6B7E91' : (() => {
     switch (session.status) {
-      case 'active': return '#4ADE50'
+      case 'active': return '#4ADE80'
       case 'closing_soon':
         return session.alertLevel === 'urgent' ? '#EF4444'
           : session.alertLevel === 'critical' ? '#F97316'
@@ -31,7 +36,7 @@ export default function SessionClock() {
     }
   })()
 
-  const statusLabel = (() => {
+  const statusLabel = isWeekend ? 'Weekend' : (() => {
     switch (session.status) {
       case 'active': return 'Live'
       case 'closing_soon': return 'Closing'
@@ -43,28 +48,35 @@ export default function SessionClock() {
 
   return (
     <div className="flex items-center gap-3 text-xs">
-      {/* Status dot + label */}
       <div className="flex items-center gap-1.5">
         <span
-          className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${session.status === 'active' ? 'animate-pulse' : ''}`}
+          className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${session.status === 'active' && !isWeekend ? 'animate-pulse' : ''}`}
           style={{ backgroundColor: statusColor }}
         />
         <span className="font-semibold" style={{ color: statusColor }}>{statusLabel}</span>
-        <span className="text-[#6B7E91] dark:text-[#8b949e]">6 PM – 5 PM EST</span>
+        <span className="text-[#6B7E91]">6 PM – 5 PM EST</span>
       </div>
 
-      {/* Countdown */}
-      <span className="font-mono font-semibold" style={{ color: statusColor }}>
-        {session.countdown}
-      </span>
+      {!isWeekend && (
+        <span className="font-mono font-semibold" style={{ color: statusColor }}>
+          {session.countdown}
+        </span>
+      )}
 
-      {/* Progress bar */}
-      <div className="w-12 h-0.5 rounded-full bg-[#E4E9F0] dark:bg-[#21262d] overflow-hidden hidden sm:block">
-        <div
-          className="h-full rounded-full transition-all duration-1000"
-          style={{ width: `${progressPct}%`, backgroundColor: statusColor }}
-        />
-      </div>
+      {liveTime && (
+        <span className="font-mono text-[#6B7E91] hidden sm:inline">
+          {liveTime}
+        </span>
+      )}
+
+      {!isWeekend && (
+        <div className="w-12 h-0.5 rounded-full bg-white/10 overflow-hidden hidden sm:block">
+          <div
+            className="h-full rounded-full transition-all duration-1000"
+            style={{ width: `${progressPct}%`, backgroundColor: statusColor }}
+          />
+        </div>
+      )}
     </div>
   )
 }

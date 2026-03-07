@@ -103,6 +103,26 @@ export function getSessionBounds(now: Date = new Date()): {
 /**
  * Get full session info for the current moment.
  */
+export function isMarketOpen(now: Date = new Date()): boolean {
+  const est = getESTComponents(now)
+  // CME futures closed Friday 5 PM → Sunday 6 PM EST
+  // dayOfWeek: 0=Sun, 1=Mon ... 6=Sat
+  const utcDay = now.getUTCDay()
+  const nyParts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    weekday: 'short', hour: '2-digit', hour12: false,
+  }).formatToParts(now)
+  const dayName = nyParts.find(p => p.type === 'weekday')?.value ?? ''
+  const hour = est.hours === 24 ? 0 : est.hours
+  // Saturday: fully closed
+  if (dayName === 'Sat') return false
+  // Friday: closed after 5 PM
+  if (dayName === 'Fri' && hour >= 17) return false
+  // Sunday: closed before 6 PM
+  if (dayName === 'Sun' && hour < 18) return false
+  return true
+}
+
 export function getSessionInfo(now: Date = new Date()): SessionInfo {
   const est = getESTComponents(now)
   const estHour = est.hours

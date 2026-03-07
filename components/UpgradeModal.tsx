@@ -70,41 +70,55 @@ export default function UpgradeModal({ open, onClose }: Props) {
           <p className="text-gray-400 text-sm mt-1">Everything you need to stay funded, longer.</p>
         </div>
 
-        {/* Billing toggle */}
-        <div className="px-7 pb-5">
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-white/5 border border-white/8">
-            <button
-              onClick={() => setBilling('monthly')}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${billing === 'monthly' ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-gray-300'}`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBilling('yearly')}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 ${billing === 'yearly' ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-gray-300'}`}
-            >
-              Yearly
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-green-500/20 text-green-400">Save $69</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Price display */}
-        <div className="px-7 pb-5">
-          <div className="flex items-baseline gap-2">
-            <span className="text-5xl font-black text-white">
-              {billing === 'monthly' ? '$14' : '$99'}
-            </span>
-            <span className="text-gray-500 text-sm">
-              {billing === 'monthly' ? '/month' : '/year'}
-            </span>
-            {billing === 'yearly' && (
-              <span className="text-gray-600 text-sm line-through ml-1">$168</span>
+        {/* Plan boxes */}
+        <div className="px-7 pb-5 grid grid-cols-2 gap-3">
+          {/* Monthly */}
+          <button
+            onClick={() => setBilling('monthly')}
+            className={`relative flex flex-col items-start p-4 rounded-2xl border text-left transition-all duration-200 ${
+              billing === 'monthly'
+                ? 'border-green-500/60 bg-green-500/8 shadow-[0_0_20px_rgba(74,222,80,0.08)]'
+                : 'border-white/8 bg-white/[0.02] hover:border-white/15'
+            }`}
+          >
+            {billing === 'monthly' && (
+              <div className="absolute top-3 right-3 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
+                <Check className="w-2.5 h-2.5 text-black" strokeWidth={3} />
+              </div>
             )}
-          </div>
-          {billing === 'yearly' && (
-            <p className="text-green-400 text-xs font-medium mt-1">That's $8.25/month — billed annually</p>
-          )}
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Monthly</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-3xl font-black text-white">$14</span>
+              <span className="text-gray-500 text-xs">/mo</span>
+            </div>
+            <span className="text-gray-600 text-xs mt-1">Billed monthly</span>
+          </button>
+
+          {/* Yearly */}
+          <button
+            onClick={() => setBilling('yearly')}
+            className={`relative flex flex-col items-start p-4 rounded-2xl border text-left transition-all duration-200 ${
+              billing === 'yearly'
+                ? 'border-green-500/60 bg-green-500/8 shadow-[0_0_20px_rgba(74,222,80,0.08)]'
+                : 'border-white/8 bg-white/[0.02] hover:border-white/15'
+            }`}
+          >
+            <div className="absolute -top-2.5 left-4 px-2 py-0.5 rounded-full bg-green-500 text-[10px] font-black text-black">BEST VALUE</div>
+            {billing === 'yearly' && (
+              <div className="absolute top-3 right-3 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
+                <Check className="w-2.5 h-2.5 text-black" strokeWidth={3} />
+              </div>
+            )}
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Yearly</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-3xl font-black text-white">$99</span>
+              <span className="text-gray-500 text-xs">/yr</span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="text-gray-600 text-xs line-through">$168</span>
+              <span className="text-green-400 text-xs font-semibold">Save $69</span>
+            </div>
+          </button>
         </div>
 
         {/* Divider */}

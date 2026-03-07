@@ -217,7 +217,7 @@ function TradesTab({ trades }: { trades: Trade[] }) {
                 <td className="py-2 px-2 text-white">{timeStr}</td>
                 <td className="py-2 px-2 text-white">{t.symbol || '—'}</td>
                 <td className="py-2 px-2 text-white">{t.side || '—'}</td>
-                <td className="py-2 px-2 text-right text-white">{t.qty ?? '—'}</td>
+                <td className="py-2 px-2 text-right text-white">{t.contracts ?? '—'}</td>
                 <td className="py-2 px-2 text-right text-white">{t.entryPrice != null ? `$${Number(t.entryPrice).toFixed(2)}` : '—'}</td>
                 <td className="py-2 px-2 text-right text-white">{t.exitPrice != null ? `$${Number(t.exitPrice).toFixed(2)}` : '—'}</td>
                 <td className={`py-2 px-2 text-right font-medium ${pnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>

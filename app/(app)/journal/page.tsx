@@ -149,7 +149,7 @@ function StatsTab({ group }: { group: DayGroup }) {
   return (
     <div className="space-y-4">
       <ModalChart data={group.equityCurve} positive={pos} />
-      <div className="grid grid-cols-6 divide-x divide-white/[0.06]">
+      <div className="grid grid-cols-3 sm:grid-cols-6 divide-x divide-white/[0.06]">
         {[
           { label: 'Trades', value: group.trades.length },
           { label: 'Wins', value: group.wins },
@@ -368,7 +368,7 @@ function DayModal({
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
       onClick={handleBackdrop}
     >
-      <div className="w-full max-w-2xl bg-[#0c1120] border border-white/[0.08] rounded-3xl overflow-hidden max-h-[90vh] flex flex-col">
+      <div className="w-full max-w-2xl bg-[#0c1120] border border-white/[0.08] rounded-none sm:rounded-3xl overflow-hidden min-h-screen sm:min-h-0 sm:max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="px-6 pt-5 pb-4 flex-shrink-0">
           <div className="flex items-center justify-between mb-3">
@@ -525,20 +525,20 @@ export default function JournalPage() {
               <div
                 key={g.sessionDate}
                 onClick={() => setModalIndex(idx)}
-                className="rounded-2xl bg-white/[0.03] border border-white/[0.06] p-5 flex items-center gap-6 flex-wrap cursor-pointer hover:bg-white/[0.05] hover:border-white/[0.1] transition-all"
+                className="rounded-2xl bg-white/[0.03] border border-white/[0.06] p-4 sm:p-5 flex items-center gap-4 sm:gap-6 flex-wrap cursor-pointer hover:bg-white/[0.05] hover:border-white/[0.1] transition-all"
               >
                 {/* Left: date + mini chart */}
                 <div className="flex flex-col items-start gap-2 min-w-[180px]">
                   <span className="text-lg font-bold text-white">{g.label}</span>
-                  <MiniChart data={g.equityCurve} positive={pos} />
+                  <div className="hidden sm:block"><MiniChart data={g.equityCurve} positive={pos} /></div>
                 </div>
 
                 {/* Center: P&L + stats */}
-                <div className="flex-1 min-w-[280px]">
+                <div className="flex-1 min-w-0 sm:min-w-[280px]">
                   <div className={`text-2xl font-bold mb-3 ${pos ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
                     {formatPnl(g.pnl)}
                   </div>
-                  <div className="grid grid-cols-3 gap-x-8 gap-y-2">
+                  <div className="grid grid-cols-3 gap-x-4 sm:gap-x-8 gap-y-2">
                     <StatCell label="Trades" value={g.trades.length} />
                     <StatCell label="Wins" value={g.wins} />
                     <StatCell label="Losses" value={g.losses} />

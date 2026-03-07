@@ -600,7 +600,7 @@ export default function ProgressPage() {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
+    <div className="space-y-4 sm:space-y-6 max-w-[1400px] mx-auto">
       {/* Onboarding */}
       <AnimatePresence>
         {showOnboarding && <OnboardingModal onComplete={handleOnboardingComplete} />}
@@ -621,10 +621,10 @@ export default function ProgressPage() {
       <WeeklyReportCard />
 
       {/* Top row */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
         {/* Left: Stats */}
         <div className="lg:col-span-3 space-y-4">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={`${GLASS} p-5`}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={`${GLASS} p-4 sm:p-5`}>
             <div className="flex items-center gap-2 mb-3">
               <Flame className="w-4 h-4 text-orange-400" />
               <span className="text-xs font-medium text-[#94A3B8] uppercase tracking-wider">Current Streak</span>
@@ -633,7 +633,7 @@ export default function ProgressPage() {
             <div className="text-sm text-[#94A3B8]">{streak === 1 ? 'day' : 'days'}</div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={`${GLASS} p-5`}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={`${GLASS} p-4 sm:p-5`}>
             <div className="flex items-center gap-2 mb-2">
               <Gauge className="w-4 h-4 text-blue-400" />
               <span className="text-xs font-medium text-[#94A3B8] uppercase tracking-wider">Current Period Score</span>
@@ -641,7 +641,7 @@ export default function ProgressPage() {
             <SemiCircleGauge value={periodScore} />
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className={`${GLASS} p-5`}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className={`${GLASS} p-4 sm:p-5`}>
             <div className="flex items-center gap-2 mb-3">
               <Target className="w-4 h-4 text-[#4ADE80]" />
               <span className="text-xs font-medium text-[#94A3B8] uppercase tracking-wider">Today&apos;s Progress</span>
@@ -801,7 +801,7 @@ export default function ProgressPage() {
       </div>
 
       {/* Bottom: Rules table */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className={`${GLASS} p-6`}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className={`${GLASS} p-4 sm:p-6`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-white">Current rules</h2>
           <button

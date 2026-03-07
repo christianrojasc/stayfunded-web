@@ -143,11 +143,7 @@ export function Pricing() {
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.3 + i * 0.15, ease: [0.21, 1.11, 0.81, 0.99] }}
-              className={`relative glass rounded-3xl p-8 border transition-all duration-500 ${
-                plan.badge
-                  ? "border-green-500/30 shadow-[0_0_60px_rgba(74,222,80,0.1)]"
-                  : "border-white/5"
-              }`}
+  className="relative"
             >
               {plan.badge && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">

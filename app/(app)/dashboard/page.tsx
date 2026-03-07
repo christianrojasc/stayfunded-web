@@ -329,7 +329,7 @@ export default function Dashboard() {
           )}
           <button
             onClick={toggleTheme}
-            className="p-2.5 rounded-xl border border-[#E4E9F0]  bg-white dark:bg-[#161b22] text-[#6B7E91] hover:text-[#1E2D3D] dark:hover:text-white hover:bg-[#F5F7FA] dark:hover:bg-[#1c2129] transition-all"
+            className="hidden sm:flex p-2.5 rounded-xl border border-[#E4E9F0]  bg-white dark:bg-[#161b22] text-[#6B7E91] hover:text-[#1E2D3D] dark:hover:text-white hover:bg-[#F5F7FA] dark:hover:bg-[#1c2129] transition-all"
           >
             {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           </button>

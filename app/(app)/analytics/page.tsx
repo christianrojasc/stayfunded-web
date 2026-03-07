@@ -219,7 +219,7 @@ export default function AnalyticsPage() {
 
       {/* ═══ Stats breakdown ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className={`${GLASS} p-5`}>
+        <div className={`${GLASS} p-4 sm:p-5`}>
           <h2 className="text-sm font-bold text-white mb-4">Trade Stats</h2>
           <div>
             <StatRow label="Total Trades" value={`${analytics.totalTrades}`} />
@@ -234,7 +234,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className={`${GLASS} p-5`}>
+        <div className={`${GLASS} p-4 sm:p-5`}>
           <h2 className="text-sm font-bold text-white mb-4">Risk & Drawdown</h2>
           <div>
             <StatRow label="Max Drawdown ($)" value={formatCurrency(analytics.maxDrawdown)} red />
@@ -248,7 +248,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className={`${GLASS} p-5`}>
+        <div className={`${GLASS} p-4 sm:p-5`}>
           <h2 className="text-sm font-bold text-white mb-4">Streaks & Patterns</h2>
           <div>
             <StatRow
@@ -266,7 +266,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* ═══ TIME INTELLIGENCE ═══ */}
-      <div className={`${GLASS} p-5`}>
+      <div className={`${GLASS} p-4 sm:p-5`}>
         <SectionHeader title="Time Intelligence" subtitle="When do you trade best?" icon={Clock} />
 
         {/* Best hours stat cards */}
@@ -382,9 +382,9 @@ export default function AnalyticsPage() {
       </div>
 
       {/* ═══ TRADE QUALITY ═══ */}
-      <div className={`${GLASS} p-5`}>
+      <div className={`${GLASS} p-4 sm:p-5`}>
         <SectionHeader title="Trade Quality" subtitle="Execution metrics and streaks" icon={Target} />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
           <MiniStat label="Avg Win" value={formatPnl(tradeQuality.avgWinPnl)} color="text-[#4ADE80]" />
           <MiniStat label="Avg Loss" value={formatPnl(tradeQuality.avgLossPnl)} color="text-[#FF453A]" />
           <MiniStat label="Largest Win" value={formatPnl(tradeQuality.largestWin)} color="text-[#4ADE80]" />
@@ -399,7 +399,7 @@ export default function AnalyticsPage() {
 
       {/* ═══ INSTRUMENT BREAKDOWN (enhanced) + SETUP ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div className={`${GLASS} p-5`}>
+        <div className={`${GLASS} p-4 sm:p-5`}>
           <SectionHeader title="Instrument Breakdown" subtitle="Avg P&L per instrument, sorted by profitability" icon={BarChart3} />
           {instrumentStats.length === 0 ? (
             <div className="text-center text-[#64748B] text-sm py-8">No data</div>
@@ -442,7 +442,7 @@ export default function AnalyticsPage() {
           )}
         </div>
 
-        <div className={`${GLASS} p-5`}>
+        <div className={`${GLASS} p-4 sm:p-5`}>
           <SectionHeader title="P&L by Setup" subtitle="Performance by trading strategy" icon={Zap} />
           {setupData.length === 0 ? (
             <div className="text-center text-[#64748B] text-sm py-8">No setup data &mdash; add setups to your trades</div>
@@ -471,7 +471,7 @@ export default function AnalyticsPage() {
 
       {/* ═══ P&L DISTRIBUTION ═══ */}
       {pnlDist.length > 0 && (
-        <div className={`${GLASS} p-5`}>
+        <div className={`${GLASS} p-4 sm:p-5`}>
           <SectionHeader title="P&L Distribution" subtitle="Frequency of trade outcomes by dollar range" icon={BarChart3} />
           <div className="min-h-[280px]">
             <ResponsiveContainer width="100%" height={300}>
@@ -491,7 +491,7 @@ export default function AnalyticsPage() {
 
       {/* ═══ DRAWDOWN CHART ═══ */}
       {drawdownData.length > 0 && (
-        <div className={`${GLASS} p-5`}>
+        <div className={`${GLASS} p-4 sm:p-5`}>
           <SectionHeader title="Drawdown" subtitle="Running drawdown over time (daily)" icon={TrendingDown} />
           <div className="min-h-[280px]">
             <ResponsiveContainer width="100%" height={300}>
@@ -523,7 +523,7 @@ export default function AnalyticsPage() {
 
       {/* ═══ SESSION PERFORMANCE ═══ */}
       {sortedSessions.length > 0 && (
-        <div className={`${GLASS} p-5`}>
+        <div className={`${GLASS} p-4 sm:p-5`}>
           <SectionHeader title="Session Performance" subtitle="Daily trading session breakdown" icon={Calendar} />
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

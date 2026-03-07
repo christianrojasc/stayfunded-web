@@ -99,7 +99,7 @@ export default function TradesPage() {
   return (
     <div className="space-y-5 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-white">Trade Log</h1>
           <p className="text-sm text-[#64748B] mt-0.5">
@@ -109,7 +109,7 @@ export default function TradesPage() {
             </span>
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <AccountSelector />
           <button className="btn-secondary" onClick={() => router.push("/import")}>
             <Upload size={16} />
@@ -125,7 +125,7 @@ export default function TradesPage() {
       {/* Filters */}
       <div className="glass-card p-4">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-[200px]">
+          <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9EB0C0] dark:text-[#64748B]" />
             <input
               className="input-field pl-9 pr-4"

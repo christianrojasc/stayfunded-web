@@ -69,7 +69,7 @@ export function Pricing() {
   }
 
   return (
-    <section id="pricing" ref={ref} className="relative py-32 md:py-40 bg-[#060a12] overflow-hidden">
+    <section id="pricing" ref={ref} className="relative py-16 md:py-20 bg-[#060a12] overflow-hidden">
       <div className="absolute inset-0 bg-dots opacity-30 pointer-events-none" />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-green-500/5 rounded-full blur-[120px] pointer-events-none" />

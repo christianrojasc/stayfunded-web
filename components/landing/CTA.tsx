@@ -9,7 +9,7 @@ export function CTA() {
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section ref={ref} className="relative py-32 md:py-40 bg-[#0A0E17] overflow-hidden">
+    <section ref={ref} className="relative py-16 md:py-20 bg-[#0A0E17] overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-40 pointer-events-none" />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-500/20 to-transparent" />
 

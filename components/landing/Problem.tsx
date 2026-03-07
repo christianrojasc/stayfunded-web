@@ -57,7 +57,7 @@ export function Problem() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section ref={ref} className="relative py-32 md:py-40 bg-[#060a12] overflow-hidden">
+    <section ref={ref} className="relative py-16 md:py-20 bg-[#060a12] overflow-hidden">
       <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-red-900/10 rounded-full blur-[120px] pointer-events-none" />
 

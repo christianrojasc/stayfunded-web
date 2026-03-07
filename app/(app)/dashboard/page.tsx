@@ -7,6 +7,9 @@ import {
 } from 'lucide-react'
 import { useTrades } from '@/components/TradeContext'
 import { useSubscription } from '@/hooks/useSubscription'
+import { useState } from 'react'
+import UpgradeModal from '@/components/UpgradeModal'
+import { Sparkles } from 'lucide-react'
 import { useTheme } from '@/components/ThemeContext'
 import { useAccountFilter } from '@/components/AccountFilterContext'
 import { calcDailyStats, calcCumulativePnl, calcDrawdown, calcAnalytics, formatCurrency, formatPnl } from '@/lib/calculations'
@@ -199,6 +202,7 @@ export default function Dashboard() {
   const { theme, toggle: toggleTheme } = useTheme()
   const { selectedId, accounts } = useAccountFilter()
   const { isPro } = useSubscription()
+  const [upgradeOpen, setUpgradeOpen] = useState(false)
 
   const filteredTrades = useMemo(
     () => selectedId ? trades.filter(t => t.accountId === selectedId) : trades,
@@ -230,13 +234,17 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
       {/* Upgrade banner */}
-      {!isPro && accounts && accounts.length >= 2 && (
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-green-500/20 bg-green-500/5">
-          <p className="text-sm text-gray-300">
-            You are using {accounts.length}/3 free accounts.{' '}
-            <a href="/pricing" className="text-green-400 font-medium hover:underline">Upgrade for unlimited.</a>
-          </p>
+      {!isPro && (
+        <div className="flex items-center justify-between gap-4 px-5 py-3 rounded-2xl border border-green-500/20 bg-green-500/5">
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-4 h-4 text-green-400 flex-shrink-0" />
+            <span className="text-sm text-gray-300">You're on the <span className="text-white font-semibold">Free plan</span> — unlock unlimited accounts, charts, reports and more.</span>
+          </div>
+          <button onClick={() => setUpgradeOpen(true)} className="flex-shrink-0 px-4 py-1.5 rounded-xl bg-gradient-to-r from-green-600 to-green-400 text-white text-xs font-bold hover:opacity-90 transition-opacity whitespace-nowrap">
+            Upgrade to Pro
+          </button>
         </div>
       )}
       {/* Header */}

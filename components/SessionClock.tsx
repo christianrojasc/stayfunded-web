@@ -47,7 +47,7 @@ export default function SessionClock() {
   const progressPct = Math.min(session.progress * 100, 100)
 
   return (
-    <div className="flex items-center gap-3 text-xs">
+    <div className="flex items-center gap-3 text-sm">
       <div className="flex items-center gap-1.5">
         <span
           className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${session.status === 'active' && !isWeekend ? 'animate-pulse' : ''}`}
@@ -58,7 +58,7 @@ export default function SessionClock() {
       </div>
 
       {!isWeekend && (
-        <span className="font-mono font-semibold" style={{ color: statusColor }}>
+        <span className="font-mono font-bold text-base tracking-tight" style={{ color: statusColor }}>
           {session.countdown}
         </span>
       )}

@@ -15,7 +15,7 @@ function SectionCard({ icon: Icon, title, description, children, accent = '#2D8B
 }) {
   return (
     <div className="glass-card overflow-hidden">
-      <div className="px-6 py-4 border-b border-[#E4E9F0]/50 dark:border-[#1a2035]" style={{ background: `linear-gradient(135deg, ${accent}08, transparent)` }}>
+      <div className="px-8 py-5 border-b border-[#E4E9F0]/50 dark:border-[#1a2035]" style={{ background: `linear-gradient(135deg, ${accent}08, transparent)` }}>
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${accent}15` }}>
             <Icon size={18} style={{ color: accent }} />
@@ -26,7 +26,7 @@ function SectionCard({ icon: Icon, title, description, children, accent = '#2D8B
           </div>
         </div>
       </div>
-      <div className="p-6 space-y-4">{children}</div>
+      <div className="p-8 space-y-6">{children}</div>
     </div>
   )
 }
@@ -128,7 +128,7 @@ export default function SettingsPage() {
   ]
 
   return (
-    <div className="space-y-5 animate-fade-in max-w-3xl">
+    <div className="space-y-8 animate-fade-in max-w-3xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

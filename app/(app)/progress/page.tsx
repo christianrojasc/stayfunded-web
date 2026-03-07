@@ -559,6 +559,8 @@ export default function ProgressPage() {
 
   const handleOnboardingComplete = (newRules: ProgressRule[]) => {
     setRules(newRules)
+    saveRulesToStorage(newRules)
+    markSetupDone()
     setShowOnboarding(false)
   }
 

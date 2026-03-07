@@ -18,15 +18,15 @@ function SectionCard({ icon: Icon, title, description, children, accent = '#2D8B
   icon: any; title: string; description?: string; children: React.ReactNode; accent?: string
 }) {
   return (
-    <div className="glass-card overflow-hidden">
-      <div className="px-8 py-5 border-b border-white/[0.06] border-l-2 border-l-[#4ADE80]" style={{ background: `linear-gradient(135deg, ${accent}08, transparent)` }}>
+    <div className="rounded-3xl overflow-hidden" style={{background:"#0c1120", border:"1px solid rgba(255,255,255,0.07)"}}>
+      <div className="px-8 py-5 border-b border-white/[0.06]" style={{ background: `linear-gradient(135deg, ${accent}08, transparent)` }}>
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${accent}15` }}>
             <Icon size={18} style={{ color: accent }} />
           </div>
           <div>
-            <h2 className="font-bold text-[#1E2D3D] dark:text-[#F1F5F9] text-[15px]">{title}</h2>
-            {description && <p className="text-xs text-[#6B7E91] dark:text-[#64748B] mt-0.5">{description}</p>}
+            <h2 className="font-bold text-white text-[15px]">{title}</h2>
+            {description && <p className="text-xs text-[#64748B] mt-0.5">{description}</p>}
           </div>
         </div>
       </div>
@@ -36,14 +36,15 @@ function SectionCard({ icon: Icon, title, description, children, accent = '#2D8B
 }
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
-  return <label className="block text-[11px] font-semibold tracking-wider uppercase text-[#6B7E91] dark:text-[#64748B] mb-1.5">{children}</label>
+  return <label className="block text-[11px] font-semibold tracking-wider uppercase text-[#64748B] mb-1.5">{children}</label>
 }
 
 function StyledInput({ className = '', ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className={`w-full px-3 py-2.5 rounded-xl text-sm bg-[#F5F7FA] dark:bg-[#0d1117] border border-[#E4E9F0] dark:border-[#21262d] text-[#1E2D3D] dark:text-[#e6edf3] focus:outline-none focus:ring-2 focus:ring-[#2D8B4E]/30 focus:border-[#2D8B4E] transition-all placeholder:text-[#9EB0C0] dark:placeholder:text-[#4d5566] ${className}`}
+      className={`w-full px-4 py-3 rounded-2xl text-sm text-white focus:outline-none transition-all placeholder:text-[#475569] ${className}`}
+      style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.09)'}}
     />
   )
 }
@@ -52,7 +53,8 @@ function StyledSelect({ className = '', children, ...props }: React.SelectHTMLAt
   return (
     <select
       {...props}
-      className={`w-full px-3 py-2.5 rounded-xl text-sm bg-[#F5F7FA] dark:bg-[#0d1117] border border-[#E4E9F0] dark:border-[#21262d] text-[#1E2D3D] dark:text-[#e6edf3] focus:outline-none focus:ring-2 focus:ring-[#2D8B4E]/30 focus:border-[#2D8B4E] transition-all appearance-none cursor-pointer ${className}`}
+      className={`w-full px-4 py-3 rounded-2xl text-sm text-white focus:outline-none transition-all appearance-none cursor-pointer ${className}`}
+      style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.09)'}}
     >
       {children}
     </select>

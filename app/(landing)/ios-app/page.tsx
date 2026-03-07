@@ -89,8 +89,8 @@ export default function IOSAppPage() {
               desc: "Import your Tradovate CSV on desktop and review your full trade history, P&L, and stats directly from the iOS app.",
             },
             {
-              title: "Drawdown Alerts",
-              desc: "Push notifications the moment you approach your daily loss limit or max drawdown. Never blow a prop account in distraction.",
+              title: "Drawdown Snapshot",
+              desc: "Review exactly where you stand on daily loss and max drawdown after each session. Know your risk before you open the platform.",
             },
             {
               title: "Session Clock",

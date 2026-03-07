@@ -319,7 +319,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <AccountSelector />
           {todayStats && (
-            <div className={`px-4 py-2 rounded-xl text-sm font-semibold border ${
+            <div className={`hidden sm:block px-4 py-2 rounded-xl text-sm font-semibold border ${
               todayStats.netPnl >= 0
                 ? 'bg-[rgba(74,222,128,0.1)] text-[#4ADE80] border-[rgba(74,222,128,0.15)]'
                 : 'bg-[rgba(255,69,58,0.1)] text-[#FF453A]  border-red-100 '
@@ -333,7 +333,7 @@ export default function Dashboard() {
           >
             {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           </button>
-          <Link href="/trades" className="btn-primary">
+          <Link href="/trades" className="btn-primary hidden sm:flex">
             <ArrowUpRight size={15} />
             Add Trade
           </Link>
@@ -442,7 +442,7 @@ export default function Dashboard() {
           </div>
           <div className="h-56"><CumPnlChart data={cumulative} /></div>
         </div>
-        <div className="glass-card p-5">
+        <div className="glass-card p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="section-title">Daily P&L</h2>
@@ -459,7 +459,7 @@ export default function Dashboard() {
 
       {/* Drawdown + Recent Trades */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="glass-card p-5">
+        <div className="glass-card p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="section-title">Drawdown</h2>

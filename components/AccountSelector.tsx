@@ -36,7 +36,7 @@ export default function AccountSelector() {
         ) : (
           <LayoutGrid size={14} className="text-[#6B7E91] flex-shrink-0" />
         )}
-        <span className="max-w-[140px] truncate">{label}</span>
+        <span className="max-w-[80px] sm:max-w-[140px] truncate">{label}</span>
         {selected && (
           <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${statusColor(selected.status)}`}>
             {selected.status === 'funded' ? 'Funded' : 'Eval'}

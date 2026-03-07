@@ -214,12 +214,12 @@ export default function SettingsPage() {
       </div>
 
       {/* Tab Bar — underline style */}
-      <div className="flex border-b border-white/[0.06]">
+      <div className="flex overflow-x-auto border-b border-white/[0.06] -mx-4 px-4 sm:mx-0 sm:px-0 flex-nowrap">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-5 py-3 text-sm font-semibold transition-all relative ${
+            className={`px-4 sm:px-5 py-3 text-sm font-semibold transition-all relative whitespace-nowrap flex-shrink-0 ${
               activeTab === tab.id
                 ? 'text-white'
                 : 'text-[#64748B] hover:text-[#94A3B8]'

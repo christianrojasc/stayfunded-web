@@ -385,7 +385,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white dark:bg-[#161b22] border border-[#E4E9F0] dark:border-[#21262d] rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto animate-slide-up">
+      <div className="relative bg-white dark:bg-[#161b22] border border-[#E4E9F0] dark:border-[#21262d] rounded-none sm:rounded-2xl shadow-2xl w-full max-w-xl min-h-screen sm:min-h-0 sm:max-h-[90vh] overflow-y-auto animate-slide-up">
         <div className="sticky top-0 bg-white dark:bg-[#161b22] border-b border-[#E4E9F0] dark:border-[#21262d] px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Briefcase size={18} className="text-[#2D8B4E]" />
@@ -433,7 +433,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                         : 'border-[#E4E9F0] dark:border-[#21262d] hover:border-[#2D8B4E]/50'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <span className="font-semibold text-sm text-[#1E2D3D] dark:text-[#e6edf3]">{plan.label}</span>
                       <div className="flex items-center gap-2">
                         {plan.evalCost !== null && (
@@ -654,7 +654,7 @@ export default function AccountsPage() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <h1 className="page-title">Prop Accounts</h1>
           <p className="text-sm text-[#6B7E91] dark:text-[#8b949e] mt-0.5">
@@ -714,7 +714,7 @@ export default function AccountsPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {accounts.map(account => (
             <div key={account.id} className="relative">
               {deleteConfirm === account.id && (

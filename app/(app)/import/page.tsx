@@ -180,11 +180,11 @@ export default function ImportPage() {
       )}
 
       {step === 'upload' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
           {/* Drop zone */}
           <div className="lg:col-span-2">
             <div
-              className={`border-2 border-dashed rounded-3xl p-16 text-center transition-all duration-200 cursor-pointer ${
+              className={`border-2 border-dashed rounded-3xl p-8 sm:p-16 text-center transition-all duration-200 cursor-pointer ${
                 dragging
                   ? 'border-[#4ADE80]/60 shadow-[0_0_40px_rgba(74,222,128,0.08)]'
                   : 'border-white/[0.08] hover:border-[#4ADE80]/40 hover:shadow-[0_0_30px_rgba(74,222,128,0.05)]'
@@ -262,7 +262,7 @@ export default function ImportPage() {
         <div className="space-y-4 animate-slide-up">
           {/* Summary */}
           <div className="glass-card p-5">
-            <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
                   <FileText size={20} className="text-[#2D8B4E]" />

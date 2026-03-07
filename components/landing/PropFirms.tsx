@@ -12,6 +12,7 @@ const firms = [
   { name: "My Funded Futures", abbr: "MFFU", rules: "Trailing Drawdown" },
   { name: "FTMO", abbr: "FTMO", rules: "Max Daily + Overall DD" },
   { name: "Fast Track Trading", abbr: "FFN", rules: "Static + Trailing" },
+  { name: "Lucid Trading", abbr: "LTF", rules: "Trailing Drawdown" },
 ];
 
 const features = [

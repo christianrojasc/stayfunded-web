@@ -19,15 +19,15 @@ export default function ShineBorder({ className = '', children, borderRadius = 2
           100% { transform: rotate(360deg); }
         }
         .shine-border-spin {
-          animation: rotateBorder 3s linear infinite;
+          animation: rotateBorder 6s linear infinite;
         }
       `}</style>
 
       {/* Outer container clips the rotating glow */}
       <div style={{
         position: 'absolute',
-        inset: '-2px',
-        borderRadius: `${borderRadius + 2}px`,
+        inset: '-3px',
+        borderRadius: `${borderRadius + 3}px`,
         overflow: 'hidden',
         zIndex: 0,
       }}>
@@ -49,8 +49,8 @@ export default function ShineBorder({ className = '', children, borderRadius = 2
       {/* Dark inner fill */}
       <div style={{
         position: 'absolute',
-        inset: '2px',
-        borderRadius: `${borderRadius - 2}px`,
+        inset: '3px',
+        borderRadius: `${borderRadius - 1}px`,
         background: '#0f1117',
         zIndex: 1,
       }} />

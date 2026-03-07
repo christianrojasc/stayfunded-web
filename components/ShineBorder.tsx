@@ -1,40 +1,56 @@
 'use client'
-import { cn } from '@/lib/utils'
 import type { ReactNode } from 'react'
 
 interface ShineBorderProps {
-  borderRadius?: number
-  borderWidth?: number
-  duration?: number
   color?: string | string[]
+  duration?: number
+  borderWidth?: number
+  borderRadius?: number
   className?: string
   children: ReactNode
 }
 
 export default function ShineBorder({
-  borderRadius = 24,
-  borderWidth = 2,
-  duration = 8,
   color = ['#4ADE80', '#22C55E', '#86EFAC'],
-  className,
+  duration = 6,
+  borderWidth = 2,
+  borderRadius = 24,
+  className = '',
   children,
 }: ShineBorderProps) {
+  const gradientColor = Array.isArray(color) ? color.join(',') : color
+
   return (
-    <div
-      style={{ '--border-radius': `${borderRadius}px` } as React.CSSProperties}
-      className={cn('relative', className)}
-    >
-      <div
-        style={{
-          '--border-width': `${borderWidth}px`,
-          '--border-radius': `${borderRadius}px`,
-          '--shine-pulse-duration': `${duration}s`,
-          '--mask-linear-gradient': 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-          '--background-radial-gradient': `radial-gradient(transparent,transparent, ${Array.isArray(color) ? color.join(',') : color},transparent,transparent)`,
-        } as React.CSSProperties}
-        className="before:bg-shine-size before:absolute before:inset-0 before:aspect-square before:size-full before:rounded-[--border-radius] before:p-[--border-width] before:will-change-[background-position] before:content-[''] before:![-webkit-mask-composite:xor] before:[background-image:--background-radial-gradient] before:[background-size:300%_300%] before:![mask-composite:exclude] before:[mask:--mask-linear-gradient] motion-safe:before:animate-[shine-pulse_var(--shine-pulse-duration)_infinite_linear] pointer-events-none absolute inset-0"
-      />
-      {children}
+    <div className={`relative ${className}`} style={{ borderRadius: `${borderRadius}px` }}>
+      <style>{`
+        @keyframes shineSpin {
+          0%   { background-position: 0% 50%; }
+          50%  { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
+      {/* Animated glow border */}
+      <div style={{
+        position: 'absolute',
+        inset: `-${borderWidth}px`,
+        borderRadius: `${borderRadius + borderWidth}px`,
+        background: `linear-gradient(var(--shine-angle, 0deg), ${gradientColor}, transparent, ${gradientColor})`,
+        backgroundSize: '300% 300%',
+        animation: `shineSpin ${duration}s linear infinite`,
+        zIndex: 0,
+      }} />
+      {/* Dark fill behind content */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        borderRadius: `${borderRadius}px`,
+        background: '#0f1117',
+        zIndex: 1,
+      }} />
+      {/* Content on top */}
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        {children}
+      </div>
     </div>
   )
 }

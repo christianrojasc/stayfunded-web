@@ -26,8 +26,8 @@ const plans = [
   },
   {
     name: "Pro",
-    priceMonthly: "$14",
-    priceYearly: "$10",
+    priceMonthly: "$15",
+    priceYearly: "$149",
     period: "/ month",
     description: "For serious traders managing multiple accounts and pushing for consistent funded status.",
     badge: "Most Popular",
@@ -157,7 +157,7 @@ export function Pricing() {
                     </motion.span>
                   </AnimatePresence>
                   <span className="text-gray-500 text-sm">
-                    {plan.priceMonthly === "$0" ? plan.period : yearly ? "/ month, billed yearly" : plan.period}
+                    {plan.priceMonthly === "$0" ? plan.period : yearly ? "/ year" : plan.period}
                   </span>
                 </div>
                 {yearly && plan.priceMonthly !== "$0" && (
@@ -166,7 +166,7 @@ export function Pricing() {
                     animate={{ opacity: 1 }}
                     className="text-xs text-green-400 font-medium"
                   >
-                    {`$${parseInt(plan.priceYearly.replace("$", "")) * 12}/year instead of $${parseInt(plan.priceMonthly.replace("$", "")) * 12}`}
+                    {`Save $${parseInt(plan.priceMonthly.replace("$", "")) * 12 - parseInt(plan.priceYearly.replace("$", ""))}/year vs monthly`}
                   </motion.p>
                 )}
                 <p className="text-gray-400 text-sm leading-relaxed mt-2">{plan.description}</p>

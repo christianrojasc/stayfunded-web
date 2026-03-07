@@ -4,9 +4,13 @@ import { useRouter } from 'next/navigation'
 import {
   Save, Trash2, AlertTriangle, Database,
   Globe, DollarSign, Zap, RotateCcw, CheckCircle,
-  Shield, Monitor, Palette, Bell, HardDrive, Download, Upload
+  Shield, Monitor, Palette, Bell, HardDrive, Download, Upload,
+  CreditCard, Crown, ExternalLink, Check
 } from 'lucide-react'
 import * as dl from '@/lib/data-layer'
+import { useSubscription } from '@/hooks/useSubscription'
+import { useAuth } from '@/components/AuthContext'
+import UpgradeModal from '@/components/UpgradeModal'
 import { getSettings as localGetSettings } from '@/lib/storage'
 import { Account, AppSettings, DEFAULT_FEE_SCHEDULE } from '@/lib/types'
 
@@ -126,6 +130,26 @@ export default function SettingsPage() {
     { label: 'Grains', symbols: ['ZC', 'ZS', 'ZW'] },
     { label: 'Currencies', symbols: ['6E', '6J'] },
   ]
+
+  const { isPro } = useSubscription()
+  const { user } = useAuth()
+  const [upgradeOpen, setUpgradeOpen] = useState(false)
+  const [portalLoading, setPortalLoading] = useState(false)
+
+  const handleManageBilling = async () => {
+    setPortalLoading(true)
+    try {
+      const res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user?.id }),
+      })
+      const { url } = await res.json()
+      if (url) window.location.href = url
+    } finally {
+      setPortalLoading(false)
+    }
+  }
 
   return (
     <div className="space-y-8 animate-fade-in max-w-2xl mx-auto">
@@ -302,6 +326,66 @@ export default function SettingsPage() {
       </SectionCard>
 
       {/* Data Management */}
+      {/* Subscription */}
+      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
+      <div className="rounded-3xl overflow-hidden" style={{background:'#0c1120', border:'1px solid rgba(255,255,255,0.07)'}}>
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-[#4ADE80]/40 to-transparent" />
+        <div className="px-8 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-2xl bg-[#4ADE80]/10 flex items-center justify-center">
+              <Crown size={18} className="text-[#4ADE80]" />
+            </div>
+            <div>
+              <h2 className="font-bold text-white text-[15px]">Subscription</h2>
+              <p className="text-xs text-[#64748B] mt-0.5">Manage your plan and billing</p>
+            </div>
+          </div>
+          <span className={`px-3 py-1 rounded-full text-xs font-bold ${isPro ? 'bg-[#4ADE80]/15 text-[#4ADE80]' : 'bg-white/[0.06] text-[#64748B]'}`}>
+            {isPro ? 'Pro' : 'Free'}
+          </span>
+        </div>
+        <div className="px-8 pb-6 space-y-3">
+          {isPro ? (
+            <>
+              <div className="flex items-center gap-3 p-4 rounded-2xl" style={{background:'rgba(74,222,128,0.05)', border:'1px solid rgba(74,222,128,0.15)'}}>
+                <Check size={16} className="text-[#4ADE80]" />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-white">StayFunded Pro</p>
+                  <p className="text-xs text-[#64748B] mt-0.5">Unlimited accounts · 1GB storage · Charts · Reports · AI insights</p>
+                </div>
+              </div>
+              <button
+                onClick={handleManageBilling}
+                disabled={portalLoading}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold text-[#64748B] hover:text-white transition-all"
+                style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}
+              >
+                <ExternalLink size={14} />
+                {portalLoading ? 'Loading...' : 'Manage Billing & Invoices'}
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-3 p-4 rounded-2xl" style={{background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)'}}>
+                <CreditCard size={16} className="text-[#64748B]" />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-white">Free Plan</p>
+                  <p className="text-xs text-[#64748B] mt-0.5">3 accounts · CSV import · Basic analytics</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setUpgradeOpen(true)}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold text-black transition-all hover:opacity-90"
+                style={{background:'linear-gradient(135deg, #4ADE80, #22C55E)'}}
+              >
+                <Crown size={14} />
+                Upgrade to Pro — $14/mo or $99/yr
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
       <SectionCard icon={Database} title="Data Management" description="Storage and data controls" accent="#EF4444">
         <div className="p-4 rounded-xl bg-gradient-to-r from-[#0d1117] to-[#0d1117] border border-[#21262d]">
           <div className="flex items-center gap-3 mb-3">

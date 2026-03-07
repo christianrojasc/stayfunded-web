@@ -46,12 +46,12 @@ const RULE_TYPE_ICONS: Record<ProgressRule['type'], typeof Clock> = {
 const GLASS = 'bg-white/[0.04] backdrop-blur-[20px] border border-white/[0.06] rounded-2xl'
 
 const HEATMAP_COLORS = [
-  'bg-white/[0.04]',
-  'bg-[#1a3a4a]',
-  'bg-[#1a5a6a]',
-  'bg-[#1a7a8a]',
-  'bg-[#4ADE80]/60',
-  'bg-[#4ADE80]',
+  'bg-white/[0.05]',
+  'bg-[#14532d]/60',
+  'bg-[#166534]/80',
+  'bg-[#15803d]',
+  'bg-[#22c55e]',
+  'bg-[#4ade80]',
 ]
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -703,14 +703,24 @@ export default function ProgressPage() {
         </motion.div>
 
         {/* Right: Heatmap */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className={`lg:col-span-5 ${GLASS} p-6`}>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white">Progress Heatmap</h2>
-            <button className="text-xs font-medium text-[#4ADE80] bg-[#4ADE80]/10 px-3 py-1.5 rounded-lg hover:bg-[#4ADE80]/20 transition-colors">Today</button>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className={`lg:col-span-5 ${GLASS} p-6 flex flex-col`}>
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h2 className="text-sm font-bold text-white tracking-tight">Progress Heatmap</h2>
+              <p className="text-xs text-[#64748B] mt-0.5">Rule follow-through · last 13 weeks</p>
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] text-[#64748B]">
+              <div className="flex gap-1 items-center">
+                {HEATMAP_COLORS.map((col, i) => (
+                  <div key={i} className={`w-3 h-3 rounded-sm ${col}`} />
+                ))}
+              </div>
+              <span className="ml-1">More</span>
+            </div>
           </div>
 
           {/* Month labels */}
-          <div className="relative h-4 mb-1 ml-8">
+          <div className="relative h-4 mb-1" style={{marginLeft:'28px'}}>
             {(() => {
               const months: { label: string; col: number }[] = []
               let lastMonth = -1
@@ -722,44 +732,59 @@ export default function ProgressPage() {
                 }
               })
               return months.map(m => (
-                <span key={m.col} className="text-[10px] text-[#94A3B8] absolute" style={{ left: `${m.col * 16}px` }}>
+                <span key={m.col} className="text-[11px] font-medium text-[#64748B] absolute" style={{ left: `${m.col * 16}px` }}>
                   {m.label}
                 </span>
               ))
             })()}
           </div>
 
-          <div className="flex gap-[2px]">
-            <div className="flex flex-col gap-[2px] mr-1">
-              {DAYS.map(d => (
-                <div key={d} className="h-[14px] flex items-center">
-                  <span className="text-[10px] text-[#94A3B8] w-6">{d}</span>
+          <div className="flex gap-[3px] flex-1">
+            {/* Day labels */}
+            <div className="flex flex-col gap-[3px] mr-1 justify-start pt-0">
+              {['S','M','T','W','T','F','S'].map((d, i) => (
+                <div key={i} className="h-[13px] flex items-center">
+                  <span className="text-[10px] text-[#374151] w-5 text-right pr-1">{i % 2 === 1 ? d : ''}</span>
                 </div>
               ))}
             </div>
-            {heatmapWeeks.map((week, wi) => (
-              <div key={wi} className="flex flex-col gap-[2px]">
-                {week.map((day, di) => {
-                  const colorIdx = day.pct < 0 ? 0 : getColorIndex(day.pct)
-                  const tooltip = day.pct < 0 ? 'No active rules' : `${day.checked}/${day.total} rules followed`
-                  return (
-                    <div
-                      key={di}
-                      className={`w-[14px] h-[14px] rounded-[3px] ${HEATMAP_COLORS[colorIdx]} cursor-pointer transition-colors hover:ring-1 hover:ring-white/20`}
-                      title={`${day.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${tooltip}`}
-                    />
-                  )
-                })}
-              </div>
-            ))}
+            {/* Grid */}
+            <div className="flex gap-[3px]">
+              {heatmapWeeks.map((week, wi) => (
+                <div key={wi} className="flex flex-col gap-[3px]">
+                  {week.map((day, di) => {
+                    const colorIdx = day.pct < 0 ? 0 : getColorIndex(day.pct)
+                    const isToday = day.date.toDateString() === new Date().toDateString()
+                    const tooltip = day.pct < 0 ? 'No data' : `${day.checked}/${day.total} rules — ${Math.round(day.pct)}%`
+                    return (
+                      <div
+                        key={di}
+                        title={`${day.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${tooltip}`}
+                        className={`w-[13px] h-[13px] rounded-[3px] cursor-pointer transition-all hover:scale-125 hover:z-10 relative ${HEATMAP_COLORS[colorIdx]} ${isToday ? 'ring-1 ring-white/50' : ''}`}
+                      />
+                    )
+                  })}
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="flex items-center justify-end gap-1 mt-4">
-            <span className="text-[10px] text-[#94A3B8] mr-1">Less</span>
-            {HEATMAP_COLORS.map((c, i) => (
-              <div key={i} className={`w-[12px] h-[12px] rounded-[2px] ${c}`} />
-            ))}
-            <span className="text-[10px] text-[#94A3B8] ml-1">More</span>
+          {/* Stats row */}
+          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-white/[0.05]">
+            <div className="text-center">
+              <p className="text-lg font-bold text-white">{streak}</p>
+              <p className="text-[10px] text-[#64748B]">day streak</p>
+            </div>
+            <div className="w-px h-8 bg-white/[0.06]" />
+            <div className="text-center">
+              <p className="text-lg font-bold text-white">{allChecklists.filter(c => c.items?.every(i => i.checked)).length}</p>
+              <p className="text-[10px] text-[#64748B]">perfect days</p>
+            </div>
+            <div className="w-px h-8 bg-white/[0.06]" />
+            <div className="text-center">
+              <p className="text-lg font-bold text-white">{allChecklists.length}</p>
+              <p className="text-[10px] text-[#64748B]">days tracked</p>
+            </div>
           </div>
         </motion.div>
       </div>

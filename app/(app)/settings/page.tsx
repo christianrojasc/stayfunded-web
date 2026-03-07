@@ -84,7 +84,6 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('account')
 
   const tabs = [
-    { id: 'account', label: 'Account' },
     { id: 'general', label: 'General' },
     { id: 'fees', label: 'Fees' },
     { id: 'subscription', label: 'Subscription' },
@@ -190,79 +189,6 @@ export default function SettingsPage() {
           </button>
         ))}
       </div>
-
-      {/* Account */}
-      {activeTab === 'account' && (
-        <SectionCard icon={DollarSign} title="Account" description="Manage your trading account settings">
-          {activeAccount && (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <FieldLabel>Account Name</FieldLabel>
-                  <StyledInput value={activeAccount.name}
-                    onChange={e => updateAccount({ name: e.target.value })} />
-                </div>
-                <div>
-                  <FieldLabel>Platform</FieldLabel>
-                  <StyledSelect value={activeAccount.platform || ''}
-                    onChange={e => updateAccount({ platform: e.target.value })}>
-                    <option value="Tradovate">Tradovate</option>
-                    <option value="Rithmic">Rithmic</option>
-                    <option value="TopstepX">TopstepX</option>
-                    <option value="NinjaTrader">NinjaTrader</option>
-                    <option value="Other">Other</option>
-                  </StyledSelect>
-                </div>
-                <div>
-                  <FieldLabel>Account Type</FieldLabel>
-                  <div className="flex gap-2">
-                    {(['personal', 'challenge', 'funded'] as const).map(phase => (
-                      <button
-                        key={phase}
-                        onClick={() => updateAccount({ phase })}
-                        className={`flex-1 py-2.5 rounded-xl text-xs font-semibold capitalize transition-all ${
-                          activeAccount.phase === phase
-                            ? 'bg-[#2D8B4E] text-white shadow-md shadow-green-500/20'
-                            : 'bg-[#F5F7FA] dark:bg-[#0d1117] text-[#6B7E91] dark:text-[#64748B] border border-[#E4E9F0] dark:border-[#21262d] hover:border-[#2D8B4E]/30'
-                        }`}
-                      >
-                        {phase}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <FieldLabel>Starting Balance ($)</FieldLabel>
-                  <StyledInput type="number" className="font-mono" value={activeAccount.startingBalance}
-                    onChange={e => updateAccount({ startingBalance: parseFloat(e.target.value) || 0 })} />
-                </div>
-              </div>
-              {(activeAccount.phase === 'challenge' || activeAccount.phase === 'funded') && (
-                <div className="grid grid-cols-3 gap-3 pt-2 border-t border-[#E4E9F0]/50 dark:border-[#1a2035]">
-                  <div>
-                    <FieldLabel>Max Daily Loss ($)</FieldLabel>
-                    <StyledInput type="number" className="font-mono" value={activeAccount.maxDailyLoss || ''}
-                      onChange={e => updateAccount({ maxDailyLoss: parseFloat(e.target.value) || undefined })}
-                      placeholder="1,000" />
-                  </div>
-                  <div>
-                    <FieldLabel>Max Drawdown ($)</FieldLabel>
-                    <StyledInput type="number" className="font-mono" value={activeAccount.maxTotalDrawdown || ''}
-                      onChange={e => updateAccount({ maxTotalDrawdown: parseFloat(e.target.value) || undefined })}
-                      placeholder="2,000" />
-                  </div>
-                  <div>
-                    <FieldLabel>Profit Target ($)</FieldLabel>
-                    <StyledInput type="number" className="font-mono" value={activeAccount.profitTarget || ''}
-                      onChange={e => updateAccount({ profitTarget: parseFloat(e.target.value) || undefined })}
-                      placeholder="3,000" />
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </SectionCard>
-      )}
 
       {/* General */}
       {activeTab === 'general' && (

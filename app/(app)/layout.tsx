@@ -1,5 +1,4 @@
 'use client'
-import { Cursor } from '@/components/ui/inverted-cursor'
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'

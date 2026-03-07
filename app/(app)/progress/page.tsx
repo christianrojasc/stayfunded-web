@@ -345,94 +345,118 @@ function RuleEditor({
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className={`w-full max-w-lg ${GLASS} bg-[#0a0f1a] p-6`}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{backdropFilter:'blur(16px)', background:'rgba(0,0,0,0.7)'}}>
+      <div
+        className="w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl"
+        style={{background:'#0c1120', border:'1px solid rgba(255,255,255,0.07)'}}
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-white">Rule Maker</h2>
-          <button onClick={onClose} className="text-[#94A3B8] hover:text-white transition-colors">
-            <X className="w-5 h-5" />
+        {/* Top accent bar */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-[#4ADE80]/40 to-transparent" />
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-7 pt-6 pb-5">
+          <div>
+            <h2 className="text-base font-bold text-white tracking-tight">Rule Maker</h2>
+            <p className="text-xs text-[#94A3B8] mt-0.5">Define your trading discipline rules</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#64748B] hover:text-white hover:bg-white/10 transition-all"
+          >
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="space-y-2 mb-6 max-h-60 overflow-y-auto">
-          {editRules.map(rule => {
-            const Icon = RULE_TYPE_ICONS[rule.type]
-            return (
-              <div key={rule.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-                <Icon className="w-4 h-4 text-[#94A3B8] flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white truncate">{rule.name}</p>
-                  <p className="text-xs text-[#94A3B8]">{rule.condition}</p>
+        {/* Existing rules */}
+        {editRules.length > 0 && (
+          <div className="px-7 pb-4 space-y-2 max-h-48 overflow-y-auto">
+            {editRules.map(rule => {
+              const Icon = RULE_TYPE_ICONS[rule.type]
+              return (
+                <div key={rule.id} className="flex items-center gap-3 px-4 py-3 rounded-2xl" style={{background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)'}}>
+                  <div className="w-7 h-7 rounded-xl bg-[#4ADE80]/10 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-3.5 h-3.5 text-[#4ADE80]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white truncate">{rule.name}</p>
+                    <p className="text-xs text-[#64748B] mt-0.5">{rule.condition}</p>
+                  </div>
+                  <button onClick={() => removeRule(rule.id)} className="w-6 h-6 rounded-lg flex items-center justify-center text-[#FF453A]/40 hover:text-[#FF453A] hover:bg-[#FF453A]/10 transition-all">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-                <button onClick={() => removeRule(rule.id)} className="text-[#FF453A]/60 hover:text-[#FF453A] transition-colors">
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            )
-          })}
-          {editRules.length === 0 && (
-            <p className="text-sm text-[#94A3B8] text-center py-4">No rules yet</p>
-          )}
-        </div>
+              )
+            })}
+          </div>
+        )}
+        {editRules.length === 0 && (
+          <div className="px-7 pb-4">
+            <div className="py-6 rounded-2xl text-center" style={{background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.05)'}}>
+              <p className="text-sm text-[#64748B]">No rules yet — add one below</p>
+            </div>
+          </div>
+        )}
 
-        <div className="space-y-3 border-t border-white/[0.06] pt-4">
-          <p className="text-xs font-medium text-[#94A3B8] uppercase tracking-wider">Add Rule</p>
+        {/* Divider */}
+        <div className="mx-7 border-t border-white/[0.05] mb-5" />
+
+        {/* Add rule section */}
+        <div className="px-7 pb-6 space-y-3">
+          <p className="text-[11px] font-semibold text-[#64748B] uppercase tracking-widest">Add Rule</p>
           <select
             value={newType}
             onChange={e => setNewType(e.target.value as ProgressRule['type'])}
-            className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#4ADE80]/40"
+            className="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors"
+            style={{background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.09)'}}
           >
             {Object.entries(RULE_TYPE_LABELS).map(([k, v]) => (
-              <option key={k} value={k} className="bg-[#0a0f1a]">{v}</option>
+              <option key={k} value={k} style={{background:'#0c1120'}}>{v}</option>
             ))}
           </select>
           <input
             value={newName}
             onChange={e => setNewName(e.target.value)}
             placeholder="Rule name (optional)"
-            className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2.5 text-sm text-white placeholder-[#94A3B8]/40 focus:outline-none focus:border-[#4ADE80]/40"
+            className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-[#475569] focus:outline-none transition-colors"
+            style={{background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.09)'}}
           />
           <input
             value={newCondition}
             onChange={e => setNewCondition(e.target.value)}
-            placeholder={newType === 'start_time' ? '09:30' : newType.includes('loss') ? '100' : 'Condition...'}
-            className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2.5 text-sm text-white placeholder-[#94A3B8]/40 focus:outline-none focus:border-[#4ADE80]/40"
+            placeholder={newType === 'start_time' ? '09:30' : newType.includes('loss') ? 'e.g. $100' : 'Condition...'}
+            className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-[#475569] focus:outline-none transition-colors"
+            style={{background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.09)'}}
           />
           <button
             onClick={addRule}
-            className="flex items-center gap-2 text-sm text-[#4ADE80] bg-[#4ADE80]/10 hover:bg-[#4ADE80]/20 px-4 py-2.5 rounded-xl border border-[#4ADE80]/20 transition-colors"
+            className="flex items-center gap-2 text-sm font-semibold text-[#4ADE80] px-5 py-2.5 rounded-xl transition-all hover:shadow-[0_0_20px_rgba(74,222,128,0.15)]"
+            style={{background:'rgba(74,222,128,0.1)', border:'1px solid rgba(74,222,128,0.2)'}}
           >
             <Plus className="w-4 h-4" />
             Add Rule
           </button>
         </div>
 
-        <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-white/[0.06]">
-          <button onClick={onClose} className="px-4 py-2.5 text-sm text-[#94A3B8] hover:text-white rounded-xl hover:bg-white/[0.04] transition-colors">
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 px-7 py-5" style={{borderTop:'1px solid rgba(255,255,255,0.05)'}}>
+          <button
+            onClick={onClose}
+            className="px-5 py-2.5 text-sm font-medium text-[#64748B] hover:text-white rounded-xl hover:bg-white/[0.05] transition-all"
+          >
             Cancel
           </button>
           <button
             onClick={() => onSave(editRules)}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-[#4ADE80]/20 hover:bg-[#4ADE80]/30 rounded-xl border border-[#4ADE80]/30 transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-black rounded-xl transition-all hover:shadow-[0_0_20px_rgba(74,222,128,0.25)]"
+            style={{background:'linear-gradient(135deg, #4ADE80, #22C55E)'}}
           >
             <Save className="w-4 h-4" />
             Save Rules
           </button>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   )
 }
 

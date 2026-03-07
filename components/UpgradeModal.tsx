@@ -104,7 +104,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
                 : 'border-white/10 bg-white/[0.03] hover:border-white/20'
             }`}
           >
-            <div className="absolute -top-2.5 left-4 px-2 py-0.5 rounded-full bg-green-500 text-[10px] font-black text-black">BEST VALUE</div>
+            <div className="absolute -top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-black text-black flex items-center gap-1" style={{background:"linear-gradient(135deg,#4ADE80,#22C55E)"}}>⚡ LAUNCH SPECIAL</div>
             {billing === 'yearly' && (
               <div className="absolute top-3 right-3 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
                 <Check className="w-2.5 h-2.5 text-black" strokeWidth={3} />
@@ -117,7 +117,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
             </div>
             <div className="flex items-center gap-1.5 mt-1">
               <span className="text-gray-600 text-xs line-through">$168</span>
-              <span className="text-green-400 text-xs font-semibold">Save $69</span>
+              <span className="text-[10px] font-black px-1.5 py-0.5 rounded-full text-black" style={{background:"#4ADE80"}}>-$69 OFF</span>
             </div>
           </button>
         </div>

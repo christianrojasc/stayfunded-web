@@ -15,7 +15,7 @@ function SectionCard({ icon: Icon, title, description, children, accent = '#2D8B
 }) {
   return (
     <div className="glass-card overflow-hidden">
-      <div className="px-8 py-5 border-b border-[#E4E9F0]/50 dark:border-[#1a2035]" style={{ background: `linear-gradient(135deg, ${accent}08, transparent)` }}>
+      <div className="px-8 py-5 border-b border-white/[0.06] border-l-2 border-l-[#4ADE80]" style={{ background: `linear-gradient(135deg, ${accent}08, transparent)` }}>
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${accent}15` }}>
             <Icon size={18} style={{ color: accent }} />
@@ -128,19 +128,19 @@ export default function SettingsPage() {
   ]
 
   return (
-    <div className="space-y-8 animate-fade-in max-w-3xl">
+    <div className="space-y-8 animate-fade-in max-w-2xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="page-title">Settings</h1>
-          <p className="text-sm text-[#6B7E91] dark:text-[#94A3B8] mt-0.5">Configure your StayFunded workspace</p>
+          <h1 className="text-xl font-bold text-white">Settings</h1>
+          <p className="text-sm text-[#64748B] mt-0.5">Configure your StayFunded workspace</p>
         </div>
         <button
           onClick={save}
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 ${
             saved
               ? 'bg-[#2D8B4E] text-white shadow-lg shadow-green-500/25'
-              : 'bg-gradient-to-r from-[#2D8B4E] to-[#4ADE50] text-white hover:shadow-lg hover:shadow-green-500/25 hover:scale-[1.02] active:scale-[0.98]'
+              : 'bg-gradient-to-r from-[#4ADE80] to-[#22C55E] text-black hover:shadow-lg hover:shadow-green-500/25 hover:scale-[1.02] active:scale-[0.98]'
           }`}
         >
           {saved ? <CheckCircle size={16} /> : <Save size={16} />}

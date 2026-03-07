@@ -3,7 +3,7 @@ import { formatAccountNumber } from '@/lib/utils'
 import { useState, useMemo, Fragment } from 'react'
 import dynamic from 'next/dynamic'
 import {
-  Plus, Search, TrendingUp, TrendingDown,
+  Plus, Search, TrendingUp, TrendingDown, ListOrdered,
   ChevronUp, ChevronDown, X, Upload, Briefcase, BarChart2
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -101,8 +101,8 @@ export default function TradesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="page-title">Trade Log</h1>
-          <p className="text-sm text-[#6B7E91] dark:text-[#94A3B8] mt-0.5">
+          <h1 className="text-xl font-bold text-white">Trade Log</h1>
+          <p className="text-sm text-[#64748B] mt-0.5">
             {filtered.length} trades · {wins}W {filtered.length - wins}L · Net {' '}
             <span className={totalPnl >= 0 ? 'text-[#2D8B4E] font-semibold' : 'text-[#EF4444] font-semibold'}>
               {formatPnl(totalPnl)}
@@ -111,7 +111,7 @@ export default function TradesPage() {
         </div>
         <div className="flex items-center gap-3">
           <AccountSelector />
-          <button className="btn-secondary" onClick={() => router.push('/import')}>
+          <button className="btn-secondary" onClick={() => router.push("/import")}>
             <Upload size={16} />
             Import CSV
           </button>
@@ -191,7 +191,7 @@ export default function TradesPage() {
                   <th
                     key={label}
                     onClick={key ? () => toggleSort(key) : undefined}
-                    className={key ? 'cursor-pointer hover:bg-[#EEEEF5] select-none' : ''}
+                    className={key ? 'cursor-pointer hover:bg-white/[0.03] select-none' : ''}
                   >
                     <div className="flex items-center gap-1">
                       {label}
@@ -207,10 +207,7 @@ export default function TradesPage() {
                 <tr>
                   <td colSpan={11} className="text-center py-12 text-[#9EB0C0] dark:text-[#64748B]">
                     {trades.length === 0 ? (
-                      <div className="space-y-2">
-                        <p className="font-medium">No trades yet</p>
-                        <p className="text-xs">Click "Log Trade" to add your first trade, or import from CSV</p>
-                      </div>
+                      <div className="flex flex-col items-center gap-3"><ListOrdered size={32} className="text-[#64748B] opacity-40" /><p className="font-medium text-[#94A3B8]">No trades yet</p><p className="text-xs text-[#64748B]">Click &quot;Log Trade&quot; to add your first trade, or import from CSV</p></div>
                     ) : 'No trades match your filters'}
                   </td>
                 </tr>
@@ -218,7 +215,7 @@ export default function TradesPage() {
                 <Fragment key={t.id}>
                   {/* ── Main trade row ── */}
                   <tr
-                    className="cursor-pointer hover:bg-[#F5F7FA] dark:hover:bg-[#0F172A]/60 transition-colors"
+                    className="cursor-pointer hover:bg-white/[0.02] transition-colors"
                     onClick={() => setDrawerTrade(t)}
                   >
                     <td className="text-[#6B7E91] dark:text-[#94A3B8] font-medium">{t.date}</td>
@@ -304,13 +301,13 @@ export default function TradesPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-[#F0F3F7] text-xs text-[#9EB0C0] dark:text-[#64748B]">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-white/[0.06] text-xs text-[#64748B]">
             <span>Showing {(page - 1) * PER_PAGE + 1}–{Math.min(page * PER_PAGE, filtered.length)} of {filtered.length}</span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1.5 rounded-lg border border-[#E4E9F0] dark:border-[#1E293B] disabled:opacity-40 hover:bg-[#F5F7FA] dark:bg-[#0F172A] transition-colors"
+                className="px-3 py-1.5 rounded-lg border border-white/[0.06] disabled:opacity-40 hover:bg-white/[0.03] transition-colors"
               >
                 ← Prev
               </button>
@@ -321,7 +318,7 @@ export default function TradesPage() {
                     key={p}
                     onClick={() => setPage(p)}
                     className={`px-3 py-1.5 rounded-lg border transition-colors ${
-                      p === page ? 'border-[#2D8B4E] text-[#2D8B4E] bg-green-50' : 'border-[#E4E9F0] dark:border-[#1E293B] hover:bg-[#F5F7FA] dark:bg-[#0F172A]'
+                      p === page ? 'border-[#4ADE80] text-[#4ADE80] bg-[#4ADE80]/10' : 'border-white/[0.06] hover:bg-white/[0.03]'
                     }`}
                   >{p}</button>
                 )
@@ -329,7 +326,7 @@ export default function TradesPage() {
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1.5 rounded-lg border border-[#E4E9F0] dark:border-[#1E293B] disabled:opacity-40 hover:bg-[#F5F7FA] dark:bg-[#0F172A] transition-colors"
+                className="px-3 py-1.5 rounded-lg border border-white/[0.06] disabled:opacity-40 hover:bg-white/[0.03] transition-colors"
               >
                 Next →
               </button>

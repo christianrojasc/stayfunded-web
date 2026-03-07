@@ -11,17 +11,17 @@ import { format, parseISO } from 'date-fns'
 import { formatPnl, calcDailyStats } from '@/lib/calculations'
 
 const MOODS = [
-  { val: 'great', icon: <Smile size={16} className="text-[#2D8B4E]" />, label: 'Great', color: 'text-[#2D8B4E] bg-green-50 border-green-200' },
-  { val: 'good',  icon: <Smile size={16} className="text-blue-500" />,   label: 'Good',  color: 'text-blue-600 bg-blue-50 border-blue-200' },
-  { val: 'neutral', icon: <Meh size={16} className="text-amber-500" />,  label: 'Neutral', color: 'text-amber-600 bg-amber-50 border-amber-200' },
-  { val: 'bad',   icon: <Frown size={16} className="text-orange-500" />, label: 'Bad',   color: 'text-orange-600 bg-orange-50 border-orange-200' },
-  { val: 'terrible', icon: <Frown size={16} className="text-[#EF4444]" />, label: 'Terrible', color: 'text-[#EF4444] bg-red-50 border-red-200' },
+  { val: 'great', icon: <Smile size={16} className="text-[#2D8B4E]" />, label: 'Great', color: 'text-[#4ADE80] bg-[#4ADE80]/10 border-[#4ADE80]/20' },
+  { val: 'good',  icon: <Smile size={16} className="text-blue-500" />,   label: 'Good',  color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
+  { val: 'neutral', icon: <Meh size={16} className="text-amber-500" />,  label: 'Neutral', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
+  { val: 'bad',   icon: <Frown size={16} className="text-orange-500" />, label: 'Bad',   color: 'text-orange-400 bg-orange-500/10 border-orange-500/20' },
+  { val: 'terrible', icon: <Frown size={16} className="text-[#EF4444]" />, label: 'Terrible', color: 'text-[#FF453A] bg-[#FF453A]/10 border-[#FF453A]/20' },
 ]
 
 const BIAS = [
-  { val: 'bullish',  icon: <TrendingUp size={14} />,  label: 'Bullish',  color: 'text-[#2D8B4E] bg-green-50 border-green-200' },
-  { val: 'neutral',  icon: <Minus size={14} />,       label: 'Neutral',  color: 'text-amber-600 bg-amber-50 border-amber-200' },
-  { val: 'bearish',  icon: <TrendingDown size={14} />, label: 'Bearish', color: 'text-[#EF4444] bg-red-50 border-red-200' },
+  { val: 'bullish',  icon: <TrendingUp size={14} />,  label: 'Bullish',  color: 'text-[#4ADE80] bg-[#4ADE80]/10 border-[#4ADE80]/20' },
+  { val: 'neutral',  icon: <Minus size={14} />,       label: 'Neutral',  color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
+  { val: 'bearish',  icon: <TrendingDown size={14} />, label: 'Bearish', color: 'text-[#FF453A] bg-[#FF453A]/10 border-[#FF453A]/20' },
 ]
 
 export default function JournalPage() {
@@ -107,7 +107,7 @@ export default function JournalPage() {
   const NoteForm = () => (
     <div className="glass-card p-6 space-y-4 animate-slide-up">
       <div className="flex items-center justify-between">
-        <h3 className="font-bold text-[#1E2D3D] dark:text-[#F1F5F9]">{editId ? 'Edit Entry' : 'New Journal Entry'}</h3>
+        <h3 className="font-bold text-white">{editId ? 'Edit Entry' : 'New Journal Entry'}</h3>
         <button onClick={() => { setShowNew(false); setEditId(null); resetForm() }} className="p-1.5 rounded-xl hover:bg-[#F5F7FA] dark:bg-[#0F172A] text-[#9EB0C0] dark:text-[#64748B]">
           <X size={16} />
         </button>
@@ -134,7 +134,7 @@ export default function JournalPage() {
               type="button"
               onClick={() => set('mood', form.mood === m.val ? '' : m.val)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
-                form.mood === m.val ? m.color : 'border-[#E4E9F0] dark:border-[#1E293B] text-[#9EB0C0] dark:text-[#64748B] hover:border-[#C8D4E0]'
+                form.mood === m.val ? m.color : 'border-white/[0.08] text-[#64748B] hover:border-white/[0.15]'
               }`}
             >
               {m.icon} {m.label}
@@ -153,7 +153,7 @@ export default function JournalPage() {
               type="button"
               onClick={() => set('marketBias', form.marketBias === b.val ? '' : b.val)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
-                form.marketBias === b.val ? b.color : 'border-[#E4E9F0] dark:border-[#1E293B] text-[#9EB0C0] dark:text-[#64748B] hover:border-[#C8D4E0]'
+                form.marketBias === b.val ? b.color : 'border-white/[0.08] text-[#64748B] hover:border-white/[0.15]'
               }`}
             >
               {b.icon} {b.label}
@@ -198,7 +198,7 @@ export default function JournalPage() {
         />
       </div>
 
-      <div className="flex gap-3 pt-2 border-t border-[#F0F3F7]">
+      <div className="flex gap-3 pt-2 border-t border-white/[0.06]">
         <button onClick={handleSave} className="btn-primary">
           <Save size={14} /> Save Entry
         </button>
@@ -213,8 +213,8 @@ export default function JournalPage() {
     <div className="space-y-5 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="page-title">Journal</h1>
-          <p className="text-sm text-[#6B7E91] dark:text-[#94A3B8] mt-0.5">{notes.length} entries</p>
+          <h1 className="text-xl font-bold text-white">Journal</h1>
+          <p className="text-sm text-[#64748B] mt-0.5">{notes.length} entries</p>
         </div>
         <button className="btn-primary" onClick={() => { setShowNew(true); setEditId(null); resetForm() }}>
           <Plus size={16} />
@@ -240,11 +240,11 @@ export default function JournalPage() {
       <div className="space-y-3">
         {sorted.length === 0 ? (
           <div className="glass-card p-12 flex flex-col items-center justify-center gap-4 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-[#F5F7FA] dark:bg-[#0F172A] flex items-center justify-center">
-              <BookOpen size={32} className="text-[#C8D4E0]" />
+            <div className="w-16 h-16 rounded-2xl bg-white/[0.04] flex items-center justify-center">
+              <BookOpen size={32} className="text-[#64748B]" />
             </div>
             <div>
-              <p className="font-bold text-[#1E2D3D] dark:text-[#F1F5F9]">No journal entries yet</p>
+              <p className="font-bold text-white">No journal entries yet</p>
               <p className="text-sm text-[#9EB0C0] dark:text-[#64748B] mt-1">Start documenting your trading journey to grow faster</p>
             </div>
             <button className="btn-primary" onClick={() => setShowNew(true)}>
@@ -263,12 +263,12 @@ export default function JournalPage() {
             <div key={note.id} className="glass-card overflow-hidden">
               {/* Header */}
               <div
-                className="flex items-center gap-4 p-4 cursor-pointer hover:bg-[#FAFBFD] transition-colors"
+                className="flex items-center gap-4 p-4 cursor-pointer hover:bg-white/[0.02] transition-colors"
                 onClick={() => toggleExpand(note.id)}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-1">
-                    <span className="font-bold text-[#1E2D3D] dark:text-[#F1F5F9] text-sm">
+                    <span className="font-bold text-white text-sm">
                       {(() => { try { return format(parseISO(note.date), 'EEEE, MMM d yyyy') } catch { return note.date } })()}
                     </span>
                     {mood && (
@@ -291,7 +291,7 @@ export default function JournalPage() {
                 <div className="flex items-center gap-3">
                   {dayStats && (
                     <span className={`text-xs font-bold font-mono px-2.5 py-1 rounded-full ${
-                      dayStats.netPnl >= 0 ? 'bg-green-50 text-[#2D8B4E]' : 'bg-red-50 text-[#EF4444]'
+                      dayStats.netPnl >= 0 ? 'bg-[#4ADE80]/10 text-[#4ADE80]' : 'bg-[#FF453A]/10 text-[#FF453A]'
                     }`}>
                       {formatPnl(dayStats.netPnl)}
                     </span>
@@ -302,10 +302,10 @@ export default function JournalPage() {
 
               {/* Expanded */}
               {isOpen && (
-                <div className="px-4 pb-4 space-y-3 border-t border-[#F5F7FA]">
+                <div className="px-4 pb-4 space-y-3 border-t border-white/[0.06]">
                   {dayStats && (
                     <div className={`flex items-center gap-4 p-3 rounded-xl mt-3 text-xs ${
-                      dayStats.netPnl >= 0 ? 'bg-green-50' : 'bg-red-50'
+                      dayStats.netPnl >= 0 ? 'bg-[#4ADE80]/[0.06]' : 'bg-[#FF453A]/[0.06]'
                     }`}>
                       <span className={`font-bold text-base ${dayStats.netPnl >= 0 ? 'text-[#2D8B4E]' : 'text-[#EF4444]'}`}>
                         {formatPnl(dayStats.netPnl)}
@@ -331,7 +331,7 @@ export default function JournalPage() {
                       <p className="text-sm text-[#1E2D3D] dark:text-[#F1F5F9] whitespace-pre-wrap">{note.postMarket}</p>
                     </div>
                   )}
-                  <div className="flex gap-2 pt-2 border-t border-[#F5F7FA]">
+                  <div className="flex gap-2 pt-2 border-t border-white/[0.06]">
                     <button onClick={() => startEdit(note)} className="btn-secondary text-xs py-1.5 px-3">Edit</button>
                     <button onClick={() => removeNote(note.id)} className="btn-danger text-xs py-1.5 px-3">
                       <Trash2 size={12} /> Delete

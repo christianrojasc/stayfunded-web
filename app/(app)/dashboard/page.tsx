@@ -235,14 +235,14 @@ export default function Dashboard() {
   return (
     <div className="space-y-6 animate-fade-in">
       <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
-      {/* Upgrade banner */}
+      {/* Upgrade banner — slim sticky */}
       {!isPro && (
-        <div className="flex items-center justify-between gap-4 px-5 py-3 rounded-2xl border border-green-500/20 bg-green-500/5">
+        <div className="sticky top-0 z-30 flex items-center justify-between gap-4 px-4 py-2 rounded-xl border border-[#4ADE80]/10 bg-[#4ADE80]/[0.04] backdrop-blur-sm">
           <div className="flex items-center gap-3">
-            <Sparkles className="w-4 h-4 text-green-400 flex-shrink-0" />
-            <span className="text-sm text-gray-300">You're on the <span className="text-white font-semibold">Free plan</span> — unlock unlimited accounts, charts, reports and more.</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#4ADE80] flex-shrink-0" />
+            <span className="text-xs text-[#94A3B8]">You're on the <span className="text-white font-semibold">Free plan</span> — unlock unlimited accounts, charts, reports and more.</span>
           </div>
-          <button onClick={() => setUpgradeOpen(true)} className="flex-shrink-0 px-4 py-1.5 rounded-xl bg-gradient-to-r from-green-600 to-green-400 text-white text-xs font-bold hover:opacity-90 transition-opacity whitespace-nowrap">
+          <button onClick={() => setUpgradeOpen(true)} className="flex-shrink-0 px-4 py-1.5 rounded-2xl bg-gradient-to-r from-[#4ADE80] to-[#22C55E] text-black text-xs font-bold hover:opacity-90 transition-opacity whitespace-nowrap">
             Upgrade to Pro
           </button>
         </div>
@@ -250,7 +250,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="page-title">Dashboard</h1>
+          <h1 className="text-xl font-bold text-white">Dashboard</h1>
           <div className="flex items-center gap-3 mt-1 flex-wrap">
             <p className="text-sm text-[rgba(255,255,255,0.45)]">{today}</p>
             <span className="text-[rgba(255,255,255,0.15)]">·</span>
@@ -440,8 +440,8 @@ export default function Dashboard() {
                       No trades yet. <Link href="/trades" className="text-[#4ADE80] hover:underline">Add your first trade</Link>
                     </td>
                   </tr>
-                ) : recentTrades.map(t => (
-                  <tr key={t.id}>
+                ) : recentTrades.map((t, idx) => (
+                  <tr key={t.id} className={idx % 2 === 1 ? "bg-white/[0.02]" : ""}>
                     <td className="font-medium text-[rgba(255,255,255,0.45)]">{t.date}</td>
                     <td><span className="font-mono font-bold text-[rgba(255,255,255,0.9)] text-xs bg-[rgba(255,255,255,0.06)] px-2 py-0.5 rounded-lg">{t.symbol}</span></td>
                     <td>

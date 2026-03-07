@@ -99,7 +99,7 @@ export default function Sidebar() {
       }}
     >
       {/* Logo */}
-      <div className={`flex items-center h-16 px-4 flex-shrink-0 ${collapsed ? 'justify-center' : 'justify-between'}`}
+      <div className={`flex items-center h-16 px-5 flex-shrink-0 ${collapsed ? 'justify-center' : 'justify-between'}`}
         style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         {!collapsed && (
           <div className="flex items-center min-w-0">
@@ -127,7 +127,7 @@ export default function Sidebar() {
           <div key={section.label} className={si > 0 ? 'mt-1' : ''}>
             {!collapsed && (
               <div className="px-3 pt-4 pb-1.5">
-                <span className="text-[10px] font-semibold tracking-widest uppercase select-none"
+                <span className="text-[9px] font-bold tracking-[0.15em] uppercase select-none"
                   style={{ color: 'rgba(255,255,255,0.2)' }}>
                   {section.label}
                 </span>

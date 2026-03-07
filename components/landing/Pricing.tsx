@@ -26,7 +26,7 @@ const plans = [
   },
   {
     name: "Pro",
-    priceMonthly: "$15",
+    priceMonthly: "$14",
     priceYearly: "$99",
     period: "/ month",
     description: "For serious traders managing multiple accounts and pushing for consistent funded status.",

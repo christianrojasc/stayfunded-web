@@ -10,6 +10,7 @@ import {
   PROP_FIRM_PRESETS, PropFirmPreset, PropFirmPlan,
 } from '@/lib/types'
 import * as dl from '@/lib/data-layer'
+import { useAuth } from '@/components/AuthContext'
 
 interface Props {
   detectedFirm: string | null
@@ -64,6 +65,8 @@ export default function NewAccountWizard({
   )
   const [saving, setSaving]                 = useState(false)
   const [saved, setSaved]                   = useState(false)
+  const [accountLimitHit, setAccountLimitHit] = useState(false)
+  const { user } = useAuth()
 
   // ── Sync fields when plan changes ─────────────────────────────────────────
   function applyPlan(plan: PropFirmPlan | null) {
@@ -89,6 +92,14 @@ export default function NewAccountWizard({
 
   // ── Submit ────────────────────────────────────────────────────────────────
   async function handleCreate() {
+    // Enforce free plan account limit (max 3)
+    if (user?.user_metadata?.plan !== 'pro') {
+      const existing = await dl.getPropAccounts()
+      if (existing.length >= 3) {
+        setAccountLimitHit(true)
+        return
+      }
+    }
     setSaving(true)
     const now = new Date().toISOString()
 
@@ -365,6 +376,27 @@ export default function NewAccountWizard({
           </div>
         </div>
 
+        {/* ── Account limit warning ──────────────────────────────────── */}
+        {accountLimitHit && (
+          <div className="px-6 py-3">
+            <div className="flex items-start gap-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <AlertTriangle size={16} className="text-amber-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-amber-300">Account limit reached</p>
+                <p className="text-xs text-[#94A3B8] mt-1">
+                  Free accounts are limited to 3 prop accounts. Upgrade to Pro for unlimited accounts.
+                </p>
+                <button
+                  onClick={() => setAccountLimitHit(false)}
+                  className="mt-2 text-xs text-[#9EB0C0] hover:text-white transition-colors"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── Footer ─────────────────────────────────────────────────────── */}
         <div
           className="px-6 py-4 flex items-center justify-between gap-3"
@@ -379,7 +411,7 @@ export default function NewAccountWizard({
 
           <button
             onClick={handleCreate}
-            disabled={saving || saved}
+            disabled={saving || saved || accountLimitHit}
             className="btn-primary disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {saved ? (

@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import ShineBorder from '@/components/ShineBorder'
 import { X, Check, Zap, ArrowRight, Loader2 } from 'lucide-react'
 import { useAuth } from '@/components/AuthContext'
 
@@ -49,7 +50,8 @@ export default function UpgradeModal({ open, onClose }: Props) {
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-2xl" style={{background:'#0f1117', border:'1px solid rgba(255,255,255,0.08)'}}>
+      <ShineBorder color={['#4ADE80', '#22C55E', '#86EFAC', '#4ADE80']} duration={6} borderWidth={2} borderRadius={24} className="w-full max-w-md">
+      <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl" style={{background:'#0f1117', border:'1px solid rgba(255,255,255,0.06)'}}>
         
         {/* Top gradient bar */}
         <div className="h-1 w-full bg-gradient-to-r from-green-600 via-green-400 to-emerald-300" />
@@ -156,6 +158,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
           <p className="text-center text-gray-600 text-xs mt-3">Cancel anytime · Secure checkout via Stripe</p>
         </div>
       </div>
+      </ShineBorder>
     </div>
   )
 }

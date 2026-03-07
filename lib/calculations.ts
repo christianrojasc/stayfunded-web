@@ -373,6 +373,17 @@ export function calcSessionPerformance(trades: Trade[]): SessionPerf[] {
     .sort((a, b) => b.date.localeCompare(a.date))
 }
 
+
+// ── Daily Grade ─────────────────────────────────────────────────────────────
+
+export function calcDailyGrade(compliancePct: number): { grade: 'A+' | 'A' | 'B' | 'C' | 'D' | 'F', color: string } {
+  if (compliancePct >= 95) return { grade: 'A+', color: '#4ADE80' }
+  if (compliancePct >= 85) return { grade: 'A', color: '#4ADE80' }
+  if (compliancePct >= 75) return { grade: 'B', color: '#86EFAC' }
+  if (compliancePct >= 65) return { grade: 'C', color: '#FCD34D' }
+  if (compliancePct >= 50) return { grade: 'D', color: '#FB923C' }
+  return { grade: 'F', color: '#FF453A' }
+}
 function emptyAnalytics(): AnalyticsData {
   return {
     totalTrades: 0, winCount: 0, lossCount: 0, winRate: 0, profitFactor: 0,

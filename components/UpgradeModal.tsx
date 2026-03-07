@@ -50,8 +50,9 @@ export default function UpgradeModal({ open, onClose }: Props) {
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
 
       {/* Modal */}
-      <ShineBorder color={['#4ADE80', '#22C55E', '#86EFAC', '#4ADE80']} duration={6} borderWidth={2} borderRadius={24} className="w-full max-w-md">
-      <div className="relative w-full rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl max-h-[95vh] sm:max-h-none overflow-y-auto" style={{background:'#0f1117', border:'1px solid rgba(255,255,255,0.06)'}}>
+      <div className="relative w-full max-w-md">
+        <ShineBorder borderRadius={24} duration={6} />
+        <div className="relative z-10 w-full rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl max-h-[95vh] sm:max-h-none overflow-y-auto" style={{background:'#0f1117', border:'1px solid rgba(255,255,255,0.06)'}}>
         
 
 
@@ -157,7 +158,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
           <p className="text-center text-gray-600 text-xs mt-3">Cancel anytime · Secure checkout via Stripe</p>
         </div>
       </div>
-      </ShineBorder>
+      </div>
     </div>
   )
 }

@@ -1,64 +1,47 @@
 'use client'
-import type { ReactNode } from 'react'
 
 interface ShineBorderProps {
-  color?: string[]
-  duration?: number
-  borderWidth?: number
   className?: string
-  children?: ReactNode
   borderRadius?: number
+  color?: string
+  duration?: number
 }
 
-export default function ShineBorder({ className = '', children, borderRadius = 24, color, duration = 3, borderWidth = 2 }: ShineBorderProps) {
+export default function ShineBorder({ className = '', borderRadius = 24, color = '#4ADE80', duration = 6 }: ShineBorderProps) {
   return (
-    <div className={`relative ${className}`} style={{ borderRadius: `${borderRadius}px` }}>
+    <>
       <style>{`
-        @keyframes rotateBorder {
-          0%   { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+        @keyframes shine-rotate {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
         }
-        .shine-border-spin {
-          animation: rotateBorder 6s linear infinite;
+        .shine-spin {
+          animation: shine-rotate ${duration}s linear infinite;
         }
       `}</style>
 
-      {/* Outer container clips the rotating glow */}
-      <div style={{
-        position: 'absolute',
-        inset: '-3px',
-        borderRadius: `${borderRadius + 3}px`,
-        overflow: 'hidden',
-        zIndex: 0,
-      }}>
-        {/* The rotating conic gradient */}
+      {/* Clipping container sits behind card content via z-index */}
+      <div
+        className={`absolute pointer-events-none ${className}`}
+        style={{
+          inset: '-2px',
+          borderRadius: `${borderRadius + 2}px`,
+          overflow: 'hidden',
+          zIndex: 0,
+        }}
+      >
         <div
-          className="shine-border-spin"
+          className="shine-spin"
           style={{
             position: 'absolute',
             width: '200%',
             height: '200%',
             top: '-50%',
             left: '-50%',
-            background: 'conic-gradient(from 0deg, transparent 0deg, #4ADE80 60deg, #86EFAC 90deg, #4ADE80 120deg, transparent 180deg)',
-            zIndex: 0,
+            background: `conic-gradient(from 0deg, transparent 0deg, ${color}99 40deg, ${color} 80deg, ${color}99 120deg, transparent 200deg)`,
           }}
         />
       </div>
-
-      {/* Dark inner fill */}
-      <div style={{
-        position: 'absolute',
-        inset: '3px',
-        borderRadius: `${borderRadius - 1}px`,
-        background: '#0f1117',
-        zIndex: 1,
-      }} />
-
-      {/* Content */}
-      <div style={{ position: 'relative', zIndex: 2 }}>
-        {children}
-      </div>
-    </div>
+    </>
   )
 }

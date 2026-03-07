@@ -27,7 +27,7 @@ export function Hero() {
         >
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
           <span className="text-green-400 text-xs font-semibold tracking-widest uppercase">
-            Built for Prop Firm Traders
+            #1 Trading Journal for Prop Traders
           </span>
         </motion.div>
 
@@ -36,10 +36,10 @@ export function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2, ease: [0.21, 1.11, 0.81, 0.99] }}
-          className="text-[clamp(2.8rem,10vw,9rem)] font-black leading-[0.9] tracking-tight text-white mb-6" style={{ fontFamily: "'Outfit', sans-serif" }}
+          className="text-[clamp(2.4rem,7vw,7rem)] font-black leading-[1.0] tracking-tight text-white mb-6" style={{ fontFamily: "'Outfit', sans-serif" }}
         >
-          <span className="block gradient-text-animated">Stay</span>
-          <span className="block text-white">Funded.</span>
+          <span className="block text-white">Stop Blowing</span>
+          <span className="block gradient-text-animated">Prop Accounts.</span>
         </motion.h1>
 
         {/* Subtitle */}
@@ -49,8 +49,7 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.4 }}
           className="text-[clamp(0.9rem,2.5vw,1.35rem)] text-gray-400 max-w-2xl mx-auto leading-relaxed mb-10"
         >
-          The trading journal built for prop firm traders who{" "}
-          <span className="text-white font-medium">refuse to blow their accounts.</span>
+          The smartest trading journal for futures prop traders. Track drawdown, follow your rules, and <span className="text-white font-medium">stay funded longer.</span>
         </motion.p>
 
         {/* CTA Buttons */}
@@ -83,10 +82,10 @@ export function Hero() {
           className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-4 sm:gap-8 mb-12 md:mb-20"
         >
           {[
-            { value: "2,000+", label: "Prop Firms Worldwide" },
-            { value: "93%", label: "Fail Without Tracking" },
-            { value: "100%", label: "Free to Start" },
-            { value: "Real-time", label: "Drawdown Monitoring" },
+            { value: "20+", label: "Prop Firms Supported" },
+            { value: "93%", label: "Traders Fail Without a Journal" },
+            { value: "Free", label: "No Credit Card Needed" },
+            { value: "CSV", label: "Tradovate Import in Seconds" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
               <div className="text-2xl font-black gradient-text mb-1">{stat.value}</div>

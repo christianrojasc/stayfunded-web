@@ -53,8 +53,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
       <ShineBorder color={['#4ADE80', '#22C55E', '#86EFAC', '#4ADE80']} duration={6} borderWidth={2} borderRadius={24} className="w-full max-w-md">
       <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl" style={{background:'#0f1117', border:'1px solid rgba(255,255,255,0.06)'}}>
         
-        {/* Top gradient bar */}
-        <div className="h-1 w-full bg-gradient-to-r from-green-600 via-green-400 to-emerald-300" />
+
 
         {/* Header */}
         <div className="px-7 pt-7 pb-5">

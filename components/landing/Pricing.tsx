@@ -3,6 +3,7 @@
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import { CheckCircle2, Sparkles, ArrowRight } from "lucide-react";
+import { useAuth } from "@/components/AuthContext";
 
 const plans = [
   {
@@ -48,6 +49,21 @@ export function Pricing() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const [yearly, setYearly] = useState(false);
+  const { user } = useAuth();
+
+  async function handleProCheckout(priceId: string) {
+    if (!user) {
+      window.location.href = '/login?redirect=upgrade';
+      return;
+    }
+    const res = await fetch('/api/stripe/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ priceId, userId: user.id, email: user.email }),
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+  }
 
   return (
     <section id="pricing" ref={ref} className="relative py-32 md:py-40 bg-[#060a12] overflow-hidden">
@@ -173,17 +189,23 @@ export function Pricing() {
               </div>
 
               {/* CTA */}
-              <a
-                href="/dashboard"
-                className={`group mb-8 flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-base font-bold transition-all duration-300 ${
-                  plan.ctaStyle === "gradient"
-                    ? "landing-btn-primary text-white"
-                    : "border border-white/15 text-white hover:border-white/30 hover:bg-white/5"
-                }`}
-              >
-                {plan.cta}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+              {plan.name === 'Pro' ? (
+                <button
+                  onClick={() => handleProCheckout(yearly ? 'price_1T8DHOCheboU7tiQR1S4s1gk' : 'price_1T8DHOCheboU7tiQPTTAPQvv')}
+                  className="group mb-8 flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-base font-bold transition-all duration-300 landing-btn-primary text-white"
+                >
+                  {plan.cta}
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              ) : (
+                <a
+                  href="/dashboard"
+                  className="group mb-8 flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-base font-bold transition-all duration-300 border border-white/15 text-white hover:border-white/30 hover:bg-white/5"
+                >
+                  {plan.cta}
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </a>
+              )}
 
               {/* Features */}
               <div className="space-y-3">

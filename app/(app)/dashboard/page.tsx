@@ -6,6 +6,7 @@ import {
   AlertTriangle, CheckCircle
 } from 'lucide-react'
 import { useTrades } from '@/components/TradeContext'
+import { useSubscription } from '@/hooks/useSubscription'
 import { useTheme } from '@/components/ThemeContext'
 import { useAccountFilter } from '@/components/AccountFilterContext'
 import { calcDailyStats, calcCumulativePnl, calcDrawdown, calcAnalytics, formatCurrency, formatPnl } from '@/lib/calculations'
@@ -196,7 +197,8 @@ function AccountHealthCard() {
 export default function Dashboard() {
   const { trades, loaded } = useTrades()
   const { theme, toggle: toggleTheme } = useTheme()
-  const { selectedId } = useAccountFilter()
+  const { selectedId, accounts } = useAccountFilter()
+  const { isPro } = useSubscription()
 
   const filteredTrades = useMemo(
     () => selectedId ? trades.filter(t => t.accountId === selectedId) : trades,
@@ -228,6 +230,15 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Upgrade banner */}
+      {!isPro && accounts && accounts.length >= 2 && (
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-green-500/20 bg-green-500/5">
+          <p className="text-sm text-gray-300">
+            You are using {accounts.length}/3 free accounts.{' '}
+            <a href="/pricing" className="text-green-400 font-medium hover:underline">Upgrade for unlimited.</a>
+          </p>
+        </div>
+      )}
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>

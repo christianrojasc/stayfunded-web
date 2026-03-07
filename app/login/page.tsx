@@ -1,4 +1,5 @@
 'use client'
+import { useRouter } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,6 +15,7 @@ import { CanvasErrorBoundary } from '@/components/ui/canvas-error-boundary'
 type PageMode = 'signin' | 'signup' | 'reset'
 
 export default function LoginPage() {
+  const router = useRouter()
   const { signIn, signUp } = useAuth()
 
   const [mode, setMode]               = useState<PageMode>('signin')
@@ -64,7 +66,7 @@ export default function LoginPage() {
           setFailed(f => f + 1); setCooldown(true); setTimeout(() => setCooldown(false), 2000)
         } else {
           setReverse(true)
-          setTimeout(() => setStep('success'), 1500)
+          setTimeout(() => { setStep('success'); setTimeout(() => router.replace('/dashboard'), 1200) }, 1500)
         }
       } else {
         const { error } = await signUp(email, password, displayName.trim() || undefined)

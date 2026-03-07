@@ -404,33 +404,41 @@ function RuleEditor({
         {/* Add rule section */}
         <div className="px-7 pb-6 space-y-3">
           <p className="text-[11px] font-semibold text-[#64748B] uppercase tracking-widest">Add Rule</p>
-          <select
-            value={newType}
-            onChange={e => setNewType(e.target.value as ProgressRule['type'])}
-            className="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors"
-            style={{background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.09)'}}
-          >
+
+          {/* Rule type — pill selector */}
+          <div className="flex flex-wrap gap-2">
             {Object.entries(RULE_TYPE_LABELS).map(([k, v]) => (
-              <option key={k} value={k} style={{background:'#0c1120'}}>{v}</option>
+              <button
+                key={k}
+                onClick={() => setNewType(k as ProgressRule['type'])}
+                className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
+                style={newType === k
+                  ? {background:'rgba(74,222,128,0.15)', border:'1px solid rgba(74,222,128,0.4)', color:'#4ADE80'}
+                  : {background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', color:'#64748B'}
+                }
+              >
+                {v}
+              </button>
             ))}
-          </select>
+          </div>
+
           <input
             value={newName}
             onChange={e => setNewName(e.target.value)}
             placeholder="Rule name (optional)"
-            className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-[#475569] focus:outline-none transition-colors"
-            style={{background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.09)'}}
+            className="w-full rounded-2xl px-4 py-3 text-sm text-white placeholder-[#475569] focus:outline-none transition-all"
+            style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}
           />
           <input
             value={newCondition}
             onChange={e => setNewCondition(e.target.value)}
-            placeholder={newType === 'start_time' ? '09:30' : newType.includes('loss') ? 'e.g. $100' : 'Condition...'}
-            className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-[#475569] focus:outline-none transition-colors"
-            style={{background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.09)'}}
+            placeholder={newType === 'start_time' ? 'e.g. 09:30' : newType.includes('loss') ? 'e.g. $100' : 'Condition...'}
+            className="w-full rounded-2xl px-4 py-3 text-sm text-white placeholder-[#475569] focus:outline-none transition-all"
+            style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}
           />
           <button
             onClick={addRule}
-            className="flex items-center gap-2 text-sm font-semibold text-[#4ADE80] px-5 py-2.5 rounded-xl transition-all hover:shadow-[0_0_20px_rgba(74,222,128,0.15)]"
+            className="flex items-center gap-2 text-sm font-semibold text-[#4ADE80] px-5 py-2.5 rounded-2xl transition-all hover:opacity-90"
             style={{background:'rgba(74,222,128,0.1)', border:'1px solid rgba(74,222,128,0.2)'}}
           >
             <Plus className="w-4 h-4" />

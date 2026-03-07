@@ -157,27 +157,24 @@ const ONBOARDING_RULES: OnboardingRule[] = [
 ]
 
 function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) => void }) {
-  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [selected, setSelected] = useState<string[]>([])
   const [values, setValues] = useState<Record<string, string>>({})
   const [custom1, setCustom1] = useState('')
   const [custom2, setCustom2] = useState('')
 
   const toggle = (type: string) => {
-    setSelected(prev => {
-      const next = new Set(prev)
-      if (next.has(type)) next.delete(type)
-      else next.add(type)
-      return next
-    })
+    setSelected(prev =>
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    )
   }
 
-  const totalSelected = selected.size + (custom1.trim() ? 1 : 0) + (custom2.trim() ? 1 : 0)
+  const totalSelected = selected.length + (custom1.trim() ? 1 : 0) + (custom2.trim() ? 1 : 0)
 
   const handleStart = () => {
     if (totalSelected === 0) return
     const rules: ProgressRule[] = []
     ONBOARDING_RULES.forEach(r => {
-      if (!selected.has(r.type)) return
+      if (!selected.includes(r.type)) return
       const condition = r.hasInput ? (values[r.type] || r.inputPlaceholder || '') : (r.defaultCondition || '')
       rules.push({ id: `rule-${Date.now()}-${Math.random().toString(36).slice(2)}`, type: r.type, name: r.name, condition })
     })
@@ -221,7 +218,7 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
         {/* Rule cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
           {ONBOARDING_RULES.map(rule => {
-            const isSelected = selected.has(rule.type)
+            const isSelected = selected.includes(rule.type)
             const Icon = rule.icon
             return (
               <div

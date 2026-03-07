@@ -82,7 +82,7 @@ export function Hero() {
           className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-4 sm:gap-8 mb-12 md:mb-20"
         >
           {[
-            { value: "20+", label: "Prop Firms Supported" },
+            { value: "Universal", label: "Works With Any Prop Firm" },
             { value: "93%", label: "Traders Fail Without a Journal" },
             { value: "Free", label: "No Credit Card Needed" },
             { value: "CSV", label: "Tradovate Import in Seconds" },

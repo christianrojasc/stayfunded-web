@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { Cursor } from '@/components/ui/inverted-cursor'
 import { ThemeProvider } from '@/components/ThemeContext'
 import { AuthProvider } from '@/components/AuthContext'
 
@@ -15,7 +14,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="text-[#1E2D3D] dark:text-[#c9d1d9]">
         <ThemeProvider>
           <AuthProvider>
-            <Cursor />
             {children}
           </AuthProvider>
         </ThemeProvider>

@@ -3,7 +3,7 @@ import { formatAccountNumber } from '@/lib/utils'
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  Plus, Briefcase, TrendingUp, TrendingDown, Search,
+  Plus, Briefcase, TrendingUp, TrendingDown, Search, FileUp,
   X, ChevronRight, Shield, Target, AlertTriangle,
   CheckCircle, Edit2, Trash2, Info, ChevronDown, Check,
   DollarSign, Calendar, Zap, Clock
@@ -695,9 +695,19 @@ export default function AccountsPage() {
             <Briefcase size={28} className="text-[#2D8B4E]" />
           </div>
           <h2 className="font-bold text-[#1E2D3D] dark:text-[#e6edf3] text-lg mb-2">No prop accounts yet</h2>
-          <p className="text-sm text-[#6B7E91] dark:text-[#8b949e] mb-6 max-w-sm mx-auto">
+          <p className="text-sm text-[#6B7E91] dark:text-[#8b949e] mb-5 max-w-sm mx-auto">
             Add your prop firm evaluation or funded accounts to track rules, drawdown, and profit targets.
           </p>
+
+          {/* CSV hint */}
+          <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl mb-6 mx-auto"
+            style={{background:'rgba(74,222,128,0.06)', border:'1px solid rgba(74,222,128,0.15)'}}>
+            <FileUp size={13} className="text-[#4ADE80] flex-shrink-0" />
+            <p className="text-xs text-[#4ADE80]">
+              Importing a CSV will auto-create your account — no manual setup needed.
+            </p>
+          </div>
+
           <button onClick={() => setShowAdd(true)} className="btn-primary mx-auto">
             <Plus size={15} />
             Add Your First Account

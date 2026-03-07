@@ -26,8 +26,8 @@ const plans = [
   },
   {
     name: "Pro",
-    priceMonthly: "$19",
-    priceYearly: "$12",
+    priceMonthly: "$1",
+    priceYearly: "$1",
     period: "/ month",
     description: "For serious traders managing multiple accounts and pushing for consistent funded status.",
     badge: "Most Popular",
@@ -113,7 +113,7 @@ export function Pricing() {
           </button>
           <span className={`text-sm font-medium transition-colors ${yearly ? "text-white" : "text-gray-500"}`}>
             Yearly
-            <span className="ml-1.5 text-xs text-green-400 font-bold">Save 37%</span>
+            <span className="ml-1.5 text-xs text-green-400 font-bold"></span>
           </span>
         </motion.div>
 

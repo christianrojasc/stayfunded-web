@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, ListOrdered, Calendar, BarChart3,
   BookOpen, Upload, Settings, ChevronLeft,
-  Menu, Moon, Sun, Briefcase, ClipboardCheck, Scale,
+  Menu, Moon, Sun, Briefcase, ClipboardCheck, Scale, Target,
   type LucideIcon
 } from 'lucide-react'
 import { useSidebar } from './SidebarContext'
@@ -30,6 +30,7 @@ const NAV_SECTIONS = [
     items: [
       { href: '/journal',   icon: BookOpen,       label: 'Journal' },
       { href: '/checklist', icon: ClipboardCheck, label: 'Checklist' },
+      { href: '/progress', icon: Target, label: 'Progress' },
       { href: '/import',    icon: Upload,         label: 'Import' },
     ],
   },

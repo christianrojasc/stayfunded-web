@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Allow: /login
+
+# App pages require login — disallow indexing
+Disallow: /dashboard
+Disallow: /trades
+Disallow: /calendar
+Disallow: /analytics
+Disallow: /journal
+Disallow: /checklist
+Disallow: /import
+Disallow: /accounts
+Disallow: /prop-firms
+Disallow: /settings

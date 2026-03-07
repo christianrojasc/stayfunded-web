@@ -179,14 +179,15 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
     ONBOARDING_RULES.forEach(r => {
       if (!selected.has(r.type)) return
       const condition = r.hasInput ? (values[r.type] || r.inputPlaceholder || '') : (r.defaultCondition || '')
-      rules.push({ id: crypto.randomUUID(), type: r.type, name: r.name, condition })
+      rules.push({ id: `rule-${Date.now()}-${Math.random().toString(36).slice(2)}`, type: r.type, name: r.name, condition })
     })
     if (custom1.trim()) {
-      rules.push({ id: crypto.randomUUID(), type: 'custom', name: custom1.trim(), condition: 'Active' })
+      rules.push({ id: `rule-${Date.now()}-1`, type: 'custom', name: custom1.trim(), condition: 'Active' })
     }
     if (custom2.trim()) {
-      rules.push({ id: crypto.randomUUID(), type: 'custom', name: custom2.trim(), condition: 'Active' })
+      rules.push({ id: `rule-${Date.now()}-2`, type: 'custom', name: custom2.trim(), condition: 'Active' })
     }
+    console.log('handleStart rules:', rules)
     saveRulesToStorage(rules)
     markSetupDone()
     onComplete(rules)
@@ -197,14 +198,14 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 overflow-y-auto"
+      className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-md overflow-y-auto" style={{WebkitOverflowScrolling:"touch"}}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.92, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.92, y: 30 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-full max-w-2xl bg-[#0c1120]/95 backdrop-blur-[30px] border border-white/[0.08] rounded-3xl p-8 my-8"
+        className="w-full max-w-2xl bg-[#0c1120] border border-white/[0.08] rounded-3xl p-8 mx-auto my-8"
       >
         {/* Header */}
         <div className="text-center mb-8">
@@ -223,9 +224,8 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
             const isSelected = selected.has(rule.type)
             const Icon = rule.icon
             return (
-              <motion.div
+              <div
                 key={rule.type}
-                whileTap={{ scale: 0.98 }}
                 onClick={() => toggle(rule.type)}
                 className={`relative cursor-pointer p-4 rounded-2xl border transition-all duration-200 ${
                   isSelected
@@ -254,10 +254,7 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
 
                 {/* Input for rules that need a value */}
                 {rule.hasInput && isSelected && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
+                  <div
                     className="mt-3"
                     onClick={e => e.stopPropagation()}
                   >
@@ -275,9 +272,9 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
                         }`}
                       />
                     </div>
-                  </motion.div>
+                  </div>
                 )}
-              </motion.div>
+              </div>
             )
           })}
         </div>

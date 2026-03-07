@@ -4,7 +4,8 @@ import { BookOpen, ChevronDown, ChevronLeft, ChevronRight, X, CheckCircle2, XCir
 import { useTrades } from '@/components/TradeContext'
 import { Trade } from '@/lib/types'
 import { getSessionDateForTrade } from '@/lib/session'
-import { formatPnl } from '@/lib/calculations'
+import { formatPnl, calcDailyGrade } from '@/lib/calculations'
+import RuleBreakCostCalculator from '@/components/RuleBreakCostCalculator'
 import { format, parse } from 'date-fns'
 import AccountSelector from '@/components/AccountSelector'
 import {
@@ -31,6 +32,8 @@ interface DayGroup {
 interface RuleItem {
   id: string
   name: string
+  type?: string
+  condition?: string
 }
 
 function buildDayGroups(trades: Trade[]): DayGroup[] {
@@ -233,7 +236,7 @@ function TradesTab({ trades }: { trades: Trade[] }) {
 }
 
 /* --- Rules Tab --- */
-function RulesTab({ sessionDate }: { sessionDate: string }) {
+function RulesTab({ sessionDate, trades, allTrades }: { sessionDate: string; trades: Trade[]; allTrades: Trade[] }) {
   const storageKey = `sf_journal_rules_${sessionDate}`
   const [rules, setRules] = useState<RuleItem[]>([])
   const [compliance, setCompliance] = useState<Record<string, boolean>>({})
@@ -307,6 +310,13 @@ function RulesTab({ sessionDate }: { sessionDate: string }) {
           )
         })}
       </div>
+      <RuleBreakCostCalculator
+        trades={trades}
+        allTrades={allTrades}
+        rules={rules}
+        compliance={compliance}
+        sessionDate={sessionDate}
+      />
     </div>
   )
 }
@@ -325,6 +335,7 @@ function DayModal({
 }) {
   const [tab, setTab] = useState<ModalTab>('statistics')
   const group = groups[currentIndex]
+  const allGroupTrades = useMemo(() => groups.flatMap(g => g.trades), [groups])
   const pos = group.pnl >= 0
 
   const handleBackdrop = (e: React.MouseEvent) => {
@@ -412,7 +423,7 @@ function DayModal({
           {tab === 'statistics' && <StatsTab group={group} />}
           {tab === 'notes' && <NotesTab sessionDate={group.sessionDate} />}
           {tab === 'trades' && <TradesTab trades={group.trades} />}
-          {tab === 'rules' && <RulesTab sessionDate={group.sessionDate} />}
+          {tab === 'rules' && <RulesTab sessionDate={group.sessionDate} trades={group.trades} allTrades={allGroupTrades} />}
         </div>
 
         {/* Footer */}
@@ -431,6 +442,24 @@ function DayModal({
       </div>
     </div>
   )
+}
+
+function getDayGrade(sessionDate: string): { grade: string; color: string } | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(`sf_journal_rules_${sessionDate}`)
+    if (!raw) return null
+    const compliance = JSON.parse(raw) as Record<string, boolean>
+    const rulesRaw = localStorage.getItem('sf_rules')
+    if (!rulesRaw) return null
+    const rules = JSON.parse(rulesRaw) as { id: string }[]
+    if (rules.length === 0) return null
+    const followed = rules.filter(r => compliance[r.id] === true).length
+    const pct = (followed / rules.length) * 100
+    return calcDailyGrade(pct)
+  } catch {
+    return null
+  }
 }
 
 export default function JournalPage() {
@@ -519,8 +548,23 @@ export default function JournalPage() {
                   </div>
                 </div>
 
-                {/* Right: Journal button */}
-                <div className="flex-shrink-0">
+                {/* Right: Grade + Journal button */}
+                <div className="flex-shrink-0 flex items-center gap-3">
+                  {(() => {
+                    const gradeData = getDayGrade(g.sessionDate)
+                    return (
+                      <span
+                        className="text-xs font-bold px-2 py-0.5 rounded-full"
+                        style={{
+                          color: gradeData ? gradeData.color : '#64748B',
+                          background: gradeData ? `${gradeData.color}15` : 'rgba(255,255,255,0.04)',
+                          border: `1px solid ${gradeData ? `${gradeData.color}30` : 'rgba(255,255,255,0.08)'}`,
+                        }}
+                      >
+                        {gradeData ? gradeData.grade : '-'}
+                      </span>
+                    )
+                  })()}
                   <button className="flex items-center gap-1.5 text-[#64748B] hover:text-white transition-colors text-sm">
                     <BookOpen size={16} />
                     Journal

@@ -9,6 +9,7 @@ import {
   Check
 } from 'lucide-react'
 import * as dl from '@/lib/data-layer'
+import WeeklyReportCard from '@/components/WeeklyReportCard'
 import { DailyChecklist } from '@/lib/types'
 import { getTodaySessionDate } from '@/lib/session'
 
@@ -615,6 +616,9 @@ export default function ProgressPage() {
           <p className="text-sm text-[#94A3B8]">Track your trading discipline</p>
         </div>
       </div>
+
+      {/* Weekly Report Card */}
+      <WeeklyReportCard />
 
       {/* Top row */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

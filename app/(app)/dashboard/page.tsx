@@ -1,5 +1,5 @@
 'use client'
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 import {
   DollarSign, TrendingUp, Target, Scale, Award, Flame,
   BarChart2, ArrowUpRight, Activity, Moon, Sun, Shield,
@@ -12,7 +12,7 @@ import UpgradeModal from '@/components/UpgradeModal'
 import { Sparkles, X } from 'lucide-react'
 import { useTheme } from '@/components/ThemeContext'
 import { useAccountFilter } from '@/components/AccountFilterContext'
-import { calcDailyStats, calcCumulativePnl, calcDrawdown, calcAnalytics, formatCurrency, formatPnl } from '@/lib/calculations'
+import { calcDailyStats, calcCumulativePnl, calcDrawdown, calcAnalytics, formatCurrency, formatPnl, calcDailyGrade } from '@/lib/calculations'
 import KPICard from '@/components/KPICard'
 import CumPnlChart from '@/components/charts/CumPnlChart'
 import DailyPnlChart from '@/components/charts/DailyPnlChart'
@@ -197,6 +197,54 @@ function AccountHealthCard() {
   )
 }
 
+function WeeklyGradeCard() {
+  const [grade, setGrade] = useState<{ grade: string; color: string } | null>(null)
+
+  useEffect(() => {
+    try {
+      const rulesRaw = localStorage.getItem('sf_rules')
+      if (!rulesRaw) return
+      const rules = JSON.parse(rulesRaw) as { id: string }[]
+      if (rules.length === 0) return
+
+      const today = new Date()
+      let totalPct = 0
+      let daysWithData = 0
+
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(today)
+        d.setDate(d.getDate() - i)
+        const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+        const raw = localStorage.getItem(`sf_journal_rules_${dateStr}`)
+        if (!raw) continue
+        const compliance = JSON.parse(raw) as Record<string, boolean>
+        if (Object.keys(compliance).length === 0) continue
+        const followed = rules.filter(r => compliance[r.id] === true).length
+        totalPct += (followed / rules.length) * 100
+        daysWithData++
+      }
+
+      if (daysWithData > 0) {
+        setGrade(calcDailyGrade(totalPct / daysWithData))
+      }
+    } catch { /* empty */ }
+  }, [])
+
+  if (!grade) return null
+
+  return (
+    <Link href="/journal" className="glass-card p-4 flex items-center gap-3 hover:bg-white/[0.05] transition-all cursor-pointer">
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${grade.color}15` }}>
+        <span className="text-lg font-black" style={{ color: grade.color }}>{grade.grade}</span>
+      </div>
+      <div>
+        <p className="text-xs text-[rgba(255,255,255,0.45)]">Weekly Grade</p>
+        <p className="text-sm font-bold" style={{ color: grade.color }}>{grade.grade}</p>
+      </div>
+    </Link>
+  )
+}
+
 export default function Dashboard() {
   const { trades, loaded } = useTrades()
   const { theme, toggle: toggleTheme } = useTheme()
@@ -376,6 +424,9 @@ export default function Dashboard() {
           icon={<Award size={18} />}
         />
       </div>
+
+      {/* Weekly Grade */}
+      <WeeklyGradeCard />
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

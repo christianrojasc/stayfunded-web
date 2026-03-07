@@ -48,8 +48,8 @@ export default function RuleBreakCostCalculator({ trades, allTrades, rules, comp
     const lines: CostLine[] = []
 
     for (const rule of brokenRules) {
-      const rType = (rule as Record<string, unknown>).type as string || ''
-      const rCondition = (rule as Record<string, unknown>).condition as string || ''
+      const rType = (rule as unknown as Record<string, string>).type || ''
+      const rCondition = (rule as unknown as Record<string, string>).condition || ''
 
       if (rType === 'max_loss_trade') {
         const limit = parseFloat(rCondition) || 0

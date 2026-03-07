@@ -184,11 +184,12 @@ export default function ImportPage() {
           {/* Drop zone */}
           <div className="lg:col-span-2">
             <div
-              className={`border-2 border-dashed rounded-2xl p-16 text-center transition-all duration-200 cursor-pointer ${
+              className={`border-2 border-dashed rounded-3xl p-16 text-center transition-all duration-200 cursor-pointer ${
                 dragging
-                  ? 'border-[#2D8B4E] bg-green-50'
-                  : 'border-[#C8D4E0] bg-white dark:bg-[#111827] hover:border-[#2D8B4E] hover:bg-[#FAFFFE]'
+                  ? 'border-[#4ADE80]/60 shadow-[0_0_40px_rgba(74,222,128,0.08)]'
+                  : 'border-white/[0.08] hover:border-[#4ADE80]/40 hover:shadow-[0_0_30px_rgba(74,222,128,0.05)]'
               }`}
+              style={{background: dragging ? 'rgba(74,222,128,0.04)' : 'rgba(255,255,255,0.02)'}}
               onDragOver={e => { e.preventDefault(); setDragging(true) }}
               onDragLeave={() => setDragging(false)}
               onDrop={onDrop}
@@ -202,10 +203,10 @@ export default function ImportPage() {
                   <Upload size={32} className="text-white" />
                 </div>
                 <div>
-                  <p className="font-bold text-[#1E2D3D] dark:text-[#F1F5F9] text-lg">Drop your CSV here</p>
-                  <p className="text-[#9EB0C0] dark:text-[#64748B] text-sm mt-1">or click to browse your files</p>
+                  <p className="font-bold text-white text-lg">Drop your CSV here</p>
+                  <p className="text-[#64748B] text-sm mt-1">or click to browse your files</p>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F5F7FA] dark:bg-[#0F172A] border border-[#E4E9F0] dark:border-[#1E293B] text-xs text-[#6B7E91] dark:text-[#94A3B8]">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs text-[#64748B]" style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}>
                   <FileText size={13} />
                   Supports Tradovate Account Statement &amp; Trades Export CSV
                 </div>

@@ -78,7 +78,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
             className={`relative flex flex-col items-start p-4 rounded-2xl border text-left transition-all duration-200 ${
               billing === 'monthly'
                 ? 'border-green-500/60 bg-green-500/8 shadow-[0_0_20px_rgba(74,222,80,0.08)]'
-                : 'border-white/8 bg-white/[0.02] hover:border-white/15'
+                : 'border-white/10 bg-white/[0.03] hover:border-white/20'
             }`}
           >
             {billing === 'monthly' && (
@@ -100,7 +100,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
             className={`relative flex flex-col items-start p-4 rounded-2xl border text-left transition-all duration-200 ${
               billing === 'yearly'
                 ? 'border-green-500/60 bg-green-500/8 shadow-[0_0_20px_rgba(74,222,80,0.08)]'
-                : 'border-white/8 bg-white/[0.02] hover:border-white/15'
+                : 'border-white/10 bg-white/[0.03] hover:border-white/20'
             }`}
           >
             <div className="absolute -top-2.5 left-4 px-2 py-0.5 rounded-full bg-green-500 text-[10px] font-black text-black">BEST VALUE</div>

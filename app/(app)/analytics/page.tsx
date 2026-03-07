@@ -5,6 +5,8 @@ import {
   ResponsiveContainer, Cell, PieChart, Pie, Legend
 } from 'recharts'
 import { useTrades } from '@/components/TradeContext'
+import { useAccountFilter } from '@/components/AccountFilterContext'
+import AccountSelector from '@/components/AccountSelector'
 import { calcAnalytics, calcDailyStats, formatCurrency, formatPnl } from '@/lib/calculations'
 import RadarChartComp from '@/components/charts/RadarChart'
 
@@ -24,8 +26,13 @@ function StatRow({ label, value, sub, green, red }: { label: string; value: stri
 
 export default function AnalyticsPage() {
   const { trades } = useTrades()
-  const analytics = useMemo(() => calcAnalytics(trades), [trades])
-  const daily = useMemo(() => calcDailyStats(trades), [trades])
+  const { selectedId, accounts } = useAccountFilter()
+  const filteredTrades = useMemo(
+    () => selectedId ? trades.filter(t => t.accountId === selectedId) : trades,
+    [trades, selectedId]
+  )
+  const analytics = useMemo(() => calcAnalytics(filteredTrades), [filteredTrades])
+  const daily = useMemo(() => calcDailyStats(filteredTrades), [filteredTrades])
 
   // Radar data (all scored 0–100)
   const radarData = [

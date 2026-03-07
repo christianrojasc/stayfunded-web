@@ -16,7 +16,7 @@ const links = {
   Resources: [
     { label: "Get Started", href: "/login" },
     { label: "Import Trades", href: "/login" },
-    { label: "Contact", href: "mailto:hello@stayfunded.io" },
+    { label: "Contact", href: "mailto:hello@stayfunded.app" },
   ],
   Legal: [
     { label: "Privacy Policy", href: "#" },

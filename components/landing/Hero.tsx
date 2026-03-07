@@ -202,7 +202,7 @@ export function Hero() {
               <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
               <div className="w-3 h-3 rounded-full bg-green-500/70" />
               <div className="flex-1 mx-4 h-6 rounded-lg bg-white/5 flex items-center justify-center">
-                <span className="text-[10px] text-gray-500 font-mono">app.stayfunded.io/dashboard</span>
+                <span className="text-[10px] text-gray-500 font-mono">app.stayfunded.app/dashboard</span>
               </div>
             </div>
 

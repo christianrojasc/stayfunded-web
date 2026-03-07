@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "iOS App — StayFunded",
-  description: "The only professional futures trading journal with a fully synced iOS app. Track trades on desktop, review on mobile.",
+  description: "The only professional futures trading journal with a companion iOS app. Import trades via CSV, review your journal anywhere.",
 };
 
 export default function IOSAppPage() {
@@ -17,11 +17,11 @@ export default function IOSAppPage() {
 
         <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tight mb-6">
           The only trading journal<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">with a synced iOS app.</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">with a companion iOS app.</span>
         </h1>
 
         <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12">
-          Most trading journals trap you at your desk. StayFunded syncs every trade, account, and insight to your iPhone — so your edge travels with you.
+          Most trading journals trap you at your desk. StayFunded brings your journal, drawdown stats, and trade history to your iPhone — so your edge travels with you.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
@@ -85,8 +85,8 @@ export default function IOSAppPage() {
         <div className="grid md:grid-cols-3 gap-6">
           {[
             {
-              title: "Real-Time Sync",
-              desc: "Enter a trade on your Mac, see it instantly on your iPhone. No manual imports, no CSV uploads. One account, everywhere.",
+              title: "Seamless Import",
+              desc: "Import your Tradovate CSV on desktop and review your full trade history, P&L, and stats directly from the iOS app.",
             },
             {
               title: "Drawdown Alerts",

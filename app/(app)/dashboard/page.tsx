@@ -9,7 +9,7 @@ import { useTrades } from '@/components/TradeContext'
 import { useSubscription } from '@/hooks/useSubscription'
 import { useState } from 'react'
 import UpgradeModal from '@/components/UpgradeModal'
-import { Sparkles } from 'lucide-react'
+import { Sparkles, X } from 'lucide-react'
 import { useTheme } from '@/components/ThemeContext'
 import { useAccountFilter } from '@/components/AccountFilterContext'
 import { calcDailyStats, calcCumulativePnl, calcDrawdown, calcAnalytics, formatCurrency, formatPnl } from '@/lib/calculations'
@@ -203,6 +203,7 @@ export default function Dashboard() {
   const { selectedId, accounts } = useAccountFilter()
   const { isPro } = useSubscription()
   const [upgradeOpen, setUpgradeOpen] = useState(false)
+  const [bannerDismissed, setBannerDismissed] = useState(false)
 
   const filteredTrades = useMemo(
     () => selectedId ? trades.filter(t => t.accountId === selectedId) : trades,
@@ -235,16 +236,26 @@ export default function Dashboard() {
   return (
     <div className="space-y-6 animate-fade-in">
       <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
-      {/* Upgrade banner — slim sticky */}
-      {!isPro && (
-        <div className="sticky top-0 z-30 flex items-center justify-between gap-4 px-4 py-2 rounded-xl border border-[#4ADE80]/10 bg-[#4ADE80]/[0.04] backdrop-blur-sm">
+      {/* Upgrade banner */}
+      {!isPro && !bannerDismissed && (
+        <div className="relative flex items-center justify-between gap-4 px-5 py-4 rounded-2xl border border-[#4ADE80]/15" style={{background:'linear-gradient(135deg, rgba(74,222,128,0.06) 0%, rgba(34,197,94,0.03) 100%)'}}>
           <div className="flex items-center gap-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#4ADE80] flex-shrink-0" />
-            <span className="text-xs text-[#94A3B8]">You're on the <span className="text-white font-semibold">Free plan</span> — unlock unlimited accounts, charts, reports and more.</span>
+            <div className="w-8 h-8 rounded-xl bg-[#4ADE80]/10 flex items-center justify-center flex-shrink-0">
+              <Sparkles className="w-4 h-4 text-[#4ADE80]" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">You're on the Free plan</p>
+              <p className="text-xs text-[#64748B] mt-0.5">Unlock unlimited accounts, charts, reports and AI insights.</p>
+            </div>
           </div>
-          <button onClick={() => setUpgradeOpen(true)} className="flex-shrink-0 px-4 py-1.5 rounded-2xl bg-gradient-to-r from-[#4ADE80] to-[#22C55E] text-black text-xs font-bold hover:opacity-90 transition-opacity whitespace-nowrap">
-            Upgrade to Pro
-          </button>
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <button onClick={() => setUpgradeOpen(true)} className="px-5 py-2 rounded-2xl bg-gradient-to-r from-[#4ADE80] to-[#22C55E] text-black text-sm font-bold hover:opacity-90 transition-opacity whitespace-nowrap">
+              Upgrade to Pro
+            </button>
+            <button onClick={() => setBannerDismissed(true)} className="w-7 h-7 rounded-full flex items-center justify-center text-[#64748B] hover:text-white hover:bg-white/10 transition-all">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
       {/* Header */}

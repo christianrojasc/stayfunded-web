@@ -109,8 +109,8 @@ export function Hero() {
             <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#0A0E17] to-transparent z-10" />
             <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#0A0E17] to-transparent z-10" />
             <div className="flex animate-marquee whitespace-nowrap gap-12">
-              {["Apex Trader Funding", "Tradeify", "TopStep", "Take Profit Trader", "My Funded Futures", "FTMO", "Fast Track Trading", "Tradeify Selects",
-                "Apex Trader Funding", "Tradeify", "TopStep", "Take Profit Trader", "My Funded Futures", "FTMO", "Fast Track Trading", "Tradeify Selects"
+              {["Apex Trader Funding", "Take Profit Trader", "My Funded Futures", "Tradeify", "Lucid Trading", "Alpha Futures", "Funded Futures Network", "TopStep", "Fast Track Trading",
+                "Apex Trader Funding", "Take Profit Trader", "My Funded Futures", "Tradeify", "Lucid Trading", "Alpha Futures", "Funded Futures Network", "TopStep", "Fast Track Trading"
               ].map((name, i) => (
                 <span key={i} className="text-gray-500 text-sm font-semibold flex items-center gap-2 flex-shrink-0">
                   <span className="w-2 h-2 rounded-full bg-green-500/30" />

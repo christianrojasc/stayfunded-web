@@ -2,12 +2,15 @@
 import type { ReactNode } from 'react'
 
 interface ShineBorderProps {
+  color?: string[]
+  duration?: number
+  borderWidth?: number
   className?: string
   children: ReactNode
   borderRadius?: number
 }
 
-export default function ShineBorder({ className = '', children, borderRadius = 24 }: ShineBorderProps) {
+export default function ShineBorder({ className = '', children, borderRadius = 24, color, duration = 3, borderWidth = 2 }: ShineBorderProps) {
   return (
     <div className={`relative ${className}`} style={{ borderRadius: `${borderRadius}px` }}>
       <style>{`

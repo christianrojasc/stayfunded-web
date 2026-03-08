@@ -286,7 +286,7 @@ html.dark ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.12); 
 @keyframes stagger-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-.animate-marquee { animation: marquee 30s linear infinite; }
+.animate-marquee { animation: marquee 30s linear infinite; will-change: transform; }
 
 input[type="range"] { -webkit-appearance: none; background: transparent; }
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: white; cursor: pointer; margin-top: -5px; box-shadow: 0 0 10px rgba(0,0,0,0.3), 0 0 20px rgba(74, 222, 80, 0.2); border: 2px solid rgba(74, 222, 80, 0.5); transition: box-shadow 0.2s; }

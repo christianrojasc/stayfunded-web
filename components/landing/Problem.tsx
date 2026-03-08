@@ -106,7 +106,8 @@ export function Problem() {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-              className={`glass rounded-2xl p-6 border ${stat.borderColor} relative overflow-hidden group hover:border-white/10 transition-colors`}
+              className={`glass rounded-2xl p-6 border ${stat.borderColor} relative overflow-hidden group hover:border-white/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/20`}
+              style={{ willChange: "transform" }}
             >
               <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
               <stat.icon className={`w-5 h-5 ${stat.color} mb-3`} />

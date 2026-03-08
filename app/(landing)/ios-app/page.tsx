@@ -109,7 +109,7 @@ export default function IOSAppPage() {
               desc: "Your account rules travel with you. Daily loss limits, consistency scores, and profit targets always one tap away.",
             },
           ].map((f) => (
-            <div key={f.title} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 hover:border-green-500/20 transition-colors">
+            <div key={f.title} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 hover:border-green-500/20 hover:-translate-y-1 transition-all duration-300">
               <h3 className="text-base font-bold text-white mb-2">{f.title}</h3>
               <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
             </div>

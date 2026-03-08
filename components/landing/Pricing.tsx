@@ -150,10 +150,15 @@ export function Pricing() {
               <div className={`relative z-10 rounded-3xl p-8 h-full ${plan.badge ? 'bg-[#0c1120] border border-[#4ADE80]/10' : 'border border-white/[0.07]'}`} style={plan.badge ? {} : {background:'rgba(255,255,255,0.025)'}}>
               {plan.badge && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-green-700 to-green-500 text-white text-xs font-bold shadow-lg">
+                  <motion.span
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={isInView ? { scale: 1, opacity: 1 } : {}}
+                    transition={{ type: "spring", stiffness: 400, damping: 15, delay: 0.6 }}
+                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-green-700 to-green-500 text-white text-xs font-bold shadow-lg shadow-green-500/25"
+                  >
                     <Sparkles className="w-3 h-3" />
                     {plan.badge}
-                  </span>
+                  </motion.span>
                 </div>
               )}
 

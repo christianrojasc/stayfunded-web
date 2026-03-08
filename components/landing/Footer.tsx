@@ -2,16 +2,16 @@
 
 const links = {
   Product: [
-    { label: "Features", href: "#features" },
-    { label: "How It Works", href: "#how-it-works" },
-    { label: "Pricing", href: "#pricing" },
-    { label: "Prop Firms", href: "#propfirms" },
+    { label: "Features", href: "/features" },
+    { label: "How It Works", href: "/how-it-works" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "Prop Firms", href: "/prop-firms-overview" },
   ],
   "Supported Firms": [
-    { label: "Apex Trader Funding", href: "#propfirms" },
-    { label: "Tradeify", href: "#propfirms" },
-    { label: "TopStep", href: "#propfirms" },
-    { label: "Take Profit Trader", href: "#propfirms" },
+    { label: "Apex Trader Funding", href: "/prop-firms-overview" },
+    { label: "Tradeify", href: "/prop-firms-overview" },
+    { label: "TopStep", href: "/prop-firms-overview" },
+    { label: "Take Profit Trader", href: "/prop-firms-overview" },
   ],
   Resources: [
     { label: "Get Started", href: "/login" },
@@ -53,6 +53,7 @@ export function Footer() {
                   <li key={item.label}>
                     <a
                       href={item.href}
+                      {...(item.href.startsWith("mailto:") || item.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       className="text-gray-500 hover:text-gray-300 text-sm transition-colors duration-200"
                     >
                       {item.label}

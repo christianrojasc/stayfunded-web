@@ -41,7 +41,7 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12">
           <div className="flex items-center justify-between h-16 md:h-[72px]">
             <a href="/" className="flex items-center group">
-              <img src="/logo.png" alt="StayFunded" className="h-10 w-auto transition-transform duration-300 group-hover:scale-105" />
+              <img src="/logo.png" alt="StayFunded" className="h-12 w-auto transition-transform duration-300 group-hover:scale-105" />
             </a>
 
             <div className="hidden md:flex items-center gap-1">

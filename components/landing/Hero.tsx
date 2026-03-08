@@ -75,24 +75,25 @@ export function Hero() {
         </motion.div>
 
         {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-          className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-4 sm:gap-8 mb-12 md:mb-20"
-        >
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-4 sm:gap-8 mb-12 md:mb-20">
           {[
             { value: "All Firms", label: "Supported*" },
             { value: "93%", label: "Traders Fail Without a Journal" },
             { value: "Free", label: "No Credit Card Needed" },
             { value: "CSV", label: "Tradovate Import in Seconds" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
+          ].map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 + i * 0.1 }}
+              className="text-center"
+            >
               <div className="text-2xl font-black gradient-text mb-1">{stat.value}</div>
               <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">{stat.label}</div>
-            </div>
+            </motion.div>
           ))}
-        </motion.div>
+        </div>
 
         {/* Prop firm marquee */}
         <motion.div

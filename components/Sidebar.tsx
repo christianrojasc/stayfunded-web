@@ -22,6 +22,7 @@ const NAV_SECTIONS = [
     items: [
       { href: '/trades',    icon: ListOrdered,  label: 'Trade Log' },
       { href: '/calendar',  icon: Calendar,     label: 'Calendar' },
+      { href: '/economic-calendar', icon: CalendarDays, label: 'Econ Calendar' },
       { href: '/analytics', icon: BarChart3,    label: 'Analytics' },
     ],
   },

@@ -4,17 +4,48 @@
 @tailwind utilities;
 
 :root {
+  --bg-primary: #050810;
+  --bg-secondary: #0a0e1a;
+  --bg-card: rgba(255,255,255,0.04);
+  --bg-card-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.06);
+  --border-strong: rgba(255,255,255,0.12);
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  --sidebar-bg: #060a12;
+  --sidebar-border: rgba(255,255,255,0.06);
+  --input-bg: rgba(255,255,255,0.04);
+  --green: #4ADE80;
+  --red: #FF453A;
+
+  /* Legacy vars for compatibility */
   --navy: #1E2D3D;
   --navy-light: #2A3F55;
   --navy-muted: #6B7E91;
-  --green: #4ADE80;
   --green-dark: #2D8B4E;
   --bg: #050810;
   --surface: rgba(255,255,255,0.04);
-  --border: rgba(255,255,255,0.08);
   --loss: #FF453A;
   --sidebar-w: 220px;
   --sidebar-collapsed: 64px;
+}
+
+html.light {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: rgba(255,255,255,0.9);
+  --bg-card-hover: rgba(255,255,255,1);
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.15);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --sidebar-bg: #0f172a;
+  --sidebar-border: rgba(255,255,255,0.06);
+  --input-bg: rgba(0,0,0,0.04);
+  --green: #16a34a;
+  --red: #dc2626;
 }
 
 * { box-sizing: border-box; }
@@ -22,8 +53,8 @@ html { scroll-behavior: smooth; }
 
 html, body {
   overflow-x: hidden;
-  background: #050810;
-  color: rgba(255,255,255,0.8);
+  background: var(--bg-primary);
+  color: var(--text-primary);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -35,34 +66,41 @@ html, body {
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.12); }
 
+html.light ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+html.light ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.15); }
+
 @layer components {
   .glass-card {
-    background: rgba(255,255,255,0.04);
+    background: var(--bg-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
     border-radius: 16px;
   }
 
   .glass-card-hover {
-    background: rgba(255,255,255,0.04);
+    background: var(--bg-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
     border-radius: 16px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .glass-card-hover:hover {
-    background: rgba(255,255,255,0.06);
-    border-color: rgba(255,255,255,0.12);
+    background: var(--bg-card-hover);
+    border-color: var(--border-strong);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 24px rgba(0,0,0,0.2);
     transform: translateY(-1px);
   }
 
+  html.light .glass-card-hover:hover {
+    box-shadow: inset 0 1px 0 rgba(0,0,0,0.05), 0 2px 12px rgba(0,0,0,0.08);
+  }
+
   .btn-primary {
     @apply flex items-center gap-2 px-5 py-2.5 text-sm font-semibold transition-all duration-200 active:scale-95;
-    background: #4ADE80;
-    color: #050810;
+    background: var(--green);
+    color: var(--bg-primary);
     border-radius: 100px;
   }
   .btn-primary:hover {
@@ -70,16 +108,20 @@ html, body {
     box-shadow: 0 4px 20px rgba(74,222,128,0.3);
   }
 
+  html.light .btn-primary:hover {
+    box-shadow: 0 4px 20px rgba(22,163,74,0.3);
+  }
+
   .btn-secondary {
     @apply flex items-center gap-2 px-5 py-2.5 text-sm font-medium transition-all duration-200 active:scale-95;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.12);
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
     border-radius: 100px;
-    color: rgba(255,255,255,0.8);
+    color: var(--text-primary);
   }
   .btn-secondary:hover {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.18);
+    background: var(--bg-card-hover);
+    border-color: var(--border-strong);
   }
 
   .btn-danger {
@@ -89,51 +131,72 @@ html, body {
     border-radius: 100px;
     color: #FF453A;
   }
-  .btn-danger:hover { background: rgba(255,69,58,0.15); }
+  .btn-danger:hover { background-color: rgba(255,69,58,0.15); }
+
+  html.light .btn-danger {
+    background-color: rgba(220,38,38,0.1);
+    border-color: rgba(220,38,38,0.2);
+    color: #dc2626;
+  }
+  html.light .btn-danger:hover { background-color: rgba(220,38,38,0.15); }
 
   .input-field {
     @apply w-full px-4 py-2.5 text-sm outline-none transition-all duration-150;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
     border-radius: 12px;
-    color: rgba(255,255,255,0.9);
+    color: var(--text-primary);
   }
-  .input-field::placeholder { color: rgba(255,255,255,0.25); }
+  .input-field::placeholder { color: var(--text-muted); }
   .input-field:focus {
     border-color: rgba(74,222,128,0.4);
     box-shadow: 0 0 0 3px rgba(74,222,128,0.08);
   }
 
+  html.light .input-field:focus {
+    border-color: rgba(22,163,74,0.4);
+    box-shadow: 0 0 0 3px rgba(22,163,74,0.08);
+  }
+
   .label {
     @apply block text-xs font-medium uppercase mb-1.5;
     letter-spacing: 0.02em;
-    color: rgba(255,255,255,0.45);
+    color: var(--text-muted);
   }
 
   .badge-win {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
     background: rgba(74,222,128,0.12);
-    color: #4ADE80;
+    color: var(--green);
   }
   .badge-loss {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
     background: rgba(255,69,58,0.12);
-    color: #FF453A;
+    color: var(--red);
   }
 
-  .pnl-positive { @apply font-semibold; color: #4ADE80; }
-  .pnl-negative { @apply font-semibold; color: #FF453A; }
-  .pnl-zero { @apply font-semibold; color: rgba(255,255,255,0.45); }
+  html.light .badge-win {
+    background: rgba(22,163,74,0.12);
+    color: #16a34a;
+  }
+  html.light .badge-loss {
+    background: rgba(220,38,38,0.12);
+    color: #dc2626;
+  }
+
+  .pnl-positive { @apply font-semibold; color: var(--green); }
+  .pnl-negative { @apply font-semibold; color: var(--red); }
+  .pnl-zero { @apply font-semibold; color: var(--text-muted); }
 
   .section-title {
     @apply text-base font-bold;
-    color: rgba(255,255,255,0.9);
+    color: var(--text-primary);
     letter-spacing: -0.02em;
   }
 
   .page-title {
     @apply text-2xl font-bold;
-    color: rgba(255,255,255,0.95);
+    color: var(--text-primary);
     letter-spacing: -0.03em;
   }
 }
@@ -148,25 +211,39 @@ html, body {
   font-size: 12px !important;
   color: rgba(255,255,255,0.8) !important;
 }
+
+html.light .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: rgba(248, 250, 252, 0.95) !important;
+  border-color: rgba(0,0,0,0.1) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important;
+  color: rgba(15,23,42,0.8) !important;
+}
+
 .recharts-cartesian-axis-tick-value { fill: rgba(255,255,255,0.3) !important; }
 .recharts-cartesian-grid line { stroke: rgba(255,255,255,0.05) !important; }
+
+html.light .recharts-cartesian-axis-tick-value { fill: rgba(0,0,0,0.4) !important; }
+html.light .recharts-cartesian-grid line { stroke: rgba(0,0,0,0.08) !important; }
 
 /* Table */
 .trade-table th {
   @apply px-4 py-3 text-left font-semibold uppercase;
   font-size: 11px;
   letter-spacing: 0.06em;
-  color: rgba(255,255,255,0.35);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
   background: transparent;
 }
 .trade-table td {
   @apply px-4 py-3.5 text-sm;
-  color: rgba(255,255,255,0.75);
+  color: var(--text-secondary);
   border-bottom: 1px solid rgba(255,255,255,0.04);
 }
 .trade-table tr:last-child td { border-bottom: none; }
 .trade-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+html.light .trade-table tr:hover td { background: rgba(0,0,0,0.02); }
+html.light .trade-table td { border-bottom-color: rgba(0,0,0,0.04); }
 
 /* Sidebar transition */
 .sidebar-transition {
@@ -201,22 +278,16 @@ html, body {
 .cal-cell.no-trade { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.04); }
 .cal-cell.weekend { background: rgba(255,255,255,0.01); border-color: rgba(255,255,255,0.03); opacity: 0.5; }
 
-/* Dark mode overrides (ensure compat) */
-html.dark { color-scheme: dark; }
-html.dark body { background: #050810; color: rgba(255,255,255,0.8); }
-html.dark .glass-card,
-html.dark .glass-card-hover {
-  background: rgba(255,255,255,0.04) !important;
-  border-color: rgba(255,255,255,0.08) !important;
-  box-shadow: none !important;
+html.light .cal-cell {
+  background: rgba(0,0,0,0.02);
+  border-color: rgba(0,0,0,0.04);
 }
-html.dark .glass-card-hover:hover {
-  background: rgba(255,255,255,0.06) !important;
-  border-color: rgba(255,255,255,0.12) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 24px rgba(0,0,0,0.2) !important;
-}
-html.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
-html.dark ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.12); }
+html.light .cal-cell:hover { background: rgba(0,0,0,0.04); }
+html.light .cal-cell.has-win { background: rgba(22,163,74,0.06); border-color: rgba(22,163,74,0.15); }
+html.light .cal-cell.has-loss { background: rgba(220,38,38,0.06); border-color: rgba(220,38,38,0.15); }
+html.light .cal-cell.today { box-shadow: inset 0 0 0 2px rgba(22,163,74,0.4); }
+html.light .cal-cell.no-trade { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.04); }
+html.light .cal-cell.weekend { background: rgba(0,0,0,0.01); border-color: rgba(0,0,0,0.03); }
 
 /* ═══════════════════════════════════════
    LANDING PAGE STYLES

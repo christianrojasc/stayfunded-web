@@ -7,7 +7,7 @@ export default function MainContent({ children }: { children: React.ReactNode })
     <main
       className="min-h-screen transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
       style={{
-        background: '#050810',
+        background: 'var(--bg-primary)',
       }}
     >
       {/* Subtle gradient overlay */}

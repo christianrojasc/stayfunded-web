@@ -24,11 +24,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (authError) {
     return (
-      <div className="min-h-screen bg-[#050810] flex flex-col items-center justify-center gap-4 px-4">
+      <div style={{ background: 'var(--bg-primary)', minHeight: '100vh' }} className="flex flex-col items-center justify-center gap-4 px-4">
         <div className="w-12 h-12 rounded-2xl bg-red-500/20 flex items-center justify-center">
           <AlertCircle className="w-6 h-6 text-red-400" />
         </div>
-        <p className="text-sm text-[#94A3B8] text-center max-w-md">{authError}</p>
+        <p style={{ color: 'var(--text-secondary)' }} className="text-sm text-center max-w-md">{authError}</p>
         <button
           onClick={() => window.location.reload()}
           className="mt-2 px-4 py-2 rounded-xl text-sm font-medium text-white bg-[#4ADE80]/20 hover:bg-[#4ADE80]/30 border border-[#4ADE80]/30 transition-colors"
@@ -41,7 +41,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-[#050810] flex flex-col items-center justify-center gap-4">
+      <div style={{ background: 'var(--bg-primary)', minHeight: '100vh' }} className="flex flex-col items-center justify-center gap-4">
         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-600 to-green-400 flex items-center justify-center shadow-lg shadow-green-500/30 animate-pulse">
           <TrendingUp className="w-6 h-6 text-white" strokeWidth={2.5} />
         </div>

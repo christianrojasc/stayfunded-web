@@ -55,22 +55,20 @@ function AccountHealthCard() {
 
   const barColor = (pct: number, inv = false) => {
     const v = inv ? pct : 1 - pct
-    if (v < 0.2) return '#FF453A'
+    if (v < 0.2) return 'var(--red)'
     if (v < 0.4) return '#F97316'
     if (v < 0.6) return '#F59E0B'
-    return '#4ADE50'
+    return 'var(--green)'
   }
 
   const isInDanger = drawdownPct >= 0.8 || (dailyPct !== null && dailyPct >= 0.8)
   const isPassing = profitPct !== null && profitPct >= 1
 
   return (
-    <div className={`glass-card p-5 border-l-4 ${
-      isPassing ? 'border-l-[#4ADE50]' : isInDanger ? 'border-l-[#FF453A]' : 'border-l-[#2D8B4E]'
-    }`}>
+    <div className="glass-card p-5 border-l-4" style={{borderLeftColor: isPassing ? '#4ADE50' : isInDanger ? '#FF453A' : '#2D8B4E'}}>
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-2">
-          <Shield size={16} className="text-[#4ADE80]" />
+          <Shield size={16} style={{color: 'var(--green)'}} />
           <h2 className="section-title">Account Health — {selected.nickname || selected.firmName}</h2>
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
             selected.status === 'funded'

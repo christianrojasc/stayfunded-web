@@ -57,7 +57,7 @@ export default function CalendarPage() {
           <div className="flex items-center gap-3 text-sm">
             <span className="text-[#6B7E91] dark:text-[#94A3B8]">{tradingDays} days · {monthTrades.length} trades</span>
             <span className={`font-bold px-3 py-1 rounded-full text-sm ${
-              monthPnl >= 0 ? 'bg-green-50 text-[#2D8B4E]' : 'bg-red-50 text-[#EF4444]'
+              monthPnl >= 0 ? 'bg-[#166534]/20 text-[#4ADE80]' : 'bg-red-50 text-[#EF4444]'
             }`}>
               {formatPnl(monthPnl)}
             </span>
@@ -138,9 +138,9 @@ export default function CalendarPage() {
 
           {/* Legend */}
           <div className="flex items-center gap-4 mt-4 pt-4 border-t border-[#F0F3F7] text-xs text-[#9EB0C0] dark:text-[#64748B]">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-[#dcfce7] border border-green-100" />Win day</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-[#fee2e2] border border-red-100" />Loss day</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-white dark:bg-[#111827] border border-[#E4E9F0] dark:border-[#1E293B]" />No trades</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-[#166534]" />Win day</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-[#7f1d1d]" />Loss day</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-[#1E293B]" />No trades</span>
           </div>
         </div>
 
@@ -171,7 +171,7 @@ export default function CalendarPage() {
                     const dayPnl = selectedTrades.reduce((s, t) => s + t.netPnl, 0)
                     const dayWins = selectedTrades.filter(t => t.netPnl > 0).length
                     return (
-                      <div className={`p-3 rounded-xl mb-4 ${dayPnl >= 0 ? 'bg-green-50' : 'bg-red-50'}`}>
+                      <div className={`p-3 rounded-xl mb-4 ${dayPnl >= 0 ? 'bg-[#166534]/20' : 'bg-[#7f1d1d]/20'}`}>
                         <p className={`text-xl font-bold ${dayPnl >= 0 ? 'text-[#2D8B4E]' : 'text-[#EF4444]'}`}>
                           {formatPnl(dayPnl)}
                         </p>

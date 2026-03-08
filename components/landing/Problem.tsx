@@ -78,7 +78,7 @@ export function Problem() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-[clamp(2rem,5vw,3.5rem)] font-black leading-tight text-white font-display mb-6"
+            className="text-[clamp(2rem,5vw,3.25rem)] font-bold leading-[1.1] tracking-[-0.02em] text-white font-display mb-6"
           >
             The prop trading industry is a{" "}
             <span className="text-red-400">$20 billion</span> market.
@@ -111,7 +111,7 @@ export function Problem() {
             >
               <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
               <stat.icon className={`w-5 h-5 ${stat.color} mb-3`} />
-              <div className="text-3xl md:text-4xl font-black text-white mb-1 font-display">
+              <div className="text-3xl md:text-4xl font-bold text-white mb-1 font-display">
                 <span className={stat.color}>{stat.value}</span>
                 <span className={`${stat.color} text-xl opacity-70`}>{stat.suffix}</span>
               </div>
@@ -128,7 +128,7 @@ export function Problem() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="text-2xl font-black text-white mb-4 font-display"
+              className="text-2xl font-bold text-white mb-4 font-display tracking-tight"
             >
               Why do traders fail?
             </motion.h3>
@@ -184,7 +184,7 @@ export function Problem() {
               <p className="text-gray-500 text-xs uppercase tracking-widest mb-4">If 100 traders start an evaluation</p>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="text-4xl font-black text-red-400 font-display w-20 text-right">
+                  <div className="text-4xl font-bold text-red-400 font-display w-20 text-right">
                     <AnimatedCounter value={93} suffix="" />
                   </div>
                   <div className="flex-1">
@@ -200,7 +200,7 @@ export function Problem() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="text-4xl font-black text-orange-400 font-display w-20 text-right">4</div>
+                  <div className="text-4xl font-bold text-orange-400 font-display w-20 text-right">4</div>
                   <div className="flex-1">
                     <div className="h-2.5 bg-orange-500/20 rounded-full overflow-hidden">
                       <motion.div
@@ -214,7 +214,7 @@ export function Problem() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="text-4xl font-black text-green-400 font-display w-20 text-right">1-3</div>
+                  <div className="text-4xl font-bold text-green-400 font-display w-20 text-right">1-3</div>
                   <div className="flex-1">
                     <div className="h-2.5 bg-green-500/20 rounded-full overflow-hidden">
                       <motion.div
@@ -238,7 +238,7 @@ export function Problem() {
               className="grid grid-cols-2 gap-4"
             >
               <div className="glass rounded-2xl p-5 border border-white/5">
-                <div className="text-2xl font-black text-orange-400 mb-1 font-display">
+                <div className="text-2xl font-bold text-orange-400 mb-1 font-display">
                   $800&ndash;$4.3k
                 </div>
                 <p className="text-gray-500 text-xs leading-relaxed">
@@ -246,7 +246,7 @@ export function Problem() {
                 </p>
               </div>
               <div className="glass rounded-2xl p-5 border border-white/5">
-                <div className="text-2xl font-black text-white mb-1 font-display">
+                <div className="text-2xl font-bold text-white mb-1 font-display">
                   <AnimatedCounter value={4} className="text-green-400" suffix="x ROI" />
                 </div>
                 <p className="text-gray-500 text-xs leading-relaxed">

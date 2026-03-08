@@ -41,7 +41,7 @@ export function Dashboard() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1, ease: [0.21, 1.11, 0.81, 0.99] }}
-            className="text-[clamp(2.5rem,5vw,4rem)] font-black leading-tight text-white font-display mb-6"
+            className="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight text-white font-display mb-6"
           >
             Your trading command{" "}
             <span className="gradient-text">center.</span>
@@ -101,7 +101,7 @@ export function Dashboard() {
                       <span className="text-xs text-gray-500 font-medium">{label}</span>
                       <Icon className="w-4 h-4 text-gray-600" />
                     </div>
-                    <div className="text-2xl font-black text-white mb-1">{value}</div>
+                    <div className="text-2xl font-bold text-white mb-1">{value}</div>
                     <div className={`flex items-center gap-1 text-xs font-medium ${up ? "text-green-400" : "text-orange-400"}`}>
                       {up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                       {change}
@@ -256,7 +256,7 @@ export function Dashboard() {
                           <td className="py-2.5 text-gray-400 font-mono hidden sm:table-cell">{trade.entry}</td>
                           <td className="py-2.5 text-gray-400 font-mono hidden sm:table-cell">{trade.exit}</td>
                           <td className="py-2.5 text-gray-500">{trade.time}</td>
-                          <td className={`py-2.5 text-right font-black ${trade.win ? "text-green-400" : "text-red-400"}`}>{trade.pnl}</td>
+                          <td className={`py-2.5 text-right font-bold ${trade.win ? "text-green-400" : "text-red-400"}`}>{trade.pnl}</td>
                         </motion.tr>
                       ))}
                     </tbody>

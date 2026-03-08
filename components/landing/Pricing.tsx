@@ -93,7 +93,7 @@ export function Pricing() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1, ease: [0.21, 1.11, 0.81, 0.99] }}
-            className="text-[clamp(2.5rem,5.5vw,4rem)] font-black leading-tight text-white font-display mb-6"
+            className="text-[clamp(2.25rem,5vw,3.5rem)] font-bold leading-[1.1] tracking-[-0.02em] text-white font-display mb-6"
           >
             Free forever.{" "}
             <span className="gradient-text">Upgrade when ready.</span>
@@ -173,7 +173,7 @@ export function Pricing() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.2 }}
-                      className="text-5xl font-black text-white font-display"
+                      className="text-5xl font-bold text-white font-display"
                     >
                       {yearly ? plan.priceYearly : plan.priceMonthly}
                     </motion.span>

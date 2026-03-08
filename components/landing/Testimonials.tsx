@@ -79,7 +79,7 @@ export function Testimonials() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1, ease: [0.21, 1.11, 0.81, 0.99] }}
-            className="text-[clamp(2.5rem,5.5vw,4rem)] font-black leading-tight text-white font-display mb-6"
+            className="text-[clamp(2.5rem,5.5vw,4rem)] font-bold leading-tight text-white font-display mb-6"
           >
             Traders who{" "}
             <span className="gradient-text">stopped guessing</span>
@@ -160,7 +160,7 @@ export function Testimonials() {
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.5, delay: 0.9 + i * 0.1 }}
             >
-              <div className="text-2xl font-black gradient-text font-display">{stat.value}</div>
+              <div className="text-2xl font-bold gradient-text font-display">{stat.value}</div>
               <div className="text-xs text-gray-500 font-medium uppercase tracking-wider mt-1">{stat.label}</div>
             </motion.div>
           ))}

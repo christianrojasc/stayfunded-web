@@ -792,7 +792,7 @@ export default function ProgressPage() {
               { value: allChecklists.filter(c => (c.items?.filter(i => i.checked).length ?? 0) === (c.items?.length ?? 0) && (c.items?.length ?? 0) > 0).length, label: 'Perfect days' },
             ].map((s, i) => (
               <div key={i} className="text-center py-2 rounded-2xl" style={{background:'rgba(255,255,255,0.03)'}}>
-                <p className="text-xl font-black text-white">{s.value}</p>
+                <p className="text-xl font-bold text-white">{s.value}</p>
                 <p className="text-[10px] text-[#64748B] mt-0.5">{s.label}</p>
               </div>
             ))}

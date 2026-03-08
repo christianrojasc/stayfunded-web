@@ -155,7 +155,7 @@ export default function EconomicCalendarPage() {
                     <div className="col-span-9 sm:col-span-5 text-white text-sm font-medium flex items-center gap-2 flex-wrap">
                       {event.event}
                       {event.impact === 'high' && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-black text-black" style={{background:'#FF453A'}}>!</span>
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold text-black" style={{background:'#FF453A'}}>!</span>
                       )}
                     </div>
                     <div className="hidden sm:block col-span-2 text-right text-[#94A3B8] text-sm">{event.forecast || '—'}</div>

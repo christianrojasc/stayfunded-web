@@ -68,7 +68,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
             </div>
             <span className="text-xs font-bold tracking-widest uppercase text-green-400">StayFunded Pro</span>
           </div>
-          <h2 className="text-2xl font-black text-white mt-3">Upgrade your edge.</h2>
+          <h2 className="text-2xl font-bold text-white mt-3">Upgrade your edge.</h2>
           <p className="text-gray-400 text-sm mt-1">Everything you need to stay funded, longer.</p>
         </div>
 
@@ -90,7 +90,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
             )}
             <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Monthly</span>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-black text-white">$14</span>
+              <span className="text-3xl font-bold text-white">$14</span>
               <span className="text-gray-500 text-xs">/mo</span>
             </div>
             <span className="text-gray-600 text-xs mt-1">Billed monthly</span>
@@ -105,7 +105,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
                 : 'border-white/10 bg-white/[0.03] hover:border-white/20'
             }`}
           >
-            <div className="absolute -top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-black text-black flex items-center gap-1" style={{background:"linear-gradient(135deg,#4ADE80,#22C55E)"}}>⚡ LAUNCH SPECIAL</div>
+            <div className="absolute -top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold text-black flex items-center gap-1" style={{background:"linear-gradient(135deg,#4ADE80,#22C55E)"}}>⚡ LAUNCH SPECIAL</div>
             {billing === 'yearly' && (
               <div className="absolute top-3 right-3 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
                 <Check className="w-2.5 h-2.5 text-black" strokeWidth={3} />
@@ -113,12 +113,12 @@ export default function UpgradeModal({ open, onClose }: Props) {
             )}
             <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Yearly</span>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-black text-white">$99</span>
+              <span className="text-3xl font-bold text-white">$99</span>
               <span className="text-gray-500 text-xs">/yr</span>
             </div>
             <div className="flex items-center gap-1.5 mt-1">
               <span className="text-gray-600 text-xs line-through">$168</span>
-              <span className="text-[10px] font-black px-1.5 py-0.5 rounded-full text-black" style={{background:"#4ADE80"}}>-$69 OFF</span>
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-black" style={{background:"#4ADE80"}}>-$69 OFF</span>
             </div>
           </button>
         </div>

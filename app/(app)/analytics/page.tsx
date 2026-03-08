@@ -173,7 +173,7 @@ export default function AnalyticsPage() {
                 style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)' }} />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-4xl font-black text-white">{analytics.score}</span>
+              <span className="text-4xl font-bold text-white">{analytics.score}</span>
               <span className="text-xs font-semibold text-[#64748B]">/ 100</span>
             </div>
           </div>

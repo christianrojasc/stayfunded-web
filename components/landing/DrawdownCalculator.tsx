@@ -76,7 +76,7 @@ export function DrawdownCalculator() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-[clamp(2rem,5vw,3.5rem)] font-black leading-tight text-white font-display mb-6"
+            className="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-white font-display mb-6"
           >
             Drawdown{" "}
             <span className="gradient-text">Calculator</span>
@@ -146,7 +146,7 @@ export function DrawdownCalculator() {
                 <div className="mb-6">
                   <div className="flex justify-between mb-3">
                     <label className="text-xs text-gray-500 font-medium uppercase tracking-wider">Today&apos;s P&L</label>
-                    <span className={`text-sm font-black ${pnlToday >= 0 ? "text-green-400" : "text-red-400"}`}>
+                    <span className={`text-sm font-bold ${pnlToday >= 0 ? "text-green-400" : "text-red-400"}`}>
                       {pnlToday >= 0 ? "+" : ""}{fmtDollar(pnlToday)}
                     </span>
                   </div>
@@ -200,7 +200,7 @@ export function DrawdownCalculator() {
                     {status.label === "SAFE" ? <Shield className={`w-4 h-4 ${status.color}`} /> :
                      status.label === "CAUTION" ? <AlertTriangle className={`w-4 h-4 ${status.color}`} /> :
                      <AlertTriangle className={`w-4 h-4 ${status.color}`} />}
-                    <span className={`text-xs font-black tracking-wider ${status.color}`}>{status.label}</span>
+                    <span className={`text-xs font-bold tracking-wider ${status.color}`}>{status.label}</span>
                   </motion.div>
                 </AnimatePresence>
 
@@ -211,7 +211,7 @@ export function DrawdownCalculator() {
                     key={plan.size + pnlToday}
                     initial={{ scale: 1.05 }}
                     animate={{ scale: 1 }}
-                    className="text-3xl font-black text-white font-display"
+                    className="text-3xl font-bold text-white font-display"
                   >
                     {fmtDollar(plan.size + pnlToday)}
                   </motion.div>
@@ -279,12 +279,12 @@ export function DrawdownCalculator() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <div className="text-lg font-black text-white">{fmtDollar(Math.max(0, plan.drawdown - drawdownUsed))}</div>
+                      <div className="text-lg font-bold text-white">{fmtDollar(Math.max(0, plan.drawdown - drawdownUsed))}</div>
                       <div className="text-[10px] text-gray-500">until max drawdown</div>
                     </div>
                     {plan.daily && (
                       <div>
-                        <div className="text-lg font-black text-white">{fmtDollar(Math.max(0, plan.daily - drawdownUsed))}</div>
+                        <div className="text-lg font-bold text-white">{fmtDollar(Math.max(0, plan.daily - drawdownUsed))}</div>
                         <div className="text-[10px] text-gray-500">until daily limit</div>
                       </div>
                     )}

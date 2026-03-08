@@ -247,7 +247,7 @@ function PlanCard({
                 <Check size={12} />
               </button>
             )}
-            <span className="text-lg font-black text-[#1E2D3D] dark:text-[#e6edf3]">
+            <span className="text-lg font-bold text-[#1E2D3D] dark:text-[#e6edf3]">
               ${row.plan.size}K
             </span>
           </div>
@@ -648,7 +648,7 @@ export default function PropFirmsPage() {
             <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1e7a3e 0%, #2D8B4E 100%)', boxShadow: '0 4px 12px rgba(45,139,78,0.3)' }}>
               <Scale size={18} className="text-white" />
             </div>
-            <h1 className="text-2xl font-black text-[#1E2D3D] dark:text-[#e6edf3]">Prop Firms</h1>
+            <h1 className="text-2xl font-bold text-[#1E2D3D] dark:text-[#e6edf3]">Prop Firms</h1>
           </div>
           <p className="text-sm text-[#6B7E91] dark:text-[#4d5566] ml-12">
             Compare {ALL_PLANS.length} plans across {PROP_FIRM_PRESETS.length} firms · Click "Add Account" to track a plan

@@ -52,7 +52,7 @@ export function Comparison() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-[clamp(2rem,5vw,3.5rem)] font-black leading-tight text-white font-display mb-6"
+            className="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-white font-display mb-6"
           >
             Built for futures.{" "}
             <span className="gradient-text">Not retrofitted.</span>

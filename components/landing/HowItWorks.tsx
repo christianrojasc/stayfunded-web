@@ -113,7 +113,7 @@ export function HowItWorks() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1, ease: [0.21, 1.11, 0.81, 0.99] }}
-            className="text-[clamp(2.5rem,5vw,4rem)] font-black leading-tight text-white font-display mb-6"
+            className="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight text-white font-display mb-6"
           >
             Three steps to{" "}
             <span className="gradient-text">never blow</span>
@@ -167,7 +167,7 @@ export function HowItWorks() {
                 <div className={`absolute -top-20 -right-20 w-40 h-40 ${colors.glow} rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
 
                 {/* Step number */}
-                <div className={`text-[5rem] font-black leading-none ${colors.number} select-none absolute top-4 right-6 font-display`}>
+                <div className={`text-[5rem] font-bold leading-none ${colors.number} select-none absolute top-4 right-6 font-display`}>
                   {step.number}
                 </div>
 

@@ -50,7 +50,7 @@ export function PropFirms() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1, ease: [0.21, 1.11, 0.81, 0.99] }}
-            className="text-[clamp(2.5rem,5.5vw,4rem)] font-black leading-tight text-white mb-6"
+            className="text-[clamp(2.5rem,5.5vw,4rem)] font-bold leading-tight text-white mb-6"
           >
             Built for every{" "}
             <span className="gradient-text">major prop firm.</span>
@@ -84,7 +84,7 @@ export function PropFirms() {
                 className="glass glass-hover rounded-2xl p-4 border border-white/5 group text-center cursor-default"
               >
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600/20 to-green-400/10 border border-green-500/20 flex items-center justify-center mx-auto mb-3 group-hover:border-green-500/40 transition-colors">
-                  <span className="text-[9px] font-black text-green-400 tracking-tight">{firm.abbr}</span>
+                  <span className="text-[9px] font-bold text-green-400 tracking-tight">{firm.abbr}</span>
                 </div>
                 <div className="text-xs font-semibold text-white leading-tight mb-1">{firm.name}</div>
                 <div className="text-[10px] text-gray-600 font-medium">{firm.rules}</div>

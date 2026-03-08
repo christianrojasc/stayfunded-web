@@ -237,7 +237,7 @@ export default function SettingsPage() {
       {activeTab === 'profile' && (
         <div className="space-y-8">
           <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#4ADE80] to-[#22C55E] flex items-center justify-center text-black text-2xl font-black">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#4ADE80] to-[#22C55E] flex items-center justify-center text-black text-2xl font-bold">
               {user?.email?.[0]?.toUpperCase() || '?'}
             </div>
             <div>

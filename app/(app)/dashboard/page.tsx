@@ -233,7 +233,7 @@ function WeeklyGradeCard() {
   return (
     <Link href="/journal" className="glass-card p-4 flex items-center gap-3 hover:bg-white/[0.05] transition-all cursor-pointer">
       <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${grade.color}15` }}>
-        <span className="text-lg font-black" style={{ color: grade.color }}>{grade.grade}</span>
+        <span className="text-lg font-bold" style={{ color: grade.color }}>{grade.grade}</span>
       </div>
       <div>
         <p className="text-xs text-[rgba(255,255,255,0.45)]">Weekly Grade</p>

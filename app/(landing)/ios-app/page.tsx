@@ -15,7 +15,7 @@ export default function IOSAppPage() {
           <span className="text-green-400 text-xs font-semibold tracking-widest uppercase">Coming Soon</span>
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tight mb-6">
+        <h1 className="text-5xl md:text-7xl font-bold leading-tight tracking-tight mb-6">
           The only trading journal<br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">with a companion iOS app.</span>
         </h1>
@@ -42,7 +42,7 @@ export default function IOSAppPage() {
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-xs text-gray-500">Today</div>
-                  <div className="text-2xl font-black text-green-400">+$847</div>
+                  <div className="text-2xl font-bold text-green-400">+$847</div>
                 </div>
                 <div className="w-10 h-10 rounded-2xl bg-green-500/20 flex items-center justify-center">
                   <div className="w-4 h-4 border-2 border-green-400 rounded-sm" />
@@ -80,7 +80,7 @@ export default function IOSAppPage() {
 
       {/* Features */}
       <section className="py-20 px-6 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-black text-center mb-3">Built for traders on the move.</h2>
+        <h2 className="text-3xl font-bold text-center mb-3">Built for traders on the move.</h2>
         <p className="text-gray-500 text-center mb-12">Everything from the web app — in your pocket.</p>
         <div className="grid md:grid-cols-3 gap-6">
           {[
@@ -120,7 +120,7 @@ export default function IOSAppPage() {
       {/* CTA */}
       <section className="py-20 px-6 text-center">
         <div className="max-w-xl mx-auto rounded-3xl border border-green-500/20 bg-green-500/5 p-12">
-          <h2 className="text-3xl font-black mb-4">Be first when it drops.</h2>
+          <h2 className="text-3xl font-bold mb-4">Be first when it drops.</h2>
           <p className="text-gray-400 mb-8">Join the waitlist. iOS beta launching soon to StayFunded members.</p>
           <a href="/login" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-green-600 to-green-400 text-white font-bold text-base shadow-lg shadow-green-500/25 hover:shadow-green-500/40 transition-all duration-300">
             Get Early Access

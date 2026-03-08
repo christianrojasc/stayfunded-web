@@ -36,7 +36,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2, ease: [0.21, 1.11, 0.81, 0.99] }}
-          className="text-[clamp(2.4rem,7vw,7rem)] font-black leading-[1.0] tracking-tight text-white mb-6" style={{ fontFamily: "'Outfit', sans-serif" }}
+          className="text-[clamp(2.4rem,7vw,6rem)] font-bold leading-[1.05] tracking-[-0.03em] text-white mb-6 font-display"
         >
           <span className="block text-white">Stop Blowing</span>
           <span className="block gradient-text-animated">Prop Accounts.</span>
@@ -47,7 +47,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.4 }}
-          className="text-[clamp(0.9rem,2.5vw,1.35rem)] text-gray-400 max-w-2xl mx-auto leading-relaxed mb-10"
+          className="text-[clamp(1rem,2.5vw,1.25rem)] text-gray-400 max-w-2xl mx-auto leading-[1.7] mb-10 font-normal"
         >
           The smartest trading journal for futures prop traders. Track drawdown, follow your rules, and <span className="text-white font-medium">stay funded longer.</span>
         </motion.p>
@@ -89,7 +89,7 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.7 + i * 0.1 }}
               className="text-center"
             >
-              <div className="text-2xl font-black gradient-text mb-1">{stat.value}</div>
+              <div className="text-2xl font-bold gradient-text mb-1 font-display tracking-tight">{stat.value}</div>
               <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">{stat.label}</div>
             </motion.div>
           ))}
@@ -140,7 +140,7 @@ export function Hero() {
               </div>
               <span className="text-xs text-gray-400 font-medium">Today&apos;s P&L</span>
             </div>
-            <div className="text-2xl font-black text-green-400">+$847</div>
+            <div className="text-2xl font-bold text-green-400">+$847</div>
             <div className="text-xs text-gray-500 mt-1">+3.4% account</div>
             <div className="mt-2 flex gap-1">
               {[40, 65, 45, 80, 55, 90, 75].map((h, i) => (
@@ -191,7 +191,7 @@ export function Hero() {
               <Activity className="w-3.5 h-3.5 text-green-400" />
               <span className="text-xs text-gray-400">Win Rate</span>
             </div>
-            <div className="text-xl font-black text-white">68.4%</div>
+            <div className="text-xl font-bold text-white">68.4%</div>
             <div className="text-xs text-gray-500 mt-0.5">Last 30 days</div>
           </motion.div>
 
@@ -213,7 +213,7 @@ export function Hero() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
                 <div>
                   <div className="text-sm text-gray-400 mb-1">Account: APEX-48291</div>
-                  <div className="text-2xl font-black text-white">$52,340 <span className="text-green-400 text-base font-bold">+$847 today</span></div>
+                  <div className="text-2xl font-bold text-white">$52,340 <span className="text-green-400 text-base font-bold">+$847 today</span></div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {["1D", "1W", "1M", "All"].map((t, i) => (
@@ -263,7 +263,7 @@ export function Hero() {
                       <Icon className="w-3.5 h-3.5 text-green-400/70" />
                       <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">{label}</span>
                     </div>
-                    <div className="text-lg font-black text-white">{value}</div>
+                    <div className="text-lg font-bold text-white">{value}</div>
                     <div className="text-[10px] text-gray-500 mt-0.5">{sub}</div>
                   </div>
                 ))}

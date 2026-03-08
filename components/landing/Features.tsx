@@ -131,7 +131,7 @@ function SessionVisual() {
         ].map((s) => (
           <div key={s.label} className="bg-white/[0.03] rounded-xl p-3 text-center">
             <div className="text-[9px] text-gray-600 mb-1">{s.label}</div>
-            <div className={`text-xs font-black ${s.color}`}>{s.pnl}</div>
+            <div className={`text-xs font-bold ${s.color}`}>{s.pnl}</div>
             <div className="text-[8px] text-gray-700 mt-1">{s.time}</div>
           </div>
         ))}
@@ -225,7 +225,7 @@ function AnalyticsVisual() {
         ].map((kpi) => (
           <div key={kpi.label} className="bg-white/[0.03] rounded-lg p-2">
             <div className="text-[8px] text-gray-600">{kpi.label}</div>
-            <div className={`text-xs font-black ${kpi.color}`}>{kpi.value}</div>
+            <div className={`text-xs font-bold ${kpi.color}`}>{kpi.value}</div>
           </div>
         ))}
       </div>
@@ -275,7 +275,7 @@ export function Features() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1, ease: [0.21, 1.11, 0.81, 0.99] }}
-            className="text-[clamp(2.5rem,6vw,4.5rem)] font-black leading-tight text-white font-display mb-6"
+            className="text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-tight text-white font-display mb-6"
           >
             Everything a{" "}
             <span className="gradient-text">prop trader</span>
@@ -341,7 +341,7 @@ export function Features() {
                   </span>
 
                   {/* Headline */}
-                  <h3 className="text-2xl lg:text-3xl font-black text-white leading-tight mb-4 font-display">
+                  <h3 className="text-2xl lg:text-3xl font-bold text-white leading-tight mb-4 font-display">
                     {active.headline}
                   </h3>
 

@@ -41,7 +41,7 @@ export function CTA() {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.15, ease: [0.21, 1.11, 0.81, 0.99] }}
-              className="text-[clamp(2.5rem,7vw,5rem)] font-black leading-tight text-white font-display mb-6"
+              className="text-[clamp(2.25rem,6vw,4rem)] font-bold leading-[1.1] tracking-[-0.02em] text-white font-display mb-6"
             >
               Stop guessing.
               <br />

@@ -396,7 +396,7 @@ function DayModal({
 
           {/* Subheader */}
           <div className="flex items-baseline gap-2 mb-4">
-            <span className={`text-3xl font-black ${pos ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+            <span className={`text-3xl font-bold ${pos ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
               {formatPnl(group.pnl)}
             </span>
             <span className="text-sm text-[#64748B]">· {group.trades.length} trades</span>

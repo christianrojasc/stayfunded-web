@@ -173,7 +173,7 @@ export default function WeeklyReportCard() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-lg font-black" style={{ color: overallGrade.color }}>
+          <span className="text-lg font-bold" style={{ color: overallGrade.color }}>
             {overallGrade.grade}
           </span>
           {expanded ? <ChevronUp size={16} className="text-[#64748B]" /> : <ChevronDown size={16} className="text-[#64748B]" />}

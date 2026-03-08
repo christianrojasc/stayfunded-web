@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  LayoutDashboard, ListOrdered, Calendar, BarChart3,
+  LayoutDashboard, ListOrdered, Calendar, CalendarDays, BarChart3,
   BookOpen, Upload, Settings, ChevronLeft,
   Menu, Moon, Sun, Briefcase, ClipboardCheck, Scale, Target,
   type LucideIcon
@@ -30,7 +30,7 @@ const NAV_SECTIONS = [
     items: [
       { href: '/journal',   icon: BookOpen,       label: 'Journal' },
       { href: '/progress', icon: Target, label: 'Progress' },
-      { href: '/import',    icon: Upload,         label: 'Import' },
+      { href: "/import",    icon: Upload,         label: "Import" },
     ],
   },
   {

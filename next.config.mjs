@@ -10,7 +10,7 @@ const ContentSecurityPolicy = [
   "default-src 'self'",
   // Scripts: Next.js + framer-motion need unsafe-inline / unsafe-eval in dev;
   // keep both for now — tighten with nonces in a future hardening pass.
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://s3.tradingview.com https://s.tradingview.com",
   // Styles: Tailwind uses inline styles throughout
   "style-src 'self' 'unsafe-inline'",
   // Images: allow data: URIs (chart libraries), blob: (canvas exports)
@@ -18,9 +18,11 @@ const ContentSecurityPolicy = [
   // Fonts: self only
   "font-src 'self'",
   // API / WebSocket connections: allow Supabase (REST + Realtime)
-  `connect-src 'self' https://${supabaseHost} wss://${supabaseHost}`,
+  `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://s3.tradingview.com https://s.tradingview.com https://widget-data.tradingview.com`,
   // No iframes from external origins
   "frame-ancestors 'none'",
+  // TradingView widget frames
+  "frame-src 'self' https://s.tradingview.com https://www.tradingview.com",
   // No plugins
   "object-src 'none'",
   // Upgrade insecure requests in production

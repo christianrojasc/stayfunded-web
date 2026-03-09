@@ -612,7 +612,11 @@ export default function ProgressPage() {
     if (!isSetupDone() && storedRules.length === 0) {
       setShowOnboarding(true)
     }
-    // Load all checklists from Supabase for heatmap
+    // Load today's checklist + all checklists from Supabase
+    const todaySD = getTodaySessionDate()
+    dl.getChecklist(todaySD).then(cl => {
+      if (cl.savedAt) setTodayChecklist(cl)
+    }).catch(() => {})
     dl.getAllChecklists().then(setAllChecklists).catch(() => setAllChecklists([]))
     setLoading(false)
   }, [])

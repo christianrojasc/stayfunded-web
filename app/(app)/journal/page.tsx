@@ -924,9 +924,7 @@ export default function JournalPage() {
             >
               Collapse All
             </button>
-            <button className="p-1.5 rounded-lg hover:bg-[var(--border)] transition-colors ml-1">
-              <Settings size={15} className="text-[var(--text-muted)]" />
-            </button>
+
           </div>
         )}
       </div>

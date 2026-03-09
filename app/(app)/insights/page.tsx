@@ -738,34 +738,68 @@ function BehaviorStat({ label, value, bad, detail }: { label: string; value: num
 }
 
 function TimeHeatmap({ data }: { data: TimeHeatmapCell[] }) {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+  // Futures session: Sunday 6PM EST → Friday 5PM EST
+  // Columns: Sun, Mon, Tue, Wed, Thu, Fri
+  // Rows: 6PM, 7PM, ..., 11PM, 12AM, 1AM, ..., 4PM, 5PM
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+  // dayOfWeek mapping: 7=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri
+  const dowOrder = [7, 1, 2, 3, 4, 5]
+  // Session hours: 18,19,20,21,22,23, 0,1,2,...,16,17
+  const sessionHours = [
+    ...Array.from({ length: 6 }, (_, i) => 18 + i),   // 18-23 (6PM-11PM)
+    ...Array.from({ length: 18 }, (_, i) => i),         // 0-17  (12AM-5PM)
+  ]
+
   const cellMap = new Map<string, TimeHeatmapCell>()
   let maxAbsPnl = 1
-  let minHour = 23, maxHour = 0
   for (const c of data) {
     cellMap.set(`${c.hour}-${c.dayOfWeek}`, c)
     if (Math.abs(c.avgPnl) > maxAbsPnl) maxAbsPnl = Math.abs(c.avgPnl)
-    if (c.hour < minHour) minHour = c.hour
-    if (c.hour > maxHour) maxHour = c.hour
   }
-  // ±1 hour buffer, clamp to 0-23
-  minHour = Math.max(0, minHour - 1)
-  maxHour = Math.min(23, maxHour + 1)
-  const hours = Array.from({ length: maxHour - minHour + 1 }, (_, i) => i + minHour)
+
+  // Determine which hours actually have data (or neighbor data) to trim empty rows
+  const hoursWithData = new Set<number>()
+  for (const c of data) hoursWithData.add(c.hour)
+
+  // Find session range that has data, with 1-hour buffer
+  let firstIdx = sessionHours.length, lastIdx = -1
+  for (let i = 0; i < sessionHours.length; i++) {
+    if (hoursWithData.has(sessionHours[i])) {
+      if (i < firstIdx) firstIdx = i
+      if (i > lastIdx) lastIdx = i
+    }
+  }
+  if (firstIdx > lastIdx) { firstIdx = 0; lastIdx = sessionHours.length - 1 }
+  firstIdx = Math.max(0, firstIdx - 1)
+  lastIdx = Math.min(sessionHours.length - 1, lastIdx + 1)
+  const visibleHours = sessionHours.slice(firstIdx, lastIdx + 1)
+
+  // Is this cell within valid futures session hours?
+  function isValidSession(dow: number, hour: number): boolean {
+    // Sunday: only 6PM (18) onwards
+    if (dow === 7) return hour >= 18
+    // Friday: only up to 5PM (17)
+    if (dow === 5) return hour <= 17
+    // Mon-Thu: all hours valid
+    return true
+  }
 
   return (
     <div>
-      <div className="grid gap-[3px]" style={{ gridTemplateColumns: `36px repeat(5, 1fr)` }}>
+      <div className="grid gap-[3px]" style={{ gridTemplateColumns: `36px repeat(6, 1fr)` }}>
         <div />
         {days.map(d => (
           <div key={d} className="text-center text-[10px] font-semibold text-[var(--text-muted)] pb-1">{d}</div>
         ))}
-        {hours.map(hour => (
+        {visibleHours.map(hour => (
           <div key={hour} className="contents">
             <div className="text-right pr-2 text-[10px] flex items-center justify-end text-[var(--text-muted)] h-8">
               {hour % 12 || 12}{hour >= 12 ? 'p' : 'a'}
             </div>
-            {[1, 2, 3, 4, 5].map(dow => {
+            {dowOrder.map(dow => {
+              if (!isValidSession(dow, hour)) {
+                return <div key={dow} className="h-8 rounded-lg" style={{ background: 'transparent' }} />
+              }
               const cell = cellMap.get(`${hour}-${dow}`)
               const intensity = cell ? Math.min(Math.abs(cell.avgPnl) / maxAbsPnl, 1) : 0
               const isProfit = cell ? cell.avgPnl >= 0 : true

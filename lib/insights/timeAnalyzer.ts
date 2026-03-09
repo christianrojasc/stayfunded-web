@@ -146,7 +146,7 @@ export function analyzeTime(trades: Trade[]): { insights: Insight[]; heatmap: Ti
   for (const t of closed) {
     const hour = getTradeHour(t)
     const dow = getTradeDayOfWeek(t)
-    if (hour === null || dow > 5) continue
+    if (hour === null || dow === 6) continue // exclude Saturday only
     const key = `${hour}-${dow}`
     const cell = heatmapMap.get(key) || { hour, dayOfWeek: dow, pnl: 0, count: 0, avgPnl: 0 }
     cell.pnl += t.netPnl

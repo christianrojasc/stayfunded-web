@@ -49,6 +49,22 @@ function AccountHealthCard() {
   const dailyLossUsed = Math.max(0, -todayPnl)
   const daysTradedCount = new Set(accountTrades.map(t => t.sessionDate)).size
 
+  // Calculate distance from drawdown floor
+  const currentBalance = selected.startingBalance + totalPnl
+  const isTrailing = selected.drawdownType === 'trailing'
+  let drawdownFloor = selected.startingBalance - selected.maxLossLimit
+  if (isTrailing && accountTrades.length > 0) {
+    // For trailing: floor = highWaterMark - maxLossLimit
+    let hwm = selected.startingBalance
+    let runningBal = selected.startingBalance
+    for (const t of accountTrades) {
+      runningBal += t.pnl - (t.fees || 0)
+      if (runningBal > hwm) hwm = runningBal
+    }
+    drawdownFloor = hwm - selected.maxLossLimit
+  }
+  const distanceFromDrawdown = currentBalance - drawdownFloor
+
   const drawdownPct = selected.maxLossLimit > 0 ? drawdownUsed / selected.maxLossLimit : 0
   const dailyPct = selected.dailyLossLimit && selected.dailyLossLimit > 0
     ? dailyLossUsed / selected.dailyLossLimit : null
@@ -95,7 +111,7 @@ function AccountHealthCard() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Max Drawdown */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
@@ -110,6 +126,26 @@ function AccountHealthCard() {
           </div>
           <p className="text-[11px]" style={{ color: barColor(drawdownPct, true) }}>
             ${(selected.maxLossLimit - drawdownUsed).toFixed(0)} remaining
+          </p>
+        </div>
+
+        {/* Distance from Drawdown */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-[var(--text-muted)] font-medium">Distance</span>
+            <span className={`font-mono font-semibold ${distanceFromDrawdown > selected.maxLossLimit * 0.5 ? 'text-[#4ADE80]' : distanceFromDrawdown > selected.maxLossLimit * 0.2 ? 'text-[#F59E0B]' : 'text-[#EF4444]'}`}>
+              ${distanceFromDrawdown.toFixed(0)}
+            </span>
+          </div>
+          <div className="h-2 rounded-full bg-[var(--border)] overflow-hidden">
+            <div className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${Math.min((distanceFromDrawdown / (selected.maxLossLimit * 2)) * 100, 100)}%`,
+                backgroundColor: distanceFromDrawdown > selected.maxLossLimit * 0.5 ? '#4ADE80' : distanceFromDrawdown > selected.maxLossLimit * 0.2 ? '#F59E0B' : '#EF4444'
+              }} />
+          </div>
+          <p className="text-[11px] text-[var(--text-muted)]">
+            above {isTrailing ? 'trailing' : 'static'} floor (${drawdownFloor.toLocaleString()})
           </p>
         </div>
 

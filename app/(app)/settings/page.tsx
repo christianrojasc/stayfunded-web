@@ -100,6 +100,7 @@ export default function SettingsPage() {
     { id: 'fees', label: 'Fees' },
     { id: 'subscription', label: 'Subscription' },
     { id: 'data', label: 'Data' },
+    { id: 'contact', label: 'Contact Us' },
   ]
 
   useEffect(() => {
@@ -738,6 +739,86 @@ export default function SettingsPage() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'contact' && (
+        <div className="space-y-8">
+          <SectionHeader title="Contact Us" description="Get in touch with the StayFunded team" />
+
+          <div className="space-y-6">
+            {/* Email */}
+            <div className="p-5 rounded-xl border border-[var(--border)]" style={{ background: 'var(--bg-card)' }}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-[#4ADE80]/10 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-[var(--text-primary)]">Email Support</p>
+                  <p className="text-xs text-[var(--text-secondary)]">We typically respond within 24 hours</p>
+                </div>
+              </div>
+              <a href="mailto:support@stayfunded.app"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-[#4ADE80] bg-[#4ADE80]/10 border border-[#4ADE80]/20 hover:bg-[#4ADE80]/20 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                support@stayfunded.app
+              </a>
+            </div>
+
+            {/* Twitter/X */}
+            <div className="p-5 rounded-xl border border-[var(--border)]" style={{ background: 'var(--bg-card)' }}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-[#1DA1F2]/10 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#1DA1F2"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-[var(--text-primary)]">Twitter / X</p>
+                  <p className="text-xs text-[var(--text-secondary)]">Follow us for updates and tips</p>
+                </div>
+              </div>
+              <a href="https://x.com/StayFundedApp" target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-[#1DA1F2] bg-[#1DA1F2]/10 border border-[#1DA1F2]/20 hover:bg-[#1DA1F2]/20 transition-colors">
+                <ExternalLink size={14} />
+                @StayFundedApp
+              </a>
+            </div>
+
+            {/* Feature Request */}
+            <div className="p-5 rounded-xl border border-[var(--border)]" style={{ background: 'var(--bg-card)' }}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.855z"/></svg>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-[var(--text-primary)]">Feature Requests</p>
+                  <p className="text-xs text-[var(--text-secondary)]">Have an idea? We&apos;d love to hear it</p>
+                </div>
+              </div>
+              <a href="mailto:features@stayfunded.app?subject=Feature Request"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-purple-400 bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                features@stayfunded.app
+              </a>
+            </div>
+
+            {/* Bug Report */}
+            <div className="p-5 rounded-xl border border-[var(--border)]" style={{ background: 'var(--bg-card)' }}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-[#EF4444]/10 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 3.8-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/></svg>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-[var(--text-primary)]">Report a Bug</p>
+                  <p className="text-xs text-[var(--text-secondary)]">Found something broken? Let us know</p>
+                </div>
+              </div>
+              <a href="mailto:bugs@stayfunded.app?subject=Bug Report"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-[#EF4444] bg-[#EF4444]/10 border border-[#EF4444]/20 hover:bg-[#EF4444]/20 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                bugs@stayfunded.app
+              </a>
+            </div>
           </div>
         </div>
       )}

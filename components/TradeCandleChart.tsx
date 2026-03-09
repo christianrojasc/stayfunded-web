@@ -41,8 +41,10 @@ export default function TradeCandleChart({ trade }: Props) {
       exitTs = Math.floor(midday.getTime() / 1000) + 3600
     }
 
-    const from = entryTs - 1800
-    const to = exitTs + 1800
+    // Pad the window — max context per interval
+    const padSeconds = iv === '1H' ? 86400 : iv === '15m' ? 43200 : iv === '5m' ? 28800 : 14400
+    const from = entryTs - padSeconds
+    const to = exitTs + padSeconds
 
     try {
       const res = await fetch(`/api/candles?symbol=${encodeURIComponent(symbol)}&interval=${iv}&from=${from}&to=${to}`)
@@ -133,28 +135,30 @@ export default function TradeCandleChart({ trade }: Props) {
       borderDownColor: '#EF4444',
       wickUpColor: '#4ADE80',
       wickDownColor: '#EF4444',
+      lastValueVisible: false,
+      priceLineVisible: false,
     })
 
     series.setData(candles)
 
-    // Entry price line
+    // Entry price line (axis label shows price, no title to avoid overlap with markers)
     series.createPriceLine({
       price: trade.entryPrice,
       color: '#fb923c',
-      lineWidth: 2,
+      lineWidth: 1,
       lineStyle: LineStyle.Dashed,
       axisLabelVisible: true,
-      title: 'Entry',
+      title: '',
     })
 
     // Exit price line
     series.createPriceLine({
       price: trade.exitPrice,
       color: trade.netPnl >= 0 ? '#4ADE80' : '#EF4444',
-      lineWidth: 2,
+      lineWidth: 1,
       lineStyle: LineStyle.Dashed,
       axisLabelVisible: true,
-      title: 'Exit',
+      title: '',
     })
 
     // Markers

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { X, StickyNote, TrendingUp, TrendingDown, LineChart, BarChart3, Check } from 'lucide-react'
 import { Trade } from '@/lib/types'
 import { formatAccountNumber } from '@/lib/utils'
@@ -95,14 +95,117 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
     }
   }
 
-  const runningPnlData = Array.from({ length: 21 }, (_, i) => {
-    const pct = i / 20
-    const price = trade.entryPrice + (trade.exitPrice - trade.entryPrice) * pct
-    const pnl = trade.side === 'Long'
-      ? (price - trade.entryPrice) * trade.contracts * spec.multiplier
-      : (trade.entryPrice - price) * trade.contracts * spec.multiplier
-    return { step: i, pnl: parseFloat(pnl.toFixed(2)) }
-  })
+  // Fetch real 1m candle data for running P&L
+  const [runningPnlData, setRunningPnlData] = useState<{ time: string; pnl: number }[]>([])
+  const [pnlLoading, setPnlLoading] = useState(true)
+
+  useEffect(() => {
+    if (tab !== 'pnl') return
+    let cancelled = false
+
+    async function fetchRunningPnl() {
+      setPnlLoading(true)
+      try {
+        if (!trade.entryTime || !trade.exitTime) {
+          // No time data — show simple entry→exit
+          setRunningPnlData([
+            { time: 'Entry', pnl: 0 },
+            { time: 'Exit', pnl: trade.netPnl },
+          ])
+          setPnlLoading(false)
+          return
+        }
+
+        // Build timestamps — Tradovate times are CT (UTC-6)
+        const entryDate = new Date(`${trade.date}T${trade.entryTime}-06:00`)
+        const exitDate = new Date(`${trade.date}T${trade.exitTime}-06:00`)
+        const entryTs = Math.floor(entryDate.getTime() / 1000)
+        const exitTs = Math.floor(exitDate.getTime() / 1000)
+
+        const symbol = trade.symbol.replace(/[A-Z]\d{2}$/, '').replace(/\d+$/, '')
+        const yahooMap: Record<string, string> = {
+          ES: 'ES=F', MES: 'MES=F', NQ: 'NQ=F', MNQ: 'MNQ=F',
+          YM: 'YM=F', MYM: 'MYM=F', RTY: 'RTY=F', M2K: 'M2K=F',
+          CL: 'CL=F', MCL: 'MCL=F', GC: 'GC=F', MGC: 'MGC=F',
+        }
+        const yahooSymbol = yahooMap[symbol] || `${symbol}=F`
+
+        const res = await fetch(`/api/candles?symbol=${encodeURIComponent(yahooSymbol)}&interval=1m&from=${entryTs - 60}&to=${exitTs + 60}`)
+        const data = await res.json()
+        const result = data?.chart?.result?.[0]
+
+        if (cancelled) return
+
+        if (!result?.timestamp?.length) {
+          setRunningPnlData([
+            { time: 'Entry', pnl: 0 },
+            { time: 'Exit', pnl: trade.netPnl },
+          ])
+          setPnlLoading(false)
+          return
+        }
+
+        const timestamps = result.timestamp as number[]
+        const quotes = result.indicators?.quote?.[0]
+        const points: { time: string; pnl: number }[] = []
+
+        // Entry point
+        points.push({ time: formatTime(entryTs), pnl: 0 })
+
+        // Each candle close between entry and exit
+        for (let i = 0; i < timestamps.length; i++) {
+          const ts = timestamps[i]
+          const close = quotes?.close?.[i]
+          if (close == null || ts < entryTs || ts > exitTs) continue
+
+          const unrealizedPnl = trade.side === 'Long'
+            ? (close - trade.entryPrice) * trade.contracts * spec.multiplier
+            : (trade.entryPrice - close) * trade.contracts * spec.multiplier
+
+          points.push({ time: formatTime(ts), pnl: parseFloat(unrealizedPnl.toFixed(2)) })
+        }
+
+        // Exit point (actual realized P&L before fees)
+        points.push({ time: formatTime(exitTs), pnl: trade.pnl })
+
+        // Dedupe by time
+        const seen = new Set<string>()
+        const deduped = points.filter(p => {
+          if (seen.has(p.time)) return false
+          seen.add(p.time)
+          return true
+        })
+
+        if (!cancelled) {
+          setRunningPnlData(deduped.length > 1 ? deduped : [
+            { time: 'Entry', pnl: 0 },
+            { time: 'Exit', pnl: trade.netPnl },
+          ])
+        }
+      } catch {
+        if (!cancelled) {
+          setRunningPnlData([
+            { time: 'Entry', pnl: 0 },
+            { time: 'Exit', pnl: trade.netPnl },
+          ])
+        }
+      }
+      if (!cancelled) setPnlLoading(false)
+    }
+
+    fetchRunningPnl()
+    return () => { cancelled = true }
+  }, [tab, trade, spec.multiplier])
+
+  function formatTime(ts: number): string {
+    // Convert UTC epoch to CT display (UTC-6)
+    const d = new Date(ts * 1000)
+    const ct = new Date(d.getTime() - 6 * 3600 * 1000)
+    const h = ct.getUTCHours()
+    const m = ct.getUTCMinutes()
+    const s = ct.getUTCSeconds()
+    return `${h}:${m.toString().padStart(2, '0')}${s ? ':' + s.toString().padStart(2, '0') : ''}`
+  }
 
   return (
     <>
@@ -228,6 +331,11 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
                   <p className="text-xs text-[var(--text-secondary)] uppercase tracking-wider font-medium mb-4">
                     Running P&L — Entry to Exit
                   </p>
+                  {pnlLoading ? (
+                    <div className="flex items-center justify-center h-[85%] text-[var(--text-secondary)] text-xs">
+                      Loading P&L data...
+                    </div>
+                  ) : (
                   <ResponsiveContainer width="100%" height="85%">
                     <AreaChart data={runningPnlData}>
                       <defs>
@@ -237,16 +345,17 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                      <XAxis dataKey="step" tick={{ fill: '#64748B', fontSize: 11 }} axisLine={{ stroke: '#1E293B' }} tickLine={false} />
-                      <YAxis tick={{ fill: '#64748B', fontSize: 11 }} axisLine={{ stroke: '#1E293B' }} tickLine={false} tickFormatter={(v: number) => `$${v}`} />
+                      <XAxis dataKey="time" tick={{ fill: '#64748B', fontSize: 11 }} axisLine={{ stroke: '#1E293B' }} tickLine={false} />
+                      <YAxis tick={{ fill: '#64748B', fontSize: 11 }} axisLine={{ stroke: '#1E293B' }} tickLine={false} tickFormatter={(v: number) => `$${v.toFixed(0)}`} />
                       <Tooltip
                         contentStyle={{ background: '#111827', border: '1px solid #1E293B', borderRadius: '8px', color: '#F1F5F9', fontSize: '12px' }}
                         formatter={(value: any) => [`$${Number(value ?? 0).toFixed(2)}`, 'P&L']}
-                        labelFormatter={(l: any) => `Step ${l ?? ''}`}
+                        labelFormatter={(l: any) => l ?? ''}
                       />
                       <Area type="monotone" dataKey="pnl" stroke={isWin ? '#4ADE80' : '#EF4444'} strokeWidth={2} fill="url(#pnlGrad)" />
                     </AreaChart>
                   </ResponsiveContainer>
+                  )}
                 </div>
               </div>
             )}

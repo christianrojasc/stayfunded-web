@@ -144,7 +144,7 @@ function CustomTooltip({ active, payload, label }: any) {
       {balance !== undefined && (
         <div className="flex items-center justify-between gap-4 mb-1">
           <span className="text-[var(--text-muted)] flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
+            <span className="w-2 h-2 rounded-full bg-[#4ADE80] inline-block" />
             Balance
           </span>
           <span className="font-mono font-bold text-[var(--text-primary)]">{fmtDollar(balance)}</span>
@@ -400,11 +400,11 @@ export default function TradingGrowthCurve() {
           <ResponsiveContainer width="100%" height={280}>
             <AreaChart data={equityPoints} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
               <defs>
-                {/* Gold/amber gradient for balance area */}
+                {/* Dynamic gradient: green when profitable, red when in loss */}
                 <linearGradient id="tgcBalanceGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#F59E0B" stopOpacity={0.28} />
-                  <stop offset="60%" stopColor="#F59E0B" stopOpacity={0.08} />
-                  <stop offset="100%" stopColor="#F59E0B" stopOpacity={0.01} />
+                  <stop offset="0%" stopColor={kpiData && kpiData.totalPnl >= 0 ? '#4ADE80' : '#EF4444'} stopOpacity={0.28} />
+                  <stop offset="60%" stopColor={kpiData && kpiData.totalPnl >= 0 ? '#4ADE80' : '#EF4444'} stopOpacity={0.08} />
+                  <stop offset="100%" stopColor={kpiData && kpiData.totalPnl >= 0 ? '#4ADE80' : '#EF4444'} stopOpacity={0.01} />
                 </linearGradient>
               </defs>
 
@@ -469,15 +469,15 @@ export default function TradingGrowthCurve() {
                 }}
               />
 
-              {/* Balance area (gold/amber) */}
+              {/* Balance area (green when profitable, red when in loss) */}
               <Area
                 type="monotone"
                 dataKey="balance"
-                stroke="#F59E0B"
+                stroke={kpiData && kpiData.totalPnl >= 0 ? '#4ADE80' : '#EF4444'}
                 strokeWidth={2.5}
                 fill="url(#tgcBalanceGrad)"
                 dot={false}
-                activeDot={{ r: 5, fill: '#F59E0B', stroke: '#0d1117', strokeWidth: 2 }}
+                activeDot={{ r: 5, fill: kpiData && kpiData.totalPnl >= 0 ? '#4ADE80' : '#EF4444', stroke: '#0d1117', strokeWidth: 2 }}
               />
 
               {/* Hidden areas for tooltip data */}
@@ -503,7 +503,7 @@ export default function TradingGrowthCurve() {
           {/* Legend */}
           <div className="flex items-center gap-4 mt-1 pl-14 flex-wrap">
             <span className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)]">
-              <span className="w-8 h-0.5 bg-amber-400 rounded inline-block" />
+              <span className={`w-8 h-0.5 rounded inline-block ${kpiData && kpiData.totalPnl >= 0 ? 'bg-[#4ADE80]' : 'bg-[#EF4444]'}`} />
               Balance
             </span>
             {profitTargetLevel && (
@@ -579,8 +579,8 @@ export default function TradingGrowthCurve() {
               value={fmtDollar(kpiData.currentEquity)}
               change={kpiData.equityChangePct}
               subValue={`${fmtPct(kpiData.equityChangePct)} from ${fmtDollar(selected?.startingBalance ?? aggregatedStartingBalance, true)}`}
-              icon={<Activity size={16} className="text-amber-400" />}
-              iconBg="bg-amber-400/10"
+              icon={<Activity size={16} className={kpiData.totalPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#EF4444]'} />}
+              iconBg={kpiData.totalPnl >= 0 ? 'bg-[#4ADE80]/10' : 'bg-[#EF4444]/10'}
             />
 
             {/* 4. MAX DRAWDOWN */}

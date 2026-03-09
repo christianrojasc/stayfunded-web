@@ -341,6 +341,15 @@ function parseTradovateTradesExport(rows: string[][]): ParseResult {
   return { trades, errors, skipped, detectedFirm, detectedAccountNumber }
 }
 
+// Sanitize a CSV cell to prevent formula injection (=, +, -, @, \t, \r)
+function sanitizeCell(val: string): string {
+  const trimmed = val.trim()
+  if (/^[=+\-@\t\r]/.test(trimmed)) {
+    return trimmed.replace(/^[=+\-@\t\r]+/, '')
+  }
+  return trimmed
+}
+
 function parseCSV(text: string): string[][] {
   const rows: string[][] = []
   let cur = ''
@@ -365,7 +374,8 @@ function parseCSV(text: string): string[][] {
     }
   }
   if (cur || row.length) { row.push(cur); if (row.some(c => c.trim())) rows.push(row) }
-  return rows
+  // Sanitize all cells against CSV injection
+  return rows.map(r => r.map(sanitizeCell))
 }
 
 // Format 3: Tradovate Orders Export CSV

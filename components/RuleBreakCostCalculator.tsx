@@ -143,7 +143,7 @@ export default function RuleBreakCostCalculator({ trades, allTrades, rules, comp
             {line.ruleName} — <span className="text-[#FF453A]">Broken</span>
           </div>
           {line.details.map((d, j) => (
-            <div key={j} className="text-xs text-[#94A3B8] pl-3">{d}</div>
+            <div key={j} className="text-xs text-[var(--text-secondary)] pl-3">{d}</div>
           ))}
         </div>
       ))}

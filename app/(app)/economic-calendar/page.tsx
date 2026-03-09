@@ -2,8 +2,8 @@
 import { useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 
-const GLASS = 'rounded-2xl border border-[var(--border)]'
-const CARD_BG = 'rgba(255,255,255,0.04)'
+const GLASS = 'glass-card'
+const CARD_BG = 'var(--bg-card)'
 
 interface EconEvent {
   date: string   // YYYY-MM-DD
@@ -46,7 +46,7 @@ const EVENTS: EconEvent[] = [
 const impactConfig = {
   high:   { dot: 'bg-[#FF453A]', text: 'text-[#FF453A]', badge: '#FF453A' },
   medium: { dot: 'bg-amber-400', text: 'text-amber-400', badge: '#F59E0B' },
-  low:    { dot: 'bg-[#475569]', text: 'text-[#475569]', badge: '#475569' },
+  low:    { dot: 'bg-[#475569]', text: 'text-[var(--text-muted)]', badge: '#475569' },
 }
 
 const FILTERS = ['All', 'High', 'Medium', 'Low'] as const
@@ -89,7 +89,7 @@ export default function EconomicCalendarPage() {
           <h1 className="text-xl font-bold text-[var(--text-primary)]">Economic Calendar</h1>
           <p className="text-[var(--text-secondary)] text-sm mt-0.5">High-impact US macro events affecting futures markets · EST</p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{background:CARD_BG, border:'1px solid rgba(255,255,255,0.06)'}}>
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{background:CARD_BG, border:'1px solid var(--border)'}}>
           <AlertCircle className="w-4 h-4 text-[#FF453A]" />
           <span className="text-[var(--text-primary)] text-sm font-semibold">{highCount} high-impact</span>
           <span className="text-[var(--text-secondary)] text-sm">events</span>
@@ -105,7 +105,7 @@ export default function EconomicCalendarPage() {
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               filter === f ? 'bg-[#4ADE80] text-black' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             }`}
-            style={filter !== f ? {background:CARD_BG, border:'1px solid rgba(255,255,255,0.06)'} : {}}
+            style={filter !== f ? {background:CARD_BG, border:'1px solid var(--border)'} : {}}
           >
             {f}
           </button>
@@ -126,7 +126,7 @@ export default function EconomicCalendarPage() {
               <span className="text-[var(--text-primary)] font-bold text-sm">{formatDate(date)}</span>
               <span className="text-[#334155] text-xs">{new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
               <div className="flex-1 h-px bg-[var(--border)]" />
-              <span className="text-[#475569] text-xs">{grouped[date].filter(e => e.impact === 'high').length} high</span>
+              <span className="text-[var(--text-muted)] text-xs">{grouped[date].filter(e => e.impact === 'high').length} high</span>
             </div>
 
             {/* Events for this date */}
@@ -146,7 +146,7 @@ export default function EconomicCalendarPage() {
                 return (
                   <div
                     key={i}
-                    className="grid grid-cols-12 gap-2 px-4 py-3 border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02] transition-colors"
+                    className="grid grid-cols-12 gap-2 px-4 py-3 border-b border-[var(--border)] last:border-0 hover:bg-[var(--bg-card)] transition-colors"
                   >
                     <div className="col-span-1 flex items-center">
                       <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
@@ -158,7 +158,7 @@ export default function EconomicCalendarPage() {
                         <span className="px-1.5 py-0.5 rounded text-[10px] font-bold text-black" style={{background:'#FF453A'}}>!</span>
                       )}
                     </div>
-                    <div className="hidden sm:block col-span-2 text-right text-[#94A3B8] text-sm">{event.forecast || '—'}</div>
+                    <div className="hidden sm:block col-span-2 text-right text-[var(--text-secondary)] text-sm">{event.forecast || '—'}</div>
                     <div className="hidden sm:block col-span-2 text-right text-[var(--text-secondary)] text-sm">{event.previous || '—'}</div>
                     <div className="hidden sm:block col-span-1 text-right text-sm">
                       {event.actual

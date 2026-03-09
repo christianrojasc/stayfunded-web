@@ -4,16 +4,17 @@ import { Insight, TimeHeatmapCell } from './types'
 function getTradeHour(trade: Trade): number | null {
   const t = trade.entryTime
   if (!t) return null
-  const d = new Date(t)
-  if (isNaN(d.getTime())) return null
-  return d.getHours()
+  // entryTime is "HH:MM" or "HH:MM:SS"
+  const hour = parseInt(t.split(':')[0], 10)
+  return isNaN(hour) ? null : hour
 }
 
 function getTradeDayOfWeek(trade: Trade): number {
   // 1=Mon ... 5=Fri
-  const d = new Date(trade.sessionDate || trade.date)
-  const day = d.getUTCDay()
-  return day === 0 ? 7 : day // Convert Sunday=0 to 7
+  const dateStr = trade.sessionDate || trade.date
+  const d = new Date(dateStr + 'T12:00:00') // noon to avoid timezone edge
+  const day = d.getDay()
+  return day === 0 ? 7 : day
 }
 
 export function analyzeTime(trades: Trade[]): { insights: Insight[]; heatmap: TimeHeatmapCell[] } {

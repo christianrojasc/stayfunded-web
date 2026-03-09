@@ -12,7 +12,7 @@ import * as dl from '@/lib/data-layer'
 import { useSubscription } from '@/hooks/useSubscription'
 import { useAuth } from '@/components/AuthContext'
 import UpgradeModal from '@/components/UpgradeModal'
-import { getSettings as localGetSettings } from '@/lib/storage'
+import { getSettings as localGetSettings, getSetups, saveSetups as persistSetups } from '@/lib/storage'
 import { Account, AppSettings, DEFAULT_FEE_SCHEDULE } from '@/lib/types'
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -23,8 +23,8 @@ function StyledInput({ className = '', ...props }: React.InputHTMLAttributes<HTM
   return (
     <input
       {...props}
-      className={`w-full px-4 py-3 rounded-2xl text-sm text-[var(--text-primary)] focus:outline-none transition-all placeholder:text-[#475569] ${className}`}
-      style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}
+      className={`w-full px-4 py-3 rounded-2xl text-sm text-[var(--text-primary)] focus:outline-none transition-all placeholder:text-[var(--text-muted)] ${className}`}
+      style={{background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)'}}
     />
   )
 }
@@ -34,7 +34,7 @@ function StyledSelect({ className = '', children, ...props }: React.SelectHTMLAt
     <select
       {...props}
       className={`w-full px-4 py-3 rounded-2xl text-sm text-[var(--text-primary)] focus:outline-none transition-all appearance-none cursor-pointer ${className}`}
-      style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}
+      style={{background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)'}}
     >
       {children}
     </select>
@@ -87,10 +87,15 @@ export default function SettingsPage() {
   const [pwMessage, setPwMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [pwLoading, setPwLoading] = useState(false)
 
+  // Setups state
+  const [setups, setSetups] = useState<string[]>([])
+  const [newSetup, setNewSetup] = useState('')
+
   const tabs = [
     { id: 'profile', label: 'Profile' },
     { id: 'security', label: 'Security' },
     { id: 'general', label: 'General' },
+    { id: 'setups', label: 'Setups' },
     { id: 'fees', label: 'Fees' },
     { id: 'subscription', label: 'Subscription' },
     { id: 'data', label: 'Data' },
@@ -102,6 +107,7 @@ export default function SettingsPage() {
       setSettings(s)
       setFeeSchedule(s.feeSchedule || DEFAULT_FEE_SCHEDULE)
       setAccounts(dl.getAccounts())
+      setSetups(getSetups())
     }
     load()
   }, [])
@@ -222,7 +228,7 @@ export default function SettingsPage() {
             className={`px-4 sm:px-5 py-3 text-sm font-semibold transition-all relative whitespace-nowrap flex-shrink-0 ${
               activeTab === tab.id
                 ? 'text-[var(--text-primary)]'
-                : 'text-[var(--text-secondary)] hover:text-[#94A3B8]'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)]'
             }`}
           >
             {tab.label}
@@ -261,13 +267,13 @@ export default function SettingsPage() {
             </div>
             <div>
               <FieldLabel>Email Address</FieldLabel>
-              <div className="w-full px-4 py-3 rounded-2xl text-sm text-[#94A3B8]" style={{background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.06)'}}>
+              <div className="w-full px-4 py-3 rounded-2xl text-sm text-[var(--text-secondary)]" style={{background:'var(--bg-card)', border:'1px solid var(--border)'}}>
                 {user?.email}
               </div>
             </div>
             <div>
               <FieldLabel>Auth Method</FieldLabel>
-              <div className="w-full px-4 py-3 rounded-2xl text-sm text-[#94A3B8]" style={{background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.06)'}}>
+              <div className="w-full px-4 py-3 rounded-2xl text-sm text-[var(--text-secondary)]" style={{background:'var(--bg-card)', border:'1px solid var(--border)'}}>
                 Email &amp; Password
               </div>
             </div>
@@ -401,12 +407,126 @@ export default function SettingsPage() {
         </div>
       )}
 
+      {/* Setups Tab */}
+      {activeTab === 'setups' && (
+        <div className="space-y-8">
+          <SectionHeader title="Setup Manager" description="Define your trade setups so you can quickly tag trades after importing." />
+
+          {/* Add new setup */}
+          <div className="flex gap-3">
+            <StyledInput
+              placeholder="e.g. Breakout, Pullback, VWAP Bounce..."
+              value={newSetup}
+              onChange={e => setNewSetup(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && newSetup.trim()) {
+                  const updated = [...setups, newSetup.trim()]
+                  setSetups(updated)
+                  persistSetups(updated)
+                  setNewSetup('')
+                }
+              }}
+            />
+            <button
+              onClick={() => {
+                if (!newSetup.trim()) return
+                const updated = [...setups, newSetup.trim()]
+                setSetups(updated)
+                persistSetups(updated)
+                setNewSetup('')
+              }}
+              className="px-5 py-3 rounded-2xl bg-[var(--green)] text-white text-sm font-semibold hover:opacity-90 transition-all whitespace-nowrap"
+            >
+              Add
+            </button>
+          </div>
+
+          {/* Setups list */}
+          {setups.length === 0 ? (
+            <div className="glass-card p-8 text-center">
+              <p className="text-[var(--text-muted)] text-sm">No setups defined yet. Add your first setup above.</p>
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                {['Breakout', 'Pullback', 'VWAP Bounce', 'Gap Fill', 'Trend Continuation', 'Reversal', 'Range Fade', 'Opening Drive'].map(s => (
+                  <button
+                    key={s}
+                    onClick={() => {
+                      const updated = [...setups, s]
+                      setSetups(updated)
+                      persistSetups(updated)
+                    }}
+                    className="px-3 py-1.5 rounded-full text-xs font-medium border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--green)] hover:text-[var(--green)] transition-all"
+                  >
+                    + {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="glass-card divide-y divide-[var(--border)]">
+              {setups.map((setup, idx) => (
+                <div key={idx} className="flex items-center justify-between px-5 py-3.5">
+                  <span className="text-sm font-medium text-[var(--text-primary)]">{setup}</span>
+                  <div className="flex items-center gap-2">
+                    {/* Move up */}
+                    {idx > 0 && (
+                      <button
+                        onClick={() => {
+                          const updated = [...setups]
+                          ;[updated[idx - 1], updated[idx]] = [updated[idx], updated[idx - 1]]
+                          setSetups(updated)
+                          persistSetups(updated)
+                        }}
+                        className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--border)] transition-all"
+                        title="Move up"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 15l-6-6-6 6"/></svg>
+                      </button>
+                    )}
+                    {/* Move down */}
+                    {idx < setups.length - 1 && (
+                      <button
+                        onClick={() => {
+                          const updated = [...setups]
+                          ;[updated[idx], updated[idx + 1]] = [updated[idx + 1], updated[idx]]
+                          setSetups(updated)
+                          persistSetups(updated)
+                        }}
+                        className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--border)] transition-all"
+                        title="Move down"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+                      </button>
+                    )}
+                    {/* Delete */}
+                    <button
+                      onClick={() => {
+                        const updated = setups.filter((_, i) => i !== idx)
+                        setSetups(updated)
+                        persistSetups(updated)
+                      }}
+                      className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[#FF453A] hover:bg-[var(--border)] transition-all"
+                      title="Remove"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <p className="text-xs text-[var(--text-muted)]">
+            These setups will appear as a dropdown when editing trades in the Trade Detail drawer.
+          </p>
+        </div>
+      )}
+
       {/* Fees Tab */}
       {activeTab === 'fees' && (
         <div className="space-y-8">
           <SectionHeader title="Fee Schedule" description="Per-side fees for round-trip calculations" />
 
-          <div className="flex items-center justify-between p-4 rounded-2xl" style={{background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)'}}>
+          <div className="flex items-center justify-between p-4 rounded-2xl" style={{background:'var(--bg-card)', border:'1px solid var(--border)'}}>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-[#F59E0B]/10 flex items-center justify-center">
                 <Zap size={16} className="text-[#F59E0B]" />
@@ -438,7 +558,7 @@ export default function SettingsPage() {
                 <p className="text-[10px] font-bold tracking-widest uppercase text-[var(--text-secondary)] mb-2 px-1">{group.label}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {group.symbols.filter(sym => sym in feeSchedule).map(sym => (
-                    <div key={sym} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] hover:border-[#F59E0B]/30 transition-colors" style={{background:'rgba(255,255,255,0.02)'}}>
+                    <div key={sym} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] hover:border-[#F59E0B]/30 transition-colors" style={{background:'var(--bg-card)'}}>
                       <span className="text-xs font-mono font-bold text-[var(--text-primary)] w-8 flex-shrink-0">{sym}</span>
                       <span className="text-xs text-[var(--text-secondary)]">$</span>
                       <input
@@ -458,7 +578,7 @@ export default function SettingsPage() {
           <div className="flex gap-3">
             <button
               onClick={() => setFeeSchedule(DEFAULT_FEE_SCHEDULE)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" style={{background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)'}}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" style={{background:'var(--bg-card)', border:'1px solid var(--border)'}}
             >
               <RotateCcw size={12} /> Reset to Defaults
             </button>
@@ -512,7 +632,7 @@ export default function SettingsPage() {
                   {['CSV import (Tradovate)', 'Advanced analytics & charts', 'Trade journal', 'Progress tracker', 'AI insights', 'Reports'].map(f => (
                     <div key={f} className="flex items-center gap-2">
                       <Check size={14} className="text-[#4ADE80]" />
-                      <span className="text-sm text-[#94A3B8]">{f}</span>
+                      <span className="text-sm text-[var(--text-secondary)]">{f}</span>
                     </div>
                   ))}
                 </div>
@@ -522,7 +642,7 @@ export default function SettingsPage() {
                 onClick={handleManageBilling}
                 disabled={portalLoading}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all"
-                style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}
+                style={{background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)'}}
               >
                 <ExternalLink size={14} />
                 {portalLoading ? 'Loading...' : 'Manage Billing & Invoices'}
@@ -555,7 +675,7 @@ export default function SettingsPage() {
                   {['CSV import (Tradovate)', 'Basic analytics', 'Trade journal', 'Progress tracker'].map(f => (
                     <div key={f} className="flex items-center gap-2">
                       <Check size={14} className="text-[#4ADE80]" />
-                      <span className="text-sm text-[#94A3B8]">{f}</span>
+                      <span className="text-sm text-[var(--text-secondary)]">{f}</span>
                     </div>
                   ))}
                 </div>
@@ -611,7 +731,7 @@ export default function SettingsPage() {
                     <Trash2 size={12} /> Yes, Delete Everything
                   </button>
                   <button onClick={() => setShowResetConfirm(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold text-[var(--text-secondary)] border border-[var(--border)] hover:border-[#64748B]/30 transition-colors" style={{background:'rgba(255,255,255,0.03)'}}>
+                    className="px-4 py-2 rounded-xl text-xs font-semibold text-[var(--text-secondary)] border border-[var(--border)] hover:border-[#64748B]/30 transition-colors" style={{background:'var(--bg-card)'}}>
                     Cancel
                   </button>
                 </div>

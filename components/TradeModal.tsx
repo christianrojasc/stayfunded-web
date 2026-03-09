@@ -99,18 +99,18 @@ export default function TradeModal({ trade, onSave, onUpdate, onDelete, onClose 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-[#1E2D3D]/30 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
       <div
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-scale-in"
+        className="relative bg-[var(--bg-primary)] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-scale-in"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[#F0F3F7]">
           <div>
-            <h2 className="text-lg font-bold text-[#1E2D3D]">{isEdit ? 'Edit Trade' : 'Log Trade'}</h2>
-            <p className="text-xs text-[#9EB0C0] mt-0.5">Fill in your trade details</p>
+            <h2 className="text-lg font-bold text-[var(--text-primary)]">{isEdit ? 'Edit Trade' : 'Log Trade'}</h2>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Fill in your trade details</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-[#F5F7FA] text-[#9EB0C0] hover:text-[#1E2D3D] transition-colors">
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
             <X size={18} />
           </button>
         </div>
@@ -153,7 +153,7 @@ export default function TradeModal({ trade, onSave, onUpdate, onDelete, onClose 
                         ? s === 'Long'
                           ? 'bg-green-50 border-green-200 text-[#2D8B4E]'
                           : 'bg-orange-50 border-orange-200 text-orange-600'
-                        : 'border-[#E4E9F0] text-[#9EB0C0] hover:border-[#C8D4E0]'
+                        : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'
                     }`}
                   >{s}</button>
                 ))}
@@ -192,7 +192,7 @@ export default function TradeModal({ trade, onSave, onUpdate, onDelete, onClose 
                   {netPnl >= 0 ? '+' : ''}{netPnl.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                 </p>
               </div>
-              <div className="text-right text-xs text-[#9EB0C0]">
+              <div className="text-right text-xs text-[var(--text-secondary)]">
                 <p>Gross: {rawPnl >= 0 ? '+' : ''}{rawPnl.toFixed(2)}</p>
                 <p>Fees: −{feesNum.toFixed(2)}</p>
                 <p className="mt-1 font-medium text-[var(--text-muted)]">{contracts} contract{contracts > 1 ? 's' : ''} · {form.symbol}</p>

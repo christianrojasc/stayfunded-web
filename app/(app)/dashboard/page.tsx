@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { useTrades } from '@/components/TradeContext'
 import { useSubscription } from '@/hooks/useSubscription'
+import ProGate from '@/components/ProGate'
 import { useState } from 'react'
 import UpgradeModal from '@/components/UpgradeModal'
 import { Sparkles, X } from 'lucide-react'
@@ -327,7 +328,7 @@ export default function Dashboard() {
           )}
           <button
             onClick={toggleTheme}
-            className="hidden sm:flex p-2.5 rounded-xl border border-[#E4E9F0]  bg-white dark:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[#1E2D3D] dark:hover:text-[var(--text-primary)] hover:bg-[#F5F7FA] dark:hover:bg-[#1c2129] transition-all"
+            className="hidden sm:flex p-2.5 rounded-xl border border-[var(--border)]  bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-all"
           >
             {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           </button>
@@ -345,6 +346,7 @@ export default function Dashboard() {
       <AccountHealthCard />
 
       {/* Trading Growth Curve */}
+      <ProGate feature="dashboard_charts" mode="blur">
       <TradingGrowthCurve />
 
       {/* KPI Grid */}
@@ -501,7 +503,7 @@ export default function Dashboard() {
                     </td>
                   </tr>
                 ) : recentTrades.map((t, idx) => (
-                  <tr key={t.id} className={idx % 2 === 1 ? "bg-white/[0.02]" : ""}>
+                  <tr key={t.id} className={idx % 2 === 1 ? "bg-[var(--bg-card)]" : ""}>
                     <td className="font-medium text-[var(--text-muted)]">{t.date}</td>
                     <td><span className="font-mono font-bold text-[var(--text-primary)] text-xs bg-[var(--border)] px-2 py-0.5 rounded-lg">{t.symbol}</span></td>
                     <td>
@@ -522,6 +524,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      </ProGate>
     </div>
   )
 }

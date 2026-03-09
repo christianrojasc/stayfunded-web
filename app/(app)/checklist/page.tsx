@@ -10,10 +10,10 @@ import { getTodaySessionDate } from '@/lib/session'
 import { v4 as uuidv4 } from 'uuid'
 
 const CATEGORY_COLORS: Record<string, string> = {
-  mindset: 'text-purple-600 bg-purple-50 dark:bg-purple-500/10',
-  analysis: 'text-blue-600 bg-blue-50 dark:bg-blue-500/10',
-  risk: 'text-amber-600 bg-amber-50 dark:bg-amber-500/10',
-  technical: 'text-[#2D8B4E] bg-green-50 dark:bg-[#2D8B4E]/10',
+  mindset: 'text-purple-400 bg-purple-50',
+  analysis: 'text-blue-400 bg-blue-50',
+  risk: 'text-amber-400 bg-amber-50',
+  technical: 'text-[#2D8B4E] bg-green-50/10',
 }
 
 const READINESS_LABELS = ['', 'Not ready', 'Getting there', 'Mostly ready', 'Ready', 'Fully focused']
@@ -108,7 +108,7 @@ export default function ChecklistPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="page-title">Pre-Session Checklist</h1>
-          <p className="text-sm text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-0.5">
+          <p className="text-sm text-[var(--text-muted)] mt-0.5">
             Session: {sessionDate} · Resets at 6 PM EST
           </p>
         </div>
@@ -134,7 +134,7 @@ export default function ChecklistPage() {
       <div className="glass-card p-6">
         <div className="flex items-center justify-between mb-5">
           <div>
-            <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">Readiness Score</p>
+            <p className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">Readiness Score</p>
             <div className="flex items-end gap-3">
               <span className="text-5xl font-light font-mono" style={{ color: grade.color }}>
                 {checkedCount}<span className="text-2xl text-[var(--text-muted)]">/{totalCount}</span>
@@ -145,7 +145,7 @@ export default function ChecklistPage() {
           {/* Circular progress */}
           <div className="relative w-20 h-20">
             <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
-              <circle cx="40" cy="40" r="32" fill="none" stroke="#E4E9F0" strokeWidth="6" className="dark:stroke-[#21262d]" />
+              <circle cx="40" cy="40" r="32" fill="none" stroke="var(--border)" strokeWidth="6" />
               <circle
                 cx="40" cy="40" r="32" fill="none"
                 stroke={grade.color}
@@ -163,7 +163,7 @@ export default function ChecklistPage() {
         </div>
 
         {/* Progress bar */}
-        <div className="h-2 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-card)] overflow-hidden">
+        <div className="h-2 rounded-full bg-[var(--bg-secondary)] overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{ width: `${pct}%`, backgroundColor: grade.color }}
@@ -173,32 +173,32 @@ export default function ChecklistPage() {
 
       {/* Checklist Items */}
       <div className="glass-card overflow-hidden">
-        <div className="p-4 border-b border-[#E4E9F0] dark:border-[var(--border)] flex items-center justify-between">
+        <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
           <h2 className="section-title flex items-center gap-2">
             <ClipboardCheck size={16} className="text-[#2D8B4E]" />
             Items
           </h2>
-          <span className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">{checkedCount}/{totalCount} checked</span>
+          <span className="text-xs text-[var(--text-muted)]">{checkedCount}/{totalCount} checked</span>
         </div>
 
-        <div className="divide-y divide-[#E4E9F0] dark:divide-[#21262d]">
+        <div className="divide-y divide-[var(--border)]">
           {checklist.items.map((item) => (
             <div
               key={item.id}
               className={`flex items-center gap-3 px-4 py-3.5 transition-colors ${
-                !editMode ? 'hover:bg-[#F5F7FA] dark:hover:bg-[#1c2129] cursor-pointer' : ''
+                !editMode ? 'hover:bg-[var(--bg-secondary)] cursor-pointer' : ''
               }`}
               onClick={!editMode ? () => toggleItem(item.id) : undefined}
             >
               {item.checked ? (
                 <CheckSquare size={20} className="text-[#2D8B4E] flex-shrink-0" />
               ) : (
-                <Square size={20} className="text-[#C8D4E0] dark:text-[#30363d] flex-shrink-0" />
+                <Square size={20} className="text-[var(--text-muted)] flex-shrink-0" />
               )}
               <span className={`flex-1 text-sm transition-colors ${
                 item.checked
-                  ? 'text-[#1E2D3D] dark:text-[var(--text-primary)] font-medium'
-                  : 'text-[var(--text-muted)] dark:text-[var(--text-muted)]'
+                  ? 'text-[var(--text-primary)] font-medium'
+                  : 'text-[var(--text-muted)]'
               }`}>{item.text}</span>
               {item.category && (
                 <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full capitalize ${CATEGORY_COLORS[item.category] ?? ''}`}>
@@ -208,7 +208,7 @@ export default function ChecklistPage() {
               {editMode && (
                 <button
                   onClick={(e) => { e.stopPropagation(); removeItem(item.id) }}
-                  className="p-1 rounded-lg text-[#9EB0C0] hover:text-[#EF4444] hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
+                  className="p-1 rounded-lg text-[var(--text-secondary)] hover:text-[#EF4444] hover:bg-[var(--border)] transition-all"
                 >
                   <Trash2 size={13} />
                 </button>
@@ -219,7 +219,7 @@ export default function ChecklistPage() {
 
         {/* Add Item (edit mode) */}
         {editMode && (
-          <div className="p-4 border-t border-[#E4E9F0] dark:border-[var(--border)] space-y-2">
+          <div className="p-4 border-t border-[var(--border)] space-y-2">
             <div className="flex gap-2">
               <input
                 className="input-field flex-1 text-sm"
@@ -260,7 +260,7 @@ export default function ChecklistPage() {
               className={`flex-1 py-3 rounded-xl text-lg font-bold border transition-all ${
                 readinessScore >= n
                   ? 'border-[#2D8B4E] text-[#4ADE50]'
-                  : 'border-[#E4E9F0] dark:border-[var(--border)] text-[#C8D4E0] dark:text-[#30363d]'
+                  : 'border-[var(--border)] text-[var(--text-muted)]'
               }`}
               style={readinessScore >= n ? { background: `${READINESS_COLORS[n]}15` } : {}}
             >
@@ -277,11 +277,11 @@ export default function ChecklistPage() {
 
       {/* Warnings */}
       {(pct < 70 || (checklist.readiness > 0 && checklist.readiness < 3)) && (
-        <div className="p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl flex items-start gap-3">
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
           <AlertCircle size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">Caution: Not fully prepared</p>
-            <p className="text-xs text-amber-600 dark:text-amber-300 mt-1">
+            <p className="text-sm font-semibold text-amber-700">Caution: Not fully prepared</p>
+            <p className="text-xs text-amber-400 mt-1">
               {pct < 70 && `Only ${checkedCount} of ${totalCount} items checked. `}
               {checklist.readiness > 0 && checklist.readiness < 3 && 'Your readiness rating is low. '}
               Consider waiting until you&apos;re better prepared before trading.
@@ -296,7 +296,7 @@ export default function ChecklistPage() {
           <Save size={14} />
           {saved ? 'Saved!' : 'Save Checklist'}
         </button>
-        <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">
+        <p className="text-xs text-[var(--text-muted)]">
           Auto-resets at the start of each new trading session (6 PM EST)
         </p>
       </div>

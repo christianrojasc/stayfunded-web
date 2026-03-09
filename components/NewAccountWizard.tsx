@@ -11,7 +11,9 @@ import {
 } from '@/lib/types'
 import * as dl from '@/lib/data-layer'
 import { useAuth } from '@/components/AuthContext'
+import { useSubscription } from '@/hooks/useSubscription'
 import UpgradeModal from '@/components/UpgradeModal'
+import { FREE_ACCOUNT_LIMIT } from '@/lib/plan-limits'
 
 interface Props {
   detectedFirm: string | null
@@ -69,6 +71,7 @@ export default function NewAccountWizard({
   const [saved, setSaved]                   = useState(false)
   const [accountLimitHit, setAccountLimitHit] = useState(false)
   const { user } = useAuth()
+  const { isPro } = useSubscription()
 
   // ── Sync fields when plan changes ─────────────────────────────────────────
   function applyPlan(plan: PropFirmPlan | null) {
@@ -94,10 +97,10 @@ export default function NewAccountWizard({
 
   // ── Submit ────────────────────────────────────────────────────────────────
   async function handleCreate() {
-    // Enforce free plan account limit (max 3)
-    if (user?.user_metadata?.plan !== 'pro') {
+    // Enforce free plan account limit
+    if (!isPro) {
       const existing = await dl.getPropAccounts()
-      if (existing.length >= 3) {
+      if (existing.length >= FREE_ACCOUNT_LIMIT) {
         setAccountLimitHit(true)
         return
       }
@@ -166,7 +169,7 @@ export default function NewAccountWizard({
                 <h2 className="text-[var(--text-primary)] font-bold text-lg leading-tight">
                   New Account Detected
                 </h2>
-                <p className="text-xs text-[var(--text-muted)] dark:text-[#94A3B8] mt-0.5">
+                <p className="text-xs text-[var(--text-muted)] mt-0.5">
                   Set up this account before importing trades
                 </p>
               </div>
@@ -183,7 +186,7 @@ export default function NewAccountWizard({
           {detectedAccountNumber && (
             <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-xl bg-[#2D8B4E]/10 border border-[#2D8B4E]/20">
               <Sparkles size={13} className="text-[#4ADE50] flex-shrink-0" />
-              <span className="text-xs text-[#2D8B4E] dark:text-[#4ADE50] font-medium">
+              <span className="text-xs text-[#2D8B4E] font-medium">
                 Detected:&nbsp;<span className="font-mono">{detectedAccountNumber}</span>
                 {detectedFirm && <> &mdash; {detectedFirm}</>}
               </span>
@@ -197,7 +200,7 @@ export default function NewAccountWizard({
           {/* Firm + Plan row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">
                 Prop Firm
               </label>
               <div className="relative">
@@ -215,7 +218,7 @@ export default function NewAccountWizard({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">
                 Plan
               </label>
               <div className="relative">
@@ -239,7 +242,7 @@ export default function NewAccountWizard({
           {/* Nickname + Account number */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">
                 Nickname
               </label>
               <input
@@ -251,7 +254,7 @@ export default function NewAccountWizard({
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">
                 Account Number
               </label>
               <input
@@ -266,7 +269,7 @@ export default function NewAccountWizard({
 
           {/* Status */}
           <div>
-            <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
+            <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">
               Status
             </label>
             <div className="flex gap-2">
@@ -293,13 +296,13 @@ export default function NewAccountWizard({
           <div>
             <div className="flex items-center gap-1.5 mb-3">
               <Info size={12} className="text-[var(--text-muted)]" />
-              <span className="text-[10px] text-[var(--text-muted)] dark:text-[var(--text-secondary)]">
+              <span className="text-[10px] text-[var(--text-muted)]">
                 Pre-filled from plan — adjust as needed
               </span>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">
                   Starting Balance ($)
                 </label>
                 <input
@@ -310,7 +313,7 @@ export default function NewAccountWizard({
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">
                   Max Drawdown / Loss ($)
                 </label>
                 <input
@@ -321,7 +324,7 @@ export default function NewAccountWizard({
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">
                   Daily Loss Limit ($)
                   <span className="ml-1 text-[var(--text-muted)] font-normal">(optional)</span>
                 </label>
@@ -334,7 +337,7 @@ export default function NewAccountWizard({
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">
                   Profit Target ($)
                   <span className="ml-1 text-[var(--text-muted)] font-normal">(optional)</span>
                 </label>
@@ -347,7 +350,7 @@ export default function NewAccountWizard({
                 />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">
                   Drawdown Type
                 </label>
                 <div className="grid grid-cols-4 gap-1.5">
@@ -387,7 +390,7 @@ export default function NewAccountWizard({
         >
           <button
             onClick={onSkip}
-            className="text-xs text-[var(--text-muted)] hover:text-[var(--text-muted)] dark:hover:text-[#94A3B8] transition-colors font-medium"
+            className="text-xs text-[var(--text-muted)] hover:text-[var(--text-muted)] transition-colors font-medium"
           >
             Skip — import without linking
           </button>

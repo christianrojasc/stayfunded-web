@@ -155,7 +155,7 @@ export function generateWhatIfs(
     const dowPnl = new Map<number, { pnl: number; count: number }>()
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     for (const t of closed) {
-      const d = new Date(t.sessionDate || t.date)
+      const d = new Date((t.sessionDate || t.date) + 'T12:00:00')
       const dow = d.getUTCDay()
       if (dow === 0 || dow === 6) continue
       const s = dowPnl.get(dow) || { pnl: 0, count: 0 }

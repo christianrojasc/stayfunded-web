@@ -212,24 +212,24 @@ export default function TradeChart({ trade }: Props) {
         </span>
 
         <span className="text-[var(--text-secondary)]">
-          <span className="font-mono font-bold text-[#94A3B8]">{trade.symbol}</span>
+          <span className="font-mono font-bold text-[var(--text-secondary)]">{trade.symbol}</span>
           {' · '}
           {trade.date}
         </span>
 
         <span className="text-[var(--text-secondary)]">
           Entry{' '}
-          <span className="font-mono text-[#94A3B8]">{trade.entryPrice.toFixed(2)}</span>
+          <span className="font-mono text-[var(--text-secondary)]">{trade.entryPrice.toFixed(2)}</span>
         </span>
 
         <span className="text-[var(--text-secondary)]">
           Exit{' '}
-          <span className="font-mono text-[#94A3B8]">{trade.exitPrice.toFixed(2)}</span>
+          <span className="font-mono text-[var(--text-secondary)]">{trade.exitPrice.toFixed(2)}</span>
         </span>
 
         {trade.contracts > 1 && (
           <span className="text-[var(--text-secondary)]">
-            <span className="font-mono text-[#94A3B8]">{trade.contracts}</span>
+            <span className="font-mono text-[var(--text-secondary)]">{trade.contracts}</span>
             {' cts'}
           </span>
         )}
@@ -250,7 +250,7 @@ export default function TradeChart({ trade }: Props) {
       />
 
       {/* Legend */}
-      <div className="flex items-center gap-4 mt-1.5 text-[10px] text-[#475569]">
+      <div className="flex items-center gap-4 mt-1.5 text-[10px] text-[var(--text-muted)]">
         <span className="flex items-center gap-1">
           <span className="inline-block w-0 h-0 border-l-[5px] border-r-[5px] border-b-[7px] border-l-transparent border-r-transparent border-b-[#4ADE50]" />
           Entry

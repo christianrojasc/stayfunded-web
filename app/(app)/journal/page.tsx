@@ -9,6 +9,9 @@ import RuleBreakCostCalculator from '@/components/RuleBreakCostCalculator'
 import { format, parse } from 'date-fns'
 import AccountSelector from '@/components/AccountSelector'
 import { motion, AnimatePresence } from 'framer-motion'
+import dynamic from 'next/dynamic'
+
+const TradeDetailDrawer = dynamic(() => import('@/components/TradeDetailDrawer'), { ssr: false })
 import {
   AreaChart, Area, ResponsiveContainer, CartesianGrid,
 } from 'recharts'
@@ -256,7 +259,7 @@ function InlineNotes({ sessionDate }: { sessionDate: string }) {
 }
 
 /* --- Trades Tab --- */
-function TradesTab({ trades }: { trades: Trade[] }) {
+function TradesTab({ trades, onSelectTrade }: { trades: Trade[]; onSelectTrade?: (trade: Trade) => void }) {
   const sorted = [...trades].sort((a, b) => a.date.localeCompare(b.date))
   return (
     <div className="overflow-x-auto">
@@ -275,17 +278,20 @@ function TradesTab({ trades }: { trades: Trade[] }) {
         <tbody>
           {sorted.map((t, i) => {
             const pnl = t.pnl ?? 0
-            let timeStr = ''
-            try { timeStr = format(new Date(t.date), 'HH:mm:ss') } catch { timeStr = t.date }
+            const timeStr = t.entryTime || ''
             return (
-              <tr key={i} className={i % 2 === 1 ? 'bg-white/[0.02]' : ''}>
-                <td className="py-2 px-2 text-[var(--text-primary)]">{timeStr}</td>
-                <td className="py-2 px-2 text-[var(--text-primary)]">{t.symbol || '—'}</td>
-                <td className="py-2 px-2 text-[var(--text-primary)]">{t.side || '—'}</td>
-                <td className="py-2 px-2 text-right text-[var(--text-primary)]">{t.contracts ?? '—'}</td>
-                <td className="py-2 px-2 text-right text-[var(--text-primary)]">{t.entryPrice != null ? `$${Number(t.entryPrice).toFixed(2)}` : '—'}</td>
-                <td className="py-2 px-2 text-right text-[var(--text-primary)]">{t.exitPrice != null ? `$${Number(t.exitPrice).toFixed(2)}` : '—'}</td>
-                <td className={`py-2 px-2 text-right font-medium ${pnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+              <tr
+                key={i}
+                className={`${i % 2 === 1 ? 'bg-[var(--bg-card)]' : ''} ${onSelectTrade ? 'cursor-pointer hover:bg-[var(--border)] transition-colors' : ''}`}
+                onClick={() => onSelectTrade?.(t)}
+              >
+                <td className="py-2.5 px-2 text-[var(--text-primary)]">{timeStr}</td>
+                <td className="py-2.5 px-2 text-[var(--text-primary)] font-medium">{t.symbol || '—'}</td>
+                <td className="py-2.5 px-2 text-[var(--text-primary)]">{t.side || '—'}</td>
+                <td className="py-2.5 px-2 text-right text-[var(--text-primary)]">{t.contracts ?? '—'}</td>
+                <td className="py-2.5 px-2 text-right text-[var(--text-primary)]">{t.entryPrice != null ? `$${Number(t.entryPrice).toFixed(2)}` : '—'}</td>
+                <td className="py-2.5 px-2 text-right text-[var(--text-primary)]">{t.exitPrice != null ? `$${Number(t.exitPrice).toFixed(2)}` : '—'}</td>
+                <td className={`py-2.5 px-2 text-right font-semibold ${pnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
                   {formatPnl(pnl)}
                 </td>
               </tr>
@@ -494,7 +500,7 @@ function DayModal({
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
       onClick={handleBackdrop}
     >
-      <div className="w-full max-w-2xl bg-[#0c1120] border border-[var(--border)] rounded-none sm:rounded-3xl overflow-hidden min-h-screen sm:min-h-0 sm:max-h-[90vh] flex flex-col">
+      <div className="w-full max-w-2xl bg-[var(--bg-primary)] border border-[var(--border)] rounded-none sm:rounded-3xl overflow-hidden min-h-screen sm:min-h-0 sm:max-h-[90vh] flex flex-col shadow-2xl">
         {/* Header */}
         <div className="px-6 pt-5 pb-4 flex-shrink-0">
           <div className="flex items-center justify-between mb-3">
@@ -535,7 +541,7 @@ function DayModal({
                 key={t.key}
                 onClick={() => setTab(t.key)}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-                  tab === t.key ? 'bg-white text-black' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  tab === t.key ? 'bg-[var(--bg-card)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                 }`}
               >
                 {t.label}
@@ -570,7 +576,7 @@ function DayModal({
   )
 }
 
-function getDayGrade(sessionDate: string): { grade: string; color: string } | null {
+function getDayGrade(sessionDate: string): { grade: string; color: string; followed: number; total: number; brokenRules: string[] } | null {
   if (typeof window === 'undefined') return null
   try {
     const raw = localStorage.getItem(`sf_journal_rules_${sessionDate}`)
@@ -578,11 +584,13 @@ function getDayGrade(sessionDate: string): { grade: string; color: string } | nu
     const compliance = JSON.parse(raw) as Record<string, boolean>
     const rulesRaw = localStorage.getItem('sf_rules')
     if (!rulesRaw) return null
-    const rules = JSON.parse(rulesRaw) as { id: string }[]
+    const rules = JSON.parse(rulesRaw) as { id: string; name: string }[]
     if (rules.length === 0) return null
     const followed = rules.filter(r => compliance[r.id] === true).length
+    const brokenRules = rules.filter(r => compliance[r.id] !== true).map(r => r.name)
     const pct = (followed / rules.length) * 100
-    return calcDailyGrade(pct)
+    const gradeData = calcDailyGrade(pct)
+    return { ...gradeData, followed, total: rules.length, brokenRules }
   } catch {
     return null
   }
@@ -600,14 +608,26 @@ function RowStat({ label, value, colored, positive }: { label: string; value: st
   )
 }
 
+function StatBlock({ label, value, colored, positive }: { label: string; value: string; colored?: boolean; positive?: boolean }) {
+  return (
+    <div className="flex flex-col min-w-[70px]">
+      <span className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-semibold mb-0.5">{label}</span>
+      <span className={`text-sm font-bold ${colored ? (positive ? 'text-[#4ADE80]' : 'text-[#FF453A]') : 'text-[var(--text-primary)]'}`}>
+        {value}
+      </span>
+    </div>
+  )
+}
+
 /* --- Day Row --- */
-function DayRow({ group, index, groups, onOpenModal, expanded, onToggleExpand }: {
+function DayRow({ group, index, groups, onOpenModal, expanded, onToggleExpand, onSelectTrade }: {
   group: DayGroup
   index: number
   groups: DayGroup[]
   onOpenModal: (idx: number) => void
   expanded: boolean
   onToggleExpand: () => void
+  onSelectTrade?: (trade: Trade) => void
 }) {
   const pos = group.pnl >= 0
   const isEmpty = group.trades.length === 0
@@ -631,20 +651,20 @@ function DayRow({ group, index, groups, onOpenModal, expanded, onToggleExpand }:
         style={{ background: 'var(--bg-secondary)' }}
         onClick={() => onOpenModal(index)}
       >
-        <div className="flex items-center gap-3 px-4 py-2.5">
-          <Calendar size={16} className="text-[var(--text-muted)] flex-shrink-0" />
-          <span className="text-sm text-[var(--text-muted)] whitespace-nowrap">
+        <div className="flex items-center gap-3 px-5 py-4">
+          <Calendar size={18} className="text-[var(--text-muted)] flex-shrink-0" />
+          <span className="text-sm font-medium text-[var(--text-muted)] whitespace-nowrap">
             {group.dayOfWeek} <span className="opacity-50">|</span> {group.monthDateYear}
           </span>
           <span className="flex-1" />
           {isWeekend ? (
-            <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Weekend</span>
+            <span className="text-[11px] text-[var(--text-muted)] uppercase tracking-wider font-medium">Weekend</span>
           ) : (
-            <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">No trades</span>
+            <span className="text-[11px] text-[var(--text-muted)] uppercase tracking-wider font-medium">No trades</span>
           )}
           <button
             onClick={(e) => { e.stopPropagation(); onToggleExpand() }}
-            className="px-3 py-1 rounded-lg hover:bg-[var(--border)] transition-colors text-xs font-medium text-[var(--text-muted)]"
+            className="px-3 py-1.5 rounded-lg hover:bg-[var(--border)] transition-colors text-xs font-medium text-[var(--text-muted)]"
           >
             Journal
           </button>
@@ -663,79 +683,65 @@ function DayRow({ group, index, groups, onOpenModal, expanded, onToggleExpand }:
   }
 
   return (
-    <div className="rounded-xl bg-[var(--bg-card)] border border-[var(--border)] overflow-hidden transition-all hover:border-[var(--border-strong)]" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-      {/* Main row */}
-      <div className="flex items-center gap-3 sm:gap-4 px-4 py-3 flex-wrap lg:flex-nowrap">
-        {/* Left: Date + Sparkline + P&L — clickable */}
-        <div className="flex items-center gap-3 min-w-[280px] sm:min-w-[320px] flex-shrink-0 cursor-pointer" onClick={() => onOpenModal(index)}>
-          <Calendar size={18} className="text-[var(--text-muted)] flex-shrink-0" />
-          <div className="flex flex-col mr-2 min-w-[130px]">
-            <span className="text-sm font-bold text-[var(--text-primary)] whitespace-nowrap">
-              {group.dayOfWeek} <span className="text-[var(--text-muted)] font-normal">|</span> {group.monthDateYear}
-            </span>
-            <span className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
-              {hasJournal ? 'Journaled' : 'Net P&L'}
-            </span>
-          </div>
-          <div className="flex-shrink-0 hidden sm:block">
-            <Sparkline data={group.equityCurve} positive={pos} />
-          </div>
-          <span className={`text-lg font-bold flex-shrink-0 ${pos ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
-            {formatPnl(group.pnl)}
+    <div className="glass-card overflow-hidden transition-all hover:border-[var(--border-strong)]">
+      {/* Header: Date + Actions */}
+      <div className="flex items-center justify-between px-6 pt-5 pb-3">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => onOpenModal(index)}>
+          <Calendar size={18} className="text-[var(--text-muted)]" />
+          <span className="text-base font-bold text-[var(--text-primary)] tracking-tight">
+            {group.dayOfWeek} <span className="text-[var(--text-muted)] font-normal">|</span> {group.monthDateYear}
           </span>
-        </div>
-
-        {/* Center: Stats row */}
-        <div className="flex items-center gap-1 overflow-x-auto flex-1 min-w-0 hide-scrollbar">
-          <RowStat label="Total Trades" value={group.trades.length} />
-          <div className="w-px h-6 bg-[var(--border)] flex-shrink-0" />
-          <RowStat label="Winrate" value={`${group.winRate.toFixed(0)}%`} />
-          <div className="w-px h-6 bg-[var(--border)] flex-shrink-0" />
-          <RowStat label="Gross P&L" value={formatPnl(group.grossPnl)} colored positive={group.grossPnl >= 0} />
-          <div className="w-px h-6 bg-[var(--border)] flex-shrink-0" />
-          <RowStat label="Volume" value={group.volume} />
-          <div className="w-px h-6 bg-[var(--border)] flex-shrink-0" />
-          <RowStat label="Winners" value={group.wins} />
-          <div className="w-px h-6 bg-[var(--border)] flex-shrink-0" />
-          <RowStat label="Losers" value={group.losses} />
-          <div className="w-px h-6 bg-[var(--border)] flex-shrink-0" />
-          <RowStat label="Commissions" value={`$${Math.abs(group.fees).toFixed(2)}`} />
-          <div className="w-px h-6 bg-[var(--border)] flex-shrink-0" />
-          <RowStat label="Profit Factor" value={group.profitFactor === Infinity ? '∞' : group.profitFactor.toFixed(2)} />
-        </div>
-
-        {/* Right: Actions */}
-        <div className="flex items-center gap-1 flex-shrink-0">
           {(() => {
             const gradeData = getDayGrade(group.sessionDate)
             if (!gradeData) return null
+            const tooltip = gradeData.brokenRules.length > 0
+              ? `${gradeData.followed}/${gradeData.total} rules followed\n\nBroke:\n${gradeData.brokenRules.map(r => `• ${r}`).join('\n')}`
+              : `${gradeData.followed}/${gradeData.total} rules followed\n\n✓ Perfect day!`
             return (
               <span
-                className="text-[10px] font-bold px-2 py-0.5 rounded-full mr-1"
-                style={{
-                  color: gradeData.color,
-                  background: `${gradeData.color}15`,
-                  border: `1px solid ${gradeData.color}30`,
-                }}
+                className="text-[10px] font-bold px-2.5 py-0.5 rounded-full cursor-help"
+                style={{ color: gradeData.color, background: `${gradeData.color}15`, border: `1px solid ${gradeData.color}30` }}
+                title={tooltip}
               >
                 {gradeData.grade}
               </span>
             )
           })()}
-          <button
-            onClick={(e) => { e.stopPropagation(); onOpenModal(index) }}
-            className="p-2 rounded-lg hover:bg-[var(--border)] transition-colors"
-            title="Edit in detail view"
-          >
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={(e) => { e.stopPropagation(); onOpenModal(index) }} className="p-2 rounded-lg hover:bg-[var(--border)] transition-colors" title="Edit">
             <Pencil size={15} className="text-[var(--text-secondary)]" />
           </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); onToggleExpand() }}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-[var(--border)] transition-colors text-xs font-medium text-[var(--text-secondary)]"
-          >
-            {expanded ? 'Collapse' : 'Expand'}
-            {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          <button onClick={(e) => { e.stopPropagation(); onToggleExpand() }}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--border)] transition-colors text-xs font-semibold text-[var(--text-secondary)]">
+            {expanded ? 'Collapse' : 'Expand'} {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </button>
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div className="flex items-start gap-6 px-6 pb-5 flex-wrap">
+        {/* Net P&L + Sparkline */}
+        <div className="flex flex-col cursor-pointer" onClick={() => onOpenModal(index)}>
+          <span className="text-[11px] uppercase tracking-wider text-[var(--text-muted)] font-medium mb-1">Net P&L</span>
+          <span className={`text-2xl font-bold ${pos ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+            {formatPnl(group.pnl)}
+          </span>
+          <div className="mt-2 hidden sm:block">
+            <Sparkline data={group.equityCurve} positive={pos} />
+          </div>
+        </div>
+
+        {/* Stats grid */}
+        <div className="flex flex-wrap items-start gap-x-8 gap-y-3 flex-1 pt-0.5">
+          <StatBlock label="TOTAL TRADES" value={String(group.trades.length)} />
+          <StatBlock label="WINRATE" value={`${group.winRate.toFixed(0)}%`} />
+          <StatBlock label="GROSS P&L" value={formatPnl(group.grossPnl)} colored positive={group.grossPnl >= 0} />
+          <StatBlock label="VOLUME" value={String(group.volume)} />
+          <StatBlock label="WINNERS" value={String(group.wins)} />
+          <StatBlock label="LOSERS" value={String(group.losses)} />
+          <StatBlock label="COMMISSIONS" value={`$${Math.abs(group.fees).toFixed(2)}`} />
+          <StatBlock label="PROFIT FACTOR" value={group.profitFactor === Infinity ? '∞' : group.profitFactor.toFixed(2)} />
         </div>
       </div>
 
@@ -754,7 +760,7 @@ function DayRow({ group, index, groups, onOpenModal, expanded, onToggleExpand }:
               {group.trades.length > 0 && (
                 <div>
                   <h4 className="text-xs font-semibold uppercase text-[var(--text-muted)] mb-2 tracking-wider">Trades</h4>
-                  <TradesTab trades={group.trades} />
+                  <TradesTab trades={group.trades} onSelectTrade={onSelectTrade} />
                 </div>
               )}
 
@@ -778,6 +784,7 @@ export default function JournalPage() {
   const [modalIndex, setModalIndex] = useState<number | null>(null)
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
   const [filter, setFilter] = useState<JournalFilter>('all')
+  const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null)
 
   // Month navigation
   const now = new Date()
@@ -924,7 +931,7 @@ export default function JournalPage() {
 
       {/* Day rows */}
       {groups.length === 0 ? (
-        <div className="rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] p-12 flex flex-col items-center gap-4 text-center">
+        <div className="glass-card p-12 flex flex-col items-center gap-4 text-center">
           <div className="w-16 h-16 rounded-2xl bg-[var(--border)] flex items-center justify-center">
             <BookOpen size={32} className="text-[var(--text-secondary)]" />
           </div>
@@ -942,6 +949,7 @@ export default function JournalPage() {
               onOpenModal={setModalIndex}
               expanded={expandedRows.has(g.sessionDate)}
               onToggleExpand={() => toggleRow(g.sessionDate)}
+              onSelectTrade={setSelectedTrade}
             />
           ))}
         </div>
@@ -955,6 +963,11 @@ export default function JournalPage() {
           onClose={handleClose}
           onNavigate={handleNavigate}
         />
+      )}
+
+      {/* Trade Detail Drawer */}
+      {selectedTrade && (
+        <TradeDetailDrawer trade={selectedTrade} onClose={() => setSelectedTrade(null)} />
       )}
 
       {/* Hide scrollbar utility */}

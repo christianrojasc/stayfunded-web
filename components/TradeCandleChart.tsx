@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { createChart, ColorType, LineStyle, CandlestickSeries, CandlestickData, Time, IChartApi, ISeriesApi, createSeriesMarkers } from 'lightweight-charts'
 import { Trade } from '@/lib/types'
+import { useTheme } from '@/components/ThemeContext'
 import { toYahooSymbol } from '@/lib/utils'
 import { Loader2 } from 'lucide-react'
 
@@ -10,16 +11,19 @@ interface Props {
   trade: Trade
 }
 
-const INTERVALS = ['1m', '5m', '15m', '1H'] as const
+const INTERVALS = ['1m', '5m', '15m', '1h'] as const
 type Interval = typeof INTERVALS[number]
 
 export default function TradeCandleChart({ trade }: Props) {
+  const { theme } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null)
   const [interval, setInterval] = useState<Interval>('1m')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [ohlc, setOhlc] = useState<{ open: number; high: number; low: number; close: number; time?: string } | null>(null)
+  const lastCandleRef = useRef<CandlestickData<Time> | null>(null)
 
   const fetchCandles = useCallback(async (iv: Interval): Promise<CandlestickData<Time>[] | null> => {
     const symbol = toYahooSymbol(trade.symbol)
@@ -42,7 +46,7 @@ export default function TradeCandleChart({ trade }: Props) {
     }
 
     // Pad the window — max context per interval
-    const padSeconds = iv === '1H' ? 86400 : iv === '15m' ? 43200 : iv === '5m' ? 28800 : 14400
+    const padSeconds = iv === '1h' ? 86400 : iv === '15m' ? 43200 : iv === '5m' ? 28800 : 14400
     const from = entryTs - padSeconds
     const to = exitTs + padSeconds
 
@@ -81,10 +85,10 @@ export default function TradeCandleChart({ trade }: Props) {
     setLoading(true)
     setError(false)
 
-    const fallbacks: Interval[] = iv === '1m' ? ['1m', '5m', '15m', '1H']
-      : iv === '5m' ? ['5m', '15m', '1H']
-      : iv === '15m' ? ['15m', '1H']
-      : ['1H']
+    const fallbacks: Interval[] = iv === '1m' ? ['1m', '5m', '15m', '1h']
+      : iv === '5m' ? ['5m', '15m', '1h']
+      : iv === '15m' ? ['15m', '1h']
+      : ['1h']
 
     let candles: CandlestickData<Time>[] | null = null
     for (const fb of fallbacks) {
@@ -107,24 +111,24 @@ export default function TradeCandleChart({ trade }: Props) {
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight,
       layout: {
-        background: { type: ColorType.Solid, color: '#0a0e17' },
-        textColor: '#8896b3',
+        background: { type: ColorType.Solid, color: theme === 'light' ? '#f8fafc' : '#0a0e17' },
+        textColor: theme === 'light' ? '#64748b' : '#8896b3',
       },
       grid: {
-        vertLines: { color: 'var(--text-muted)' },
-        horzLines: { color: 'var(--text-muted)' },
+        vertLines: { color: theme === 'light' ? '#e2e8f0' : '#1e293b' },
+        horzLines: { color: theme === 'light' ? '#e2e8f0' : '#1e293b' },
       },
       timeScale: {
         timeVisible: true,
         secondsVisible: false,
-        borderColor: 'var(--border)',
+        borderColor: theme === 'light' ? '#cbd5e1' : '#1e293b',
       },
       rightPriceScale: {
-        borderColor: 'var(--border)',
+        borderColor: theme === 'light' ? '#cbd5e1' : '#1e293b',
       },
       crosshair: {
-        vertLine: { color: 'var(--text-muted)' },
-        horzLine: { color: 'var(--text-muted)' },
+        vertLine: { color: theme === 'light' ? '#94a3b8' : '#475569' },
+        horzLine: { color: theme === 'light' ? '#94a3b8' : '#475569' },
       },
     })
 
@@ -162,8 +166,8 @@ export default function TradeCandleChart({ trade }: Props) {
     })
 
     // Markers
-    const entryCandle = findClosestCandle(candles, trade.date, trade.entryTime)
-    const exitCandle = findClosestCandle(candles, trade.date, trade.exitTime)
+    const entryCandle = findClosestCandle(candles, trade.date, trade.entryTime, trade.entryPrice)
+    const exitCandle = findClosestCandle(candles, trade.date, trade.exitTime, trade.exitPrice)
 
     const markers: any[] = []
     if (entryCandle) {
@@ -189,11 +193,32 @@ export default function TradeCandleChart({ trade }: Props) {
       createSeriesMarkers(series, markers)
     }
 
+    // Store last candle for default OHLC display
+    const lastCandle = candles[candles.length - 1]
+    lastCandleRef.current = lastCandle
+    setOhlc({ open: lastCandle.open, high: lastCandle.high, low: lastCandle.low, close: lastCandle.close })
+
+    // Subscribe to crosshair move for live OHLC
+    chart.subscribeCrosshairMove((param) => {
+      if (!param || !param.time || !param.seriesData) {
+        // Reset to last candle when cursor leaves
+        if (lastCandleRef.current) {
+          const lc = lastCandleRef.current
+          setOhlc({ open: lc.open, high: lc.high, low: lc.low, close: lc.close })
+        }
+        return
+      }
+      const data = param.seriesData.get(series) as CandlestickData<Time> | undefined
+      if (data) {
+        setOhlc({ open: data.open, high: data.high, low: data.low, close: data.close })
+      }
+    })
+
     chart.timeScale().fitContent()
     chartRef.current = chart
     seriesRef.current = series
     setLoading(false)
-  }, [fetchCandles, trade])
+  }, [fetchCandles, trade, theme])
 
   useEffect(() => {
     loadChart(interval)
@@ -223,29 +248,39 @@ export default function TradeCandleChart({ trade }: Props) {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center gap-1 px-4 py-2">
-        {INTERVALS.map(iv => (
-          <button
-            key={iv}
-            onClick={() => setInterval(iv)}
-            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-              interval === iv
-                ? 'bg-[#2D8B4E]/20 text-[#4ADE80]'
-                : 'text-[var(--text-secondary)] hover:text-[#94A3B8] hover:bg-[#111827]'
-            }`}
-          >
-            {iv}
-          </button>
-        ))}
+      <div className="flex items-center justify-between px-4 py-2">
+        <div className="flex items-center gap-1">
+          {INTERVALS.map(iv => (
+            <button
+              key={iv}
+              onClick={() => setInterval(iv)}
+              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                interval === iv
+                  ? 'bg-[var(--green)]/20 text-[var(--green)]'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+              }`}
+            >
+              {iv.toUpperCase()}
+            </button>
+          ))}
+        </div>
+        {ohlc && !loading && !error && (
+          <div className="flex items-center gap-3 text-[11px] font-mono">
+            <span className="text-[var(--text-muted)]">O <span className="font-semibold text-[var(--text-primary)]">{ohlc.open.toFixed(2)}</span></span>
+            <span className="text-[var(--text-muted)]">H <span className="font-semibold text-[#4ADE80]">{ohlc.high.toFixed(2)}</span></span>
+            <span className="text-[var(--text-muted)]">L <span className="font-semibold text-[#FF453A]">{ohlc.low.toFixed(2)}</span></span>
+            <span className="text-[var(--text-muted)]">C <span className={`font-semibold ${ohlc.close >= ohlc.open ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>{ohlc.close.toFixed(2)}</span></span>
+          </div>
+        )}
       </div>
       <div className="flex-1 relative" ref={containerRef}>
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#0a0e17] z-10">
+          <div className="absolute inset-0 flex items-center justify-center bg-[var(--bg-primary)] z-10">
             <Loader2 size={24} className="animate-spin text-[var(--text-secondary)]" />
           </div>
         )}
         {error && !loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#0a0e17] z-10">
+          <div className="absolute inset-0 flex items-center justify-center bg-[var(--bg-primary)] z-10">
             <p className="text-[var(--text-secondary)] text-sm">Chart unavailable</p>
           </div>
         )}
@@ -254,18 +289,52 @@ export default function TradeCandleChart({ trade }: Props) {
   )
 }
 
-function findClosestCandle(candles: CandlestickData<Time>[], date: string, time?: string): CandlestickData<Time> | null {
-  if (!time || !candles.length) return candles.length ? candles[Math.floor(candles.length / 2)] : null
-  // Tradovate timestamps are CT (UTC-6), match what fetchCandles uses
-  const target = new Date(`${date}T${time}-06:00`).getTime() / 1000
-  let closest = candles[0]
-  let minDiff = Math.abs((closest.time as number) - target)
-  for (const c of candles) {
-    const diff = Math.abs((c.time as number) - target)
-    if (diff < minDiff) {
-      minDiff = diff
-      closest = c
+function findClosestCandle(candles: CandlestickData<Time>[], date: string, time: string | undefined, price: number): CandlestickData<Time> | null {
+  if (!candles.length) return null
+  if (!time) {
+    // No time — find candle closest to the price
+    return findByPrice(candles, price)
+  }
+
+  // Try multiple timezone offsets: CT (-06:00), ET (-05:00), UTC
+  const offsets = ['-06:00', '-05:00', '-04:00', '+00:00']
+  let bestCandle = candles[0]
+  let bestScore = Infinity
+
+  for (const offset of offsets) {
+    const target = new Date(`${date}T${time}${offset}`).getTime() / 1000
+    if (isNaN(target)) continue
+
+    for (const c of candles) {
+      const timeDiff = Math.abs((c.time as number) - target)
+      // Price match: does this candle's range contain the trade price?
+      const priceInRange = price >= c.low && price <= c.high
+      // Score: prioritize price match, then time proximity
+      const score = priceInRange ? timeDiff : timeDiff + 100000
+      if (score < bestScore) {
+        bestScore = score
+        bestCandle = c
+      }
     }
   }
-  return closest
+
+  return bestCandle
+}
+
+function findByPrice(candles: CandlestickData<Time>[], price: number): CandlestickData<Time> {
+  let best = candles[0]
+  let bestDiff = Infinity
+  for (const c of candles) {
+    // Prefer candles that contain the price in their range
+    if (price >= c.low && price <= c.high) {
+      return c
+    }
+    const mid = (c.high + c.low) / 2
+    const diff = Math.abs(mid - price)
+    if (diff < bestDiff) {
+      bestDiff = diff
+      best = c
+    }
+  }
+  return best
 }

@@ -3,9 +3,10 @@ import { useMemo, useState } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, PieChart, Pie, Legend,
-  LineChart, Line, ReferenceLine, ReferenceDot
+  LineChart, Line, AreaChart, Area, ReferenceLine, ReferenceDot
 } from 'recharts'
 import { useTrades } from '@/components/TradeContext'
+import { Trade } from '@/lib/types'
 import { useAccountFilter } from '@/components/AccountFilterContext'
 import AccountSelector from '@/components/AccountSelector'
 import {
@@ -16,20 +17,23 @@ import {
 } from '@/lib/calculations'
 import RadarChartComp from '@/components/charts/RadarChart'
 import {
-  Clock, Calendar, Trophy, TrendingDown, BarChart3, Target,
+  Clock, Calendar, Trophy, TrendingDown, TrendingUp, BarChart3, Target, Brain,
   ArrowUpRight, ArrowDownRight, Timer, Repeat, Zap, Award,
   ChevronDown, ChevronUp
 } from 'lucide-react'
+import ProGate from '@/components/ProGate'
 
-const GLASS = 'bg-[var(--border)] backdrop-blur-[20px] border border-[var(--border)] rounded-2xl'
+const GLASS = 'glass-card'
 const TT_STYLE: React.CSSProperties = { backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border)', borderRadius: 12, fontSize: 12, color: 'var(--text-primary)', padding: '8px 12px' }
+const TT_LABEL: React.CSSProperties = { color: 'var(--text-primary)', fontWeight: 600 }
+const TT_ITEM: React.CSSProperties = { color: 'var(--text-secondary)' }
 
 let _statRowIdx = 0;
 function StatRow({ label, value, sub, green, red }: { label: string; value: string; sub?: string; green?: boolean; red?: boolean }) {
   const idx = _statRowIdx++;
   return (
-    <div className={"flex items-center justify-between py-2.5 px-3 rounded-lg " + (idx % 2 === 0 ? "bg-white/[0.02]" : "")}>
-      <span className="text-sm text-[#94A3B8]">{label}</span>
+    <div className={"flex items-center justify-between py-2.5 px-3 rounded-lg " + (idx % 2 === 0 ? "bg-[var(--bg-card)]" : "")}>
+      <span className="text-sm text-[var(--text-secondary)]">{label}</span>
       <div className="text-right">
         <span className={`text-sm font-bold ${green ? 'text-[#4ADE80]' : red ? 'text-[#FF453A]' : 'text-[var(--text-primary)]'}`}>
           {value}
@@ -44,7 +48,7 @@ function SectionHeader({ title, subtitle, icon: Icon }: { title: string; subtitl
   return (
     <div className="flex items-center gap-2 mb-4">
       <div className="p-1.5 rounded-lg bg-[var(--border)]">
-        <Icon className="w-4 h-4 text-[#94A3B8]" />
+        <Icon className="w-4 h-4 text-[var(--text-secondary)]" />
       </div>
       <div>
         <h2 className="text-sm font-bold text-[var(--text-primary)]">{title}</h2>
@@ -89,6 +93,163 @@ export default function AnalyticsPage() {
   const pnlDist = useMemo(() => calcPnlDistribution(filteredTrades), [filteredTrades])
   const drawdownData = useMemo(() => calcDrawdownSeries(filteredTrades), [filteredTrades])
   const sessionPerf = useMemo(() => calcSessionPerformance(filteredTrades), [filteredTrades])
+
+  // Side analysis: Long vs Short
+  const sideStats = useMemo(() => {
+    const closed = filteredTrades.filter(t => t.status === 'closed')
+    const calc = (side: string) => {
+      const arr = closed.filter(t => t.side === side)
+      const w = arr.filter(t => t.netPnl > 0)
+      const l = arr.filter(t => t.netPnl < 0)
+      return {
+        count: arr.length,
+        pnl: arr.reduce((s, t) => s + t.netPnl, 0),
+        winRate: arr.length > 0 ? (w.length / arr.length) * 100 : 0,
+        avgWin: w.length > 0 ? w.reduce((s, t) => s + t.netPnl, 0) / w.length : 0,
+        avgLoss: l.length > 0 ? Math.abs(l.reduce((s, t) => s + t.netPnl, 0) / l.length) : 0,
+        wins: w.length,
+        losses: l.length,
+        pf: l.length > 0 && l.reduce((s, t) => s + t.netPnl, 0) !== 0
+          ? w.reduce((s, t) => s + t.netPnl, 0) / Math.abs(l.reduce((s, t) => s + t.netPnl, 0))
+          : w.length > 0 ? Infinity : 0,
+      }
+    }
+    return { long: calc('Long'), short: calc('Short') }
+  }, [filteredTrades])
+
+  // ── Expectancy ──
+  const expectancy = useMemo(() => {
+    const closed = filteredTrades.filter(t => t.status === 'closed')
+    if (closed.length === 0) return null
+    const w = closed.filter(t => t.netPnl > 0)
+    const l = closed.filter(t => t.netPnl < 0)
+    const winPct = w.length / closed.length
+    const lossPct = l.length / closed.length
+    const avgW = w.length > 0 ? w.reduce((s, t) => s + t.netPnl, 0) / w.length : 0
+    const avgL = l.length > 0 ? Math.abs(l.reduce((s, t) => s + t.netPnl, 0) / l.length) : 0
+    const exp = (winPct * avgW) - (lossPct * avgL)
+    // Kelly Criterion: (W/L ratio × Win% - Loss%) / (W/L ratio)
+    const wlRatio = avgL > 0 ? avgW / avgL : 0
+    const kelly = wlRatio > 0 ? ((wlRatio * winPct) - lossPct) / wlRatio : 0
+    return { expectancy: exp, kelly: Math.max(0, Math.min(kelly, 1)) * 100, perTrade: exp }
+  }, [filteredTrades])
+
+  // ── Equity Curve ──
+  const equityCurve = useMemo(() => {
+    const closed = filteredTrades.filter(t => t.status === 'closed')
+    if (closed.length === 0) return []
+    const sorted = [...closed].sort((a, b) => a.date.localeCompare(b.date) || (a.entryTime || '').localeCompare(b.entryTime || ''))
+    let cumPnl = 0
+    const sessionMap = new Map<string, number>()
+    sorted.forEach(t => {
+      cumPnl += t.netPnl
+      sessionMap.set(t.sessionDate || t.date, cumPnl)
+    })
+    return [...sessionMap.entries()].map(([date, pnl]) => ({ date, pnl }))
+  }, [filteredTrades])
+
+  // ── After-Win / After-Loss ──
+  const sequenceStats = useMemo(() => {
+    const closed = filteredTrades.filter(t => t.status === 'closed')
+    if (closed.length < 5) return null
+    let afterWinWins = 0, afterWinTotal = 0, afterLossWins = 0, afterLossTotal = 0
+    let afterWinPnl = 0, afterLossPnl = 0
+    for (let i = 1; i < closed.length; i++) {
+      if (closed[i - 1].netPnl > 0) {
+        afterWinTotal++
+        afterWinPnl += closed[i].netPnl
+        if (closed[i].netPnl > 0) afterWinWins++
+      } else {
+        afterLossTotal++
+        afterLossPnl += closed[i].netPnl
+        if (closed[i].netPnl > 0) afterLossWins++
+      }
+    }
+    // After 2 consecutive losses
+    let after2LWins = 0, after2LTotal = 0, after2LPnl = 0
+    for (let i = 2; i < closed.length; i++) {
+      if (closed[i - 1].netPnl < 0 && closed[i - 2].netPnl < 0) {
+        after2LTotal++
+        after2LPnl += closed[i].netPnl
+        if (closed[i].netPnl > 0) after2LWins++
+      }
+    }
+    return {
+      afterWin: { winRate: afterWinTotal > 0 ? (afterWinWins / afterWinTotal) * 100 : 0, count: afterWinTotal, avgPnl: afterWinTotal > 0 ? afterWinPnl / afterWinTotal : 0 },
+      afterLoss: { winRate: afterLossTotal > 0 ? (afterLossWins / afterLossTotal) * 100 : 0, count: afterLossTotal, avgPnl: afterLossTotal > 0 ? afterLossPnl / afterLossTotal : 0 },
+      after2Loss: { winRate: after2LTotal > 0 ? (after2LWins / after2LTotal) * 100 : 0, count: after2LTotal, avgPnl: after2LTotal > 0 ? after2LPnl / after2LTotal : 0 },
+    }
+  }, [filteredTrades])
+
+  // ── First Trade of Day ──
+  const firstTradeStats = useMemo(() => {
+    const closed = filteredTrades.filter(t => t.status === 'closed')
+    const bySession = new Map<string, Trade[]>()
+    closed.forEach(t => {
+      const key = t.sessionDate || t.date
+      if (!bySession.has(key)) bySession.set(key, [])
+      bySession.get(key)!.push(t)
+    })
+    let wins = 0, total = 0, pnl = 0
+    bySession.forEach(trades => {
+      const sorted = trades.sort((a, b) => (a.entryTime || '').localeCompare(b.entryTime || ''))
+      if (sorted.length > 0) {
+        total++
+        pnl += sorted[0].netPnl
+        if (sorted[0].netPnl > 0) wins++
+      }
+    })
+    return { winRate: total > 0 ? (wins / total) * 100 : 0, count: total, avgPnl: total > 0 ? pnl / total : 0 }
+  }, [filteredTrades])
+
+  // ── Trade Frequency vs Performance ──
+  const frequencyStats = useMemo(() => {
+    const closed = filteredTrades.filter(t => t.status === 'closed')
+    const bySession = new Map<string, Trade[]>()
+    closed.forEach(t => {
+      const key = t.sessionDate || t.date
+      if (!bySession.has(key)) bySession.set(key, [])
+      bySession.get(key)!.push(t)
+    })
+    const buckets: { label: string; days: number; pnl: number; avgPnl: number; winRate: number }[] = []
+    const ranges = [[1, 2, '1-2 trades'], [3, 4, '3-4 trades'], [5, 99, '5+ trades']] as const
+    ranges.forEach(([min, max, label]) => {
+      let days = 0, pnl = 0, wins = 0, total = 0
+      bySession.forEach(trades => {
+        if (trades.length >= min && trades.length <= max) {
+          days++
+          const dayPnl = trades.reduce((s, t) => s + t.netPnl, 0)
+          pnl += dayPnl
+          total += trades.length
+          wins += trades.filter(t => t.netPnl > 0).length
+        }
+      })
+      if (days > 0) buckets.push({ label: label as string, days, pnl, avgPnl: pnl / days, winRate: total > 0 ? (wins / total) * 100 : 0 })
+    })
+    return buckets
+  }, [filteredTrades])
+
+  // ── Contract Size Impact ──
+  const contractStats = useMemo(() => {
+    const closed = filteredTrades.filter(t => t.status === 'closed')
+    const sizes = new Map<number, { count: number; pnl: number; wins: number }>()
+    closed.forEach(t => {
+      const s = sizes.get(t.contracts) || { count: 0, pnl: 0, wins: 0 }
+      s.count++
+      s.pnl += t.netPnl
+      if (t.netPnl > 0) s.wins++
+      sizes.set(t.contracts, s)
+    })
+    return [...sizes.entries()]
+      .sort((a, b) => a[0] - b[0])
+      .map(([contracts, s]) => ({
+        contracts,
+        count: s.count,
+        pnl: s.pnl,
+        avgPnl: s.pnl / s.count,
+        winRate: (s.wins / s.count) * 100,
+      }))
+  }, [filteredTrades])
 
   // Derived: active hours only, best hours, best day
   const activeHours = useMemo(() => hourlyStats.filter(h => h.count > 0), [hourlyStats])
@@ -155,6 +316,7 @@ export default function AnalyticsPage() {
   }
 
   return (
+    <ProGate feature="analytics" mode="block">
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-xl font-bold text-[var(--text-primary)]">Analytics</h1>
@@ -198,7 +360,7 @@ export default function AnalyticsPage() {
               <div key={label}>
                 <div className="flex justify-between text-xs mb-0.5">
                   <span className="text-[var(--text-secondary)]">{label}</span>
-                  <span className="text-[#94A3B8] font-semibold">{pct.toFixed(0)}%</span>
+                  <span className="text-[var(--text-secondary)] font-semibold">{pct.toFixed(0)}%</span>
                 </div>
                 <div className="h-1.5 bg-[var(--border)] rounded-full overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #4ADE80, #22c55e)' }} />
@@ -265,6 +427,62 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
+      {/* ═══ EXPECTANCY & KELLY ═══ */}
+      {expectancy && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className={`${GLASS} p-5 text-center`}>
+            <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-medium mb-2">Expectancy per Trade</p>
+            <p className={`text-3xl font-bold font-mono ${expectancy.perTrade >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+              {expectancy.perTrade >= 0 ? '+' : ''}{formatCurrency(expectancy.perTrade)}
+            </p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">Expected $ per trade taken</p>
+          </div>
+          <div className={`${GLASS} p-5 text-center`}>
+            <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-medium mb-2">Kelly Criterion</p>
+            <p className={`text-3xl font-bold ${expectancy.kelly > 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+              {expectancy.kelly.toFixed(1)}%
+            </p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">Optimal risk per trade</p>
+          </div>
+          <div className={`${GLASS} p-5 text-center`}>
+            <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-medium mb-2">First Trade Win Rate</p>
+            <p className={`text-3xl font-bold ${firstTradeStats.winRate >= 50 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+              {firstTradeStats.winRate.toFixed(0)}%
+            </p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">{firstTradeStats.count} sessions · Avg {firstTradeStats.avgPnl >= 0 ? '+' : ''}{formatCurrency(firstTradeStats.avgPnl)}</p>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ EQUITY CURVE ═══ */}
+      {equityCurve.length > 1 && (
+        <div className={`${GLASS} p-5`}>
+          <SectionHeader title="Equity Curve" subtitle="Cumulative P&L over time" icon={TrendingUp} />
+          <div className="min-h-[280px]">
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={equityCurve} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="equityGreen" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#4ADE80" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#4ADE80" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="equityRed" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#FF453A" stopOpacity={0} />
+                    <stop offset="100%" stopColor="#FF453A" stopOpacity={0.3} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis dataKey="date" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => v.slice(5)} />
+                <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 10 }} axisLine={false} tickLine={false} width={55} tickFormatter={v => `$${v}`} />
+                <Tooltip contentStyle={TT_STYLE} labelStyle={TT_LABEL} itemStyle={TT_ITEM} formatter={(v: any) => [`${formatCurrency(v)}`, 'Equity']} labelFormatter={l => `Date: ${l}`} />
+                <ReferenceLine y={0} stroke="var(--border)" strokeDasharray="3 3" />
+                <Area type="monotone" dataKey="pnl" stroke="#4ADE80" strokeWidth={2} fill="url(#equityGreen)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
       {/* ═══ TIME INTELLIGENCE ═══ */}
       <div className={`${GLASS} p-4 sm:p-5`}>
         <SectionHeader title="Time Intelligence" subtitle="When do you trade best?" icon={Clock} />
@@ -275,7 +493,7 @@ export default function AnalyticsPage() {
             {bestHours.map((h, i) => (
               <div key={h.hour} className={`${GLASS} p-4 flex items-center gap-3`}>
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${
-                  i === 0 ? 'bg-[#4ADE80]/15 text-[#4ADE80]' : 'bg-[var(--border)] text-[#94A3B8]'
+                  i === 0 ? 'bg-[#4ADE80]/15 text-[#4ADE80]' : 'bg-[var(--border)] text-[var(--text-secondary)]'
                 }`}>
                   #{i + 1}
                 </div>
@@ -298,7 +516,7 @@ export default function AnalyticsPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                   <XAxis dataKey="label" tick={{ fill: '#64748B', fontSize: 10 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: '#64748B', fontSize: 10 }} axisLine={false} tickLine={false} width={35} />
-                  <Tooltip contentStyle={TT_STYLE} formatter={(v: any) => [v, 'Trades']} />
+                  <Tooltip contentStyle={TT_STYLE} labelStyle={TT_LABEL} itemStyle={TT_ITEM} formatter={(v: any) => [v, 'Trades']} />
                   <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                     {activeHours.map((d, i) => (
                       <Cell key={i} fill={
@@ -323,7 +541,7 @@ export default function AnalyticsPage() {
                   <XAxis dataKey="label" tick={{ fill: '#64748B', fontSize: 10 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: '#64748B', fontSize: 10 }} axisLine={false} tickLine={false} width={50}
                     tickFormatter={v => `$${Math.abs(v) >= 1000 ? (v/1000).toFixed(1)+'k' : v}`} />
-                  <Tooltip contentStyle={TT_STYLE} formatter={(v: any) => [formatCurrency(v), 'Net P&L']} />
+                  <Tooltip contentStyle={TT_STYLE} labelStyle={TT_LABEL} itemStyle={TT_ITEM} formatter={(v: any) => [formatCurrency(v), 'Net P&L']} />
                   <ReferenceLine y={0} stroke="var(--border)" />
                   <Bar dataKey="pnl" radius={[4, 4, 0, 0]}>
                     {activeHours.map((d, i) => <Cell key={i} fill={d.pnl >= 0 ? '#4ADE80' : '#FF453A'} fillOpacity={0.8} />)}
@@ -349,7 +567,7 @@ export default function AnalyticsPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: '#64748B', fontSize: 11 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: '#64748B', fontSize: 10 }} axisLine={false} tickLine={false} width={35} />
-                  <Tooltip contentStyle={TT_STYLE} formatter={(v: any) => [v, 'Trades']} />
+                  <Tooltip contentStyle={TT_STYLE} labelStyle={TT_LABEL} itemStyle={TT_ITEM} formatter={(v: any) => [v, 'Trades']} />
                   <Bar dataKey="count" radius={[6, 6, 0, 0]}>
                     {dayOfWeekStats.map((d, i) => (
                       <Cell key={i} fill={bestDay && d.day === bestDay.day ? '#4ADE80' : 'rgba(255,255,255,0.2)'} />
@@ -369,7 +587,7 @@ export default function AnalyticsPage() {
                   <XAxis dataKey="name" tick={{ fill: '#64748B', fontSize: 11 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: '#64748B', fontSize: 10 }} axisLine={false} tickLine={false} width={50}
                     tickFormatter={v => `$${Math.abs(v) >= 1000 ? (v/1000).toFixed(1)+'k' : v}`} />
-                  <Tooltip contentStyle={TT_STYLE} formatter={(v: any) => [formatCurrency(v), 'Net P&L']} />
+                  <Tooltip contentStyle={TT_STYLE} labelStyle={TT_LABEL} itemStyle={TT_ITEM} formatter={(v: any) => [formatCurrency(v), 'Net P&L']} />
                   <ReferenceLine y={0} stroke="var(--border)" />
                   <Bar dataKey="pnl" radius={[6, 6, 0, 0]}>
                     {dayOfWeekStats.map((d, i) => <Cell key={i} fill={d.pnl >= 0 ? '#4ADE80' : '#FF453A'} fillOpacity={0.8} />)}
@@ -412,7 +630,7 @@ export default function AnalyticsPage() {
                     <XAxis type="number" tick={{ fill: '#64748B', fontSize: 11 }} axisLine={false} tickLine={false}
                       tickFormatter={v => `$${Math.abs(v) >= 1000 ? (v/1000).toFixed(1)+'k' : v}`} />
                     <YAxis type="category" dataKey="symbol" tick={{ fill: '#fff', fontSize: 12, fontWeight: 700 }} axisLine={false} tickLine={false} width={50} />
-                    <Tooltip contentStyle={TT_STYLE}
+                    <Tooltip contentStyle={TT_STYLE} labelStyle={TT_LABEL} itemStyle={TT_ITEM}
                       formatter={(v: any, name: any) => [formatCurrency(v), 'Avg P&L']}
                       labelFormatter={(label) => {
                         const inst = instrumentStats.find(i => i.symbol === label)
@@ -428,7 +646,7 @@ export default function AnalyticsPage() {
               </div>
               <div className="mt-3 space-y-1">
                 {instrumentStats.map(s => (
-                  <div key={s.symbol} className="flex items-center justify-between text-xs px-2 py-1.5 rounded-lg bg-white/[0.02]">
+                  <div key={s.symbol} className="flex items-center justify-between text-xs px-2 py-1.5 rounded-lg bg-[var(--bg-card)]">
                     <span className="text-[var(--text-primary)] font-semibold">{s.symbol}</span>
                     <div className="flex items-center gap-4 text-[var(--text-secondary)]">
                       <span>{s.count} trades</span>
@@ -479,7 +697,7 @@ export default function AnalyticsPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                 <XAxis dataKey="range" tick={{ fill: '#64748B', fontSize: 10 }} axisLine={false} tickLine={false} angle={-45} textAnchor="end" height={50} />
                 <YAxis tick={{ fill: '#64748B', fontSize: 10 }} axisLine={false} tickLine={false} width={30} />
-                <Tooltip contentStyle={TT_STYLE} formatter={(v: any) => [v, 'Trades']} />
+                <Tooltip contentStyle={TT_STYLE} labelStyle={TT_LABEL} itemStyle={TT_ITEM} formatter={(v: any) => [v, 'Trades']} />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                   {pnlDist.map((d, i) => <Cell key={i} fill={d.from >= 0 ? '#4ADE80' : '#FF453A'} fillOpacity={0.7} />)}
                 </Bar>
@@ -488,6 +706,143 @@ export default function AnalyticsPage() {
           </div>
         </div>
       )}
+
+      {/* ═══ LONG vs SHORT ═══ */}
+      {(sideStats.long.count > 0 || sideStats.short.count > 0) && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {(['long', 'short'] as const).map(side => {
+            const s = sideStats[side]
+            const label = side === 'long' ? 'Long' : 'Short'
+            const color = side === 'long' ? '#4ADE80' : '#FF453A'
+            if (s.count === 0) return null
+            return (
+              <div key={side} className={`${GLASS} p-5`} style={{ borderTop: `3px solid ${color}` }}>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    {side === 'long' ? <TrendingUp size={18} style={{ color }} /> : <TrendingDown size={18} style={{ color }} />}
+                    <h3 className="text-sm font-bold text-[var(--text-primary)]">{label} Trades</h3>
+                  </div>
+                  <span className="text-xs text-[var(--text-muted)]">{s.count} trades</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] mb-0.5">Net P&L</p>
+                    <p className={`text-xl font-bold font-mono ${s.pnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+                      {s.pnl >= 0 ? '+' : ''}{formatCurrency(s.pnl)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] mb-0.5">Win Rate</p>
+                    <p className={`text-xl font-bold ${s.winRate >= 50 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+                      {s.winRate.toFixed(1)}%
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] mb-0.5">W / L</p>
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">{s.wins}W / {s.losses}L</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] mb-0.5">Profit Factor</p>
+                    <p className={`text-sm font-semibold ${s.pf >= 1 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+                      {s.pf === Infinity ? '∞' : s.pf.toFixed(2)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] mb-0.5">Avg Win</p>
+                    <p className="text-sm font-semibold text-[#4ADE80] font-mono">+{formatCurrency(s.avgWin)}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] mb-0.5">Avg Loss</p>
+                    <p className="text-sm font-semibold text-[#FF453A] font-mono">-{formatCurrency(s.avgLoss)}</p>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* ═══ PSYCHOLOGICAL PATTERNS ═══ */}
+      {sequenceStats && (
+        <div className={`${GLASS} p-5`}>
+          <SectionHeader title="Psychological Patterns" subtitle="How your results change based on previous outcomes" icon={Brain} />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+            <div className="rounded-xl p-4" style={{ background: 'rgba(74, 222, 128, 0.06)', border: '1px solid rgba(74, 222, 128, 0.15)' }}>
+              <p className="text-xs font-semibold text-[#4ADE80] mb-3">After a Win</p>
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs"><span className="text-[var(--text-muted)]">Win Rate</span><span className={`font-bold ${sequenceStats.afterWin.winRate >= 50 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>{sequenceStats.afterWin.winRate.toFixed(0)}%</span></div>
+                <div className="flex justify-between text-xs"><span className="text-[var(--text-muted)]">Avg P&L</span><span className={`font-bold ${sequenceStats.afterWin.avgPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>{formatCurrency(sequenceStats.afterWin.avgPnl)}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-[var(--text-muted)]">Sample</span><span className="text-[var(--text-secondary)]">{sequenceStats.afterWin.count} trades</span></div>
+              </div>
+            </div>
+            <div className="rounded-xl p-4" style={{ background: 'rgba(255, 69, 58, 0.06)', border: '1px solid rgba(255, 69, 58, 0.15)' }}>
+              <p className="text-xs font-semibold text-[#FF453A] mb-3">After a Loss</p>
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs"><span className="text-[var(--text-muted)]">Win Rate</span><span className={`font-bold ${sequenceStats.afterLoss.winRate >= 50 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>{sequenceStats.afterLoss.winRate.toFixed(0)}%</span></div>
+                <div className="flex justify-between text-xs"><span className="text-[var(--text-muted)]">Avg P&L</span><span className={`font-bold ${sequenceStats.afterLoss.avgPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>{formatCurrency(sequenceStats.afterLoss.avgPnl)}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-[var(--text-muted)]">Sample</span><span className="text-[var(--text-secondary)]">{sequenceStats.afterLoss.count} trades</span></div>
+              </div>
+            </div>
+            <div className="rounded-xl p-4" style={{ background: 'rgba(245, 158, 11, 0.06)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+              <p className="text-xs font-semibold text-[#F59E0B] mb-3">After 2 Losses in a Row</p>
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs"><span className="text-[var(--text-muted)]">Win Rate</span><span className={`font-bold ${sequenceStats.after2Loss.winRate >= 50 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>{sequenceStats.after2Loss.winRate.toFixed(0)}%</span></div>
+                <div className="flex justify-between text-xs"><span className="text-[var(--text-muted)]">Avg P&L</span><span className={`font-bold ${sequenceStats.after2Loss.avgPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>{formatCurrency(sequenceStats.after2Loss.avgPnl)}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-[var(--text-muted)]">Sample</span><span className="text-[var(--text-secondary)]">{sequenceStats.after2Loss.count} trades</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ TRADE FREQUENCY + CONTRACT SIZE ═══ */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Trade Frequency */}
+        {frequencyStats.length > 0 && (
+          <div className={`${GLASS} p-5`}>
+            <SectionHeader title="Trade Frequency vs Performance" subtitle="Are more trades better?" icon={Zap} />
+            <div className="space-y-3 mt-3">
+              {frequencyStats.map(f => (
+                <div key={f.label} className="flex items-center justify-between p-3 rounded-xl bg-[var(--bg-secondary)]">
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">{f.label}</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">{f.days} sessions · {f.winRate.toFixed(0)}% WR</p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm font-bold font-mono ${f.avgPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+                      {f.avgPnl >= 0 ? '+' : ''}{formatCurrency(f.avgPnl)}
+                    </p>
+                    <p className="text-[10px] text-[var(--text-muted)]">avg/day</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Contract Size Impact */}
+        {contractStats.length > 1 && (
+          <div className={`${GLASS} p-5`}>
+            <SectionHeader title="Position Size Impact" subtitle="Performance by contract count" icon={Target} />
+            <div className="space-y-3 mt-3">
+              {contractStats.map(c => (
+                <div key={c.contracts} className="flex items-center justify-between p-3 rounded-xl bg-[var(--bg-secondary)]">
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">{c.contracts} contract{c.contracts > 1 ? 's' : ''}</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">{c.count} trades · {c.winRate.toFixed(0)}% WR</p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm font-bold font-mono ${c.avgPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+                      {c.avgPnl >= 0 ? '+' : ''}{formatCurrency(c.avgPnl)}
+                    </p>
+                    <p className="text-[10px] text-[var(--text-muted)]">avg/trade</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* ═══ DRAWDOWN CHART ═══ */}
       {drawdownData.length > 0 && (
@@ -501,7 +856,7 @@ export default function AnalyticsPage() {
                   tickFormatter={v => v.slice(5)} />
                 <YAxis tick={{ fill: '#64748B', fontSize: 10 }} axisLine={false} tickLine={false} width={55}
                   tickFormatter={v => `$${v}`} />
-                <Tooltip contentStyle={TT_STYLE}
+                <Tooltip contentStyle={TT_STYLE} labelStyle={TT_LABEL} itemStyle={TT_ITEM}
                   formatter={(v: any) => [formatCurrency(v), 'Drawdown']}
                   labelFormatter={l => `Date: ${l}`} />
                 <ReferenceLine y={0} stroke="var(--border)" />
@@ -553,13 +908,13 @@ export default function AnalyticsPage() {
               </thead>
               <tbody>
                 {sortedSessions.slice(0, 50).map(s => (
-                  <tr key={s.date} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
-                    <td className="py-2.5 px-3 text-white font-medium">{s.date}</td>
-                    <td className="py-2.5 px-3 text-[#94A3B8]">{s.trades}</td>
+                  <tr key={s.date} className="border-b border-[var(--border)] hover:bg-[var(--bg-card)] transition-colors">
+                    <td className="py-2.5 px-3 text-[var(--text-primary)] font-medium">{s.date}</td>
+                    <td className="py-2.5 px-3 text-[var(--text-secondary)]">{s.trades}</td>
                     <td className={`py-2.5 px-3 font-bold ${s.netPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
                       {formatPnl(s.netPnl)}
                     </td>
-                    <td className="py-2.5 px-3 text-[#94A3B8]">{s.winRate.toFixed(0)}%</td>
+                    <td className="py-2.5 px-3 text-[var(--text-secondary)]">{s.winRate.toFixed(0)}%</td>
                     <td className={`py-2.5 px-3 ${s.grossPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
                       {formatPnl(s.grossPnl)}
                     </td>
@@ -572,5 +927,6 @@ export default function AnalyticsPage() {
         </div>
       )}
     </div>
+    </ProGate>
   )
 }

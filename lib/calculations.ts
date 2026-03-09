@@ -212,7 +212,7 @@ const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 export function calcDayOfWeekStats(trades: Trade[]): { day: number; name: string; count: number; pnl: number; avgPnl: number }[] {
   const map = new Map<number, { count: number; pnl: number }>()
   trades.filter(t => t.status === 'closed').forEach(t => {
-    const d = new Date(t.sessionDate || t.date).getDay()
+    const d = new Date((t.sessionDate || t.date) + 'T12:00:00').getDay()
     const s = map.get(d) || { count: 0, pnl: 0 }
     map.set(d, { count: s.count + 1, pnl: s.pnl + t.netPnl })
   })

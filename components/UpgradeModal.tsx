@@ -11,7 +11,7 @@ const features = [
   'Unlimited prop firm accounts',
   'Trade screen charts & replay',
   'PDF & CSV report generation',
-  'AI trade insights (coming soon)',
+  'AI trade insights',
   '1GB storage for screenshots',
   'Priority support',
 ]

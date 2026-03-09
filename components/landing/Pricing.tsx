@@ -42,7 +42,7 @@ const plans = [
       "1GB storage (screenshots, statements)",
       "Trade screen charts",
       "Report generation",
-      "AI trade insights (coming soon)",
+      "AI trade insights",
       "Priority support",
     ],
   },

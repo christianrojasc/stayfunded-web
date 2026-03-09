@@ -172,6 +172,16 @@ export function saveChecklistTemplate(items: ChecklistItem[]): void {
   set('sf_checklist_template', items)
 }
 
+// ── Setups ───────────────────────────────────────────────────────────────────
+
+export function getSetups(): string[] {
+  return get<string[]>('sf_setups', [])
+}
+
+export function saveSetups(setups: string[]): void {
+  set('sf_setups', setups)
+}
+
 // ── Settings ─────────────────────────────────────────────────────────────────
 
 const DEFAULT_SETTINGS: AppSettings = {

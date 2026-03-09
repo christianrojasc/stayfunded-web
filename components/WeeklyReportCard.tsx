@@ -196,7 +196,7 @@ export default function WeeklyReportCard() {
 
           {/* Stats */}
           <div className="space-y-2 text-sm">
-            <div className="flex items-center gap-2 text-[#94A3B8]">
+            <div className="flex items-center gap-2 text-[var(--text-secondary)]">
               <Calendar size={14} className="text-[var(--text-secondary)] flex-shrink-0" />
               <span>Most broken rule: {mostBroken}</span>
             </div>

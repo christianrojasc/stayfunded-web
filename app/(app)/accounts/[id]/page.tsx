@@ -55,13 +55,13 @@ function RuleBar({
   const dotColor = { safe: 'bg-[#4ADE50]', caution: 'bg-amber-400', danger: 'bg-[#EF4444]' }[trafficLight]
 
   return (
-    <div className="p-4 bg-[#F5F7FA] dark:bg-[var(--bg-primary)] rounded-xl border border-[#E4E9F0] dark:border-[var(--border)]">
+    <div className="p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border)]">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className={`w-2 h-2 rounded-full ${dotColor}`} />
-          <span className="text-sm font-semibold text-[#1E2D3D] dark:text-[var(--text-primary)]">{label}</span>
+          <span className="text-sm font-semibold text-[var(--text-primary)]">{label}</span>
         </div>
-        <span className="text-xs font-mono font-semibold text-[var(--text-muted)] dark:text-[var(--text-muted)]">
+        <span className="text-xs font-mono font-semibold text-[var(--text-muted)]">
           {limit !== null
             ? `${prefix}${used.toFixed(0)} / ${prefix}${limit.toFixed(0)}`
             : 'No limit'
@@ -69,7 +69,7 @@ function RuleBar({
         </span>
       </div>
       {limit !== null && limit > 0 && (
-        <div className="h-2 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-card)] overflow-hidden">
+        <div className="h-2 rounded-full bg-[var(--bg-secondary)] overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{ width: `${pct * 100}%`, backgroundColor: color }}
@@ -78,7 +78,7 @@ function RuleBar({
       )}
       {limit !== null && limit > 0 && (
         <div className="flex justify-between text-[11px] mt-1">
-          <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)]">
+          <span className="text-[var(--text-muted)]">
             {(pct * 100).toFixed(0)}% used
           </span>
           {!invert && limit > 0 && (
@@ -144,7 +144,7 @@ export default function AccountDetailPage({ params }: { params: { id: string } }
       <div className="flex items-center gap-4">
         <button
           onClick={() => router.back()}
-          className="p-2 rounded-xl border border-[#E4E9F0] dark:border-[var(--border)] bg-white dark:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[#1E2D3D] dark:hover:text-[var(--text-primary)] hover:bg-[#F5F7FA] transition-all"
+          className="p-2 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-all"
         >
           <ArrowLeft size={16} />
         </button>
@@ -169,7 +169,7 @@ export default function AccountDetailPage({ params }: { params: { id: string } }
               </span>
             )}
           </div>
-          <p className="text-sm text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-0.5">
+          <p className="text-sm text-[var(--text-muted)] mt-0.5">
             {account.firmName} · ${(account.startingBalance / 1000).toFixed(0)}K · {fmtDrawdownType(account.drawdownType)}
             {account.accountNumber && ` · ${account.accountNumber}`}
           </p>
@@ -183,33 +183,33 @@ export default function AccountDetailPage({ params }: { params: { id: string } }
       {/* KPI Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="glass-card p-4">
-          <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">Net P&L</p>
+          <p className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">Net P&L</p>
           <p className={`text-2xl font-bold font-mono ${totalPnl >= 0 ? 'text-[#4ADE50]' : 'text-[#EF4444]'}`}>
             {formatPnl(totalPnl)}
           </p>
-          <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-1">{trades.length} total trades</p>
+          <p className="text-xs text-[var(--text-muted)] mt-1">{trades.length} total trades</p>
         </div>
         <div className="glass-card p-4">
-          <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">Today</p>
+          <p className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">Today</p>
           <p className={`text-2xl font-bold font-mono ${todayPnl >= 0 ? 'text-[#4ADE50]' : 'text-[#EF4444]'}`}>
             {formatPnl(todayPnl)}
           </p>
-          <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-1">current session</p>
+          <p className="text-xs text-[var(--text-muted)] mt-1">current session</p>
         </div>
         <div className="glass-card p-4">
-          <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">Days Traded</p>
-          <p className="text-2xl font-bold text-[#1E2D3D] dark:text-[var(--text-primary)]">
+          <p className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">Days Traded</p>
+          <p className="text-2xl font-bold text-[var(--text-primary)]">
             {daysTradedCount}
             {account.minTradingDays > 0 && (
               <span className="text-lg text-[var(--text-muted)]"> / {account.minTradingDays}</span>
             )}
           </p>
-          <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-1">
+          <p className="text-xs text-[var(--text-muted)] mt-1">
             {account.minTradingDays > 0 ? `${account.minTradingDays} min required` : 'no minimum'}
           </p>
         </div>
         <div className="glass-card p-4">
-          <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">
+          <p className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">
             {account.profitTarget ? 'To Target' : 'Drawdown Used'}
           </p>
           {account.profitTarget ? (
@@ -217,16 +217,16 @@ export default function AccountDetailPage({ params }: { params: { id: string } }
               <p className="text-2xl font-bold text-[#4ADE50]">
                 {profitPct !== null ? `${(profitPct * 100).toFixed(0)}%` : '—'}
               </p>
-              <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-1">
+              <p className="text-xs text-[var(--text-muted)] mt-1">
                 {formatPnl(Math.max(0, totalPnl))} / ${account.profitTarget.toFixed(0)}
               </p>
             </>
           ) : (
             <>
-              <p className={`text-2xl font-bold ${drawdownPct >= 0.8 ? 'text-[#EF4444]' : drawdownPct >= 0.5 ? 'text-amber-400' : 'text-[#1E2D3D] dark:text-[var(--text-primary)]'}`}>
+              <p className={`text-2xl font-bold ${drawdownPct >= 0.8 ? 'text-[#EF4444]' : drawdownPct >= 0.5 ? 'text-amber-400' : 'text-[var(--text-primary)]'}`}>
                 {(drawdownPct * 100).toFixed(0)}%
               </p>
-              <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-1">
+              <p className="text-xs text-[var(--text-muted)] mt-1">
                 ${drawdownUsed.toFixed(0)} / ${account.maxLossLimit.toFixed(0)}
               </p>
             </>
@@ -274,11 +274,11 @@ export default function AccountDetailPage({ params }: { params: { id: string } }
           )}
         </div>
         {account.consistencyRule && (
-          <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl">
-            <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-0.5 flex items-center gap-1.5">
+          <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+            <p className="text-xs font-semibold text-amber-700 mb-0.5 flex items-center gap-1.5">
               <AlertTriangle size={11} /> Consistency Rule
             </p>
-            <p className="text-xs text-amber-600 dark:text-amber-300">{account.consistencyRule}</p>
+            <p className="text-xs text-amber-400">{account.consistencyRule}</p>
           </div>
         )}
       </div>
@@ -300,9 +300,9 @@ export default function AccountDetailPage({ params }: { params: { id: string } }
             { label: 'Min Trading Days', value: account.minTradingDays > 0 ? `${account.minTradingDays} days` : 'None' },
             { label: 'Status', value: account.status === 'funded' ? 'Funded' : 'Evaluation' },
           ].map(({ label, value }) => (
-            <div key={label} className="p-3 bg-[#F5F7FA] dark:bg-[var(--bg-primary)] rounded-xl">
-              <p className="text-[10px] text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">{label}</p>
-              <p className="text-sm font-semibold text-[#1E2D3D] dark:text-[var(--text-primary)]">{value}</p>
+            <div key={label} className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+              <p className="text-[10px] text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">{label}</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{value}</p>
             </div>
           ))}
         </div>
@@ -310,7 +310,7 @@ export default function AccountDetailPage({ params }: { params: { id: string } }
 
       {/* Recent Trades */}
       <div className="glass-card overflow-hidden">
-        <div className="flex items-center justify-between p-5 border-b border-[#F0F3F7] dark:border-[var(--border)]">
+        <div className="flex items-center justify-between p-5 border-b border-[#F0F3F7]">
           <h2 className="section-title flex items-center gap-2">
             <BarChart2 size={16} className="text-[#2D8B4E]" />
             Trade History
@@ -320,7 +320,7 @@ export default function AccountDetailPage({ params }: { params: { id: string } }
           </Link>
         </div>
         {recentTrades.length === 0 ? (
-          <div className="p-12 text-center text-[#9EB0C0] dark:text-[#6e7681]">
+          <div className="p-12 text-center text-[var(--text-secondary)]">
             <p className="font-medium mb-1">No trades for this account</p>
             <p className="text-xs">Import trades and link them to this account</p>
           </div>
@@ -341,8 +341,8 @@ export default function AccountDetailPage({ params }: { params: { id: string } }
               <tbody>
                 {recentTrades.map(t => (
                   <tr key={t.id}>
-                    <td className="text-[var(--text-muted)] dark:text-[var(--text-muted)]">{t.date}</td>
-                    <td><span className="font-mono font-bold text-xs bg-[#F5F7FA] dark:bg-[var(--bg-primary)] px-2 py-0.5 rounded-lg">{t.symbol}</span></td>
+                    <td className="text-[var(--text-muted)]">{t.date}</td>
+                    <td><span className="font-mono font-bold text-xs bg-[var(--bg-secondary)] px-2 py-0.5 rounded-lg">{t.symbol}</span></td>
                     <td>
                       <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${t.side === 'Long' ? 'bg-green-50 text-[#2D8B4E]' : 'bg-orange-50 text-orange-600'}`}>
                         {t.side}

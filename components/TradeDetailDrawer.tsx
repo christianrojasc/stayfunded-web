@@ -5,6 +5,7 @@ import { X, StickyNote, TrendingUp, TrendingDown, LineChart, BarChart3, Check } 
 import { Trade } from '@/lib/types'
 import { formatAccountNumber } from '@/lib/utils'
 import { formatPnl } from '@/lib/calculations'
+import { getSetups } from '@/lib/storage'
 import { useTrades } from '@/components/TradeContext'
 import { useAccountFilter } from '@/components/AccountFilterContext'
 import dynamic from 'next/dynamic'
@@ -39,9 +40,11 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
   const { updateTrade } = useTrades()
   const { accounts } = useAccountFilter()
   const [notes, setNotes] = useState(trade.notes || '')
+  const [setup, setSetup] = useState(trade.setup || '')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [tab, setTab] = useState<'chart' | 'pnl'>('chart')
+  const savedSetups = useMemo(() => getSetups(), [])
   const [visible, setVisible] = useState(false)
   const notesRef = useRef(notes)
   notesRef.current = notes
@@ -105,23 +108,12 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
 
     async function fetchRunningPnl() {
       setPnlLoading(true)
+      const fallback = [
+        { time: 'Entry', pnl: 0 },
+        { time: 'Exit', pnl: trade.pnl },
+      ]
+
       try {
-        if (!trade.entryTime || !trade.exitTime) {
-          // No time data — show simple entry→exit
-          setRunningPnlData([
-            { time: 'Entry', pnl: 0 },
-            { time: 'Exit', pnl: trade.netPnl },
-          ])
-          setPnlLoading(false)
-          return
-        }
-
-        // Build timestamps — Tradovate times are CT (UTC-6)
-        const entryDate = new Date(`${trade.date}T${trade.entryTime}-06:00`)
-        const exitDate = new Date(`${trade.date}T${trade.exitTime}-06:00`)
-        const entryTs = Math.floor(entryDate.getTime() / 1000)
-        const exitTs = Math.floor(exitDate.getTime() / 1000)
-
         const symbol = trade.symbol.replace(/[A-Z]\d{2}$/, '').replace(/\d+$/, '')
         const yahooMap: Record<string, string> = {
           ES: 'ES=F', MES: 'MES=F', NQ: 'NQ=F', MNQ: 'MNQ=F',
@@ -130,65 +122,101 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
         }
         const yahooSymbol = yahooMap[symbol] || `${symbol}=F`
 
-        const res = await fetch(`/api/candles?symbol=${encodeURIComponent(yahooSymbol)}&interval=1m&from=${entryTs - 60}&to=${exitTs + 60}`)
-        const data = await res.json()
-        const result = data?.chart?.result?.[0]
+        // Fetch a wide window around the trade date — we'll find entry/exit by PRICE, not time
+        // Try multiple offsets to get the right candles
+        const offsets = ['-05:00', '-06:00', '-04:00', '+00:00']
+        const intervals = ['1m', '2m', '5m', '15m']
+        const baseTime = trade.entryTime || '12:00'
+        let bestResult: { timestamps: number[]; quotes: any } | null = null
+
+        // Try each interval (1m has 7-day limit, 2m/5m/15m go further back)
+        for (const iv of intervals) {
+          if (bestResult) break
+          const pad = iv === '1m' ? 7200 : iv === '2m' ? 10800 : iv === '5m' ? 14400 : 21600
+          for (const offset of offsets) {
+            const anchor = new Date(`${trade.date}T${baseTime}${offset}`)
+            if (isNaN(anchor.getTime())) continue
+            const anchorTs = Math.floor(anchor.getTime() / 1000)
+            const res = await fetch(`/api/candles?symbol=${encodeURIComponent(yahooSymbol)}&interval=${iv}&from=${anchorTs - pad}&to=${anchorTs + pad}`)
+            const data = await res.json()
+            const result = data?.chart?.result?.[0]
+            if (result?.timestamp?.length > 0) {
+              const timestamps = result.timestamp as number[]
+              const quotes = result.indicators?.quote?.[0]
+              for (let i = 0; i < timestamps.length; i++) {
+                const h = quotes?.high?.[i]
+                const l = quotes?.low?.[i]
+                if (h != null && l != null && trade.entryPrice >= l && trade.entryPrice <= h) {
+                  bestResult = { timestamps, quotes }
+                  break
+                }
+              }
+              if (bestResult) break
+            }
+          }
+        }
 
         if (cancelled) return
 
-        if (!result?.timestamp?.length) {
-          setRunningPnlData([
-            { time: 'Entry', pnl: 0 },
-            { time: 'Exit', pnl: trade.netPnl },
-          ])
+        if (!bestResult) {
+          setRunningPnlData(fallback)
           setPnlLoading(false)
           return
         }
 
-        const timestamps = result.timestamp as number[]
-        const quotes = result.indicators?.quote?.[0]
-        const points: { time: string; pnl: number }[] = []
+        const { timestamps, quotes } = bestResult
 
-        // Entry point
-        points.push({ time: formatTime(entryTs), pnl: 0 })
-
-        // Each candle close between entry and exit
+        // Find entry candle: first candle whose range contains entry price
+        let entryIdx = -1
         for (let i = 0; i < timestamps.length; i++) {
-          const ts = timestamps[i]
-          const close = quotes?.close?.[i]
-          if (close == null || ts < entryTs || ts > exitTs) continue
+          const h = quotes?.high?.[i]; const l = quotes?.low?.[i]
+          if (h != null && l != null && trade.entryPrice >= l && trade.entryPrice <= h) {
+            entryIdx = i
+            break
+          }
+        }
 
+        // Find exit candle: last candle whose range contains exit price (after entry)
+        let exitIdx = -1
+        for (let i = timestamps.length - 1; i >= Math.max(entryIdx, 0); i--) {
+          const h = quotes?.high?.[i]; const l = quotes?.low?.[i]
+          if (h != null && l != null && trade.exitPrice >= l && trade.exitPrice <= h) {
+            exitIdx = i
+            break
+          }
+        }
+
+        if (entryIdx === -1 || exitIdx === -1 || exitIdx <= entryIdx) {
+          setRunningPnlData(fallback)
+          setPnlLoading(false)
+          return
+        }
+
+        // Build P&L curve from entry candle to exit candle
+        const points: { time: string; pnl: number }[] = [{ time: 'Entry', pnl: 0 }]
+
+        for (let i = entryIdx; i <= exitIdx; i++) {
+          const close = quotes?.close?.[i]
+          if (close == null) continue
           const unrealizedPnl = trade.side === 'Long'
             ? (close - trade.entryPrice) * trade.contracts * spec.multiplier
             : (trade.entryPrice - close) * trade.contracts * spec.multiplier
-
-          points.push({ time: formatTime(ts), pnl: parseFloat(unrealizedPnl.toFixed(2)) })
+          // Format time from UTC epoch → local display
+          const d = new Date(timestamps[i] * 1000)
+          const h = d.getHours()
+          const m = d.getMinutes()
+          const label = `${h}:${m.toString().padStart(2, '0')}`
+          points.push({ time: label, pnl: parseFloat(unrealizedPnl.toFixed(2)) })
         }
 
-        // Exit point (actual realized P&L before fees)
-        points.push({ time: formatTime(exitTs), pnl: trade.pnl })
-
-        // Dedupe by time
-        const seen = new Set<string>()
-        const deduped = points.filter(p => {
-          if (seen.has(p.time)) return false
-          seen.add(p.time)
-          return true
-        })
+        // Add actual exit P&L as final point
+        points.push({ time: 'Exit', pnl: trade.pnl })
 
         if (!cancelled) {
-          setRunningPnlData(deduped.length > 1 ? deduped : [
-            { time: 'Entry', pnl: 0 },
-            { time: 'Exit', pnl: trade.netPnl },
-          ])
+          setRunningPnlData(points.length > 2 ? points : fallback)
         }
       } catch {
-        if (!cancelled) {
-          setRunningPnlData([
-            { time: 'Entry', pnl: 0 },
-            { time: 'Exit', pnl: trade.netPnl },
-          ])
-        }
+        if (!cancelled) setRunningPnlData(fallback)
       }
       if (!cancelled) setPnlLoading(false)
     }
@@ -196,16 +224,6 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
     fetchRunningPnl()
     return () => { cancelled = true }
   }, [tab, trade, spec.multiplier])
-
-  function formatTime(ts: number): string {
-    // Convert UTC epoch to CT display (UTC-6)
-    const d = new Date(ts * 1000)
-    const ct = new Date(d.getTime() - 6 * 3600 * 1000)
-    const h = ct.getUTCHours()
-    const m = ct.getUTCMinutes()
-    const s = ct.getUTCSeconds()
-    return `${h}:${m.toString().padStart(2, '0')}${s ? ':' + s.toString().padStart(2, '0') : ''}`
-  }
 
   return (
     <>
@@ -226,17 +244,17 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
         {/* Left sidebar */}
         <div className="w-[300px] shrink-0 flex flex-col overflow-y-auto relative" style={{ background: 'var(--bg-secondary)', borderRight: '1px solid var(--border)' }}>
           {/* Header */}
-          <div className="p-5 border-b border-[#1E293B]">
+          <div className="p-5 border-b border-[var(--border)]">
             <div className="flex items-center gap-2 mb-2">
-              <span className="font-mono font-bold text-sm text-[#F1F5F9]">{trade.symbol}</span>
+              <span className="font-mono font-bold text-sm text-[var(--text-primary)]">{trade.symbol}</span>
               <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                trade.side === 'Long' ? 'bg-green-500/15 text-[#4ADE80]' : 'bg-red-500/15 text-[#EF4444]'
+                trade.side === 'Long' ? 'bg-green-500/15 text-[var(--green)]' : 'bg-red-500/15 text-[#EF4444]'
               }`}>
                 {trade.side === 'Long' ? <TrendingUp className="inline w-3 h-3 mr-0.5" /> : <TrendingDown className="inline w-3 h-3 mr-0.5" />}
                 {trade.side}
               </span>
             </div>
-            <p className="text-xs text-[var(--text-secondary)] uppercase tracking-wider font-medium mb-1">Net P&L</p>
+            <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-medium mb-1">Net P&L</p>
             <p
               className="font-bold"
               style={{ fontFamily: 'Outfit, sans-serif', fontSize: '36px', color: isWin ? '#4ADE80' : '#EF4444' }}
@@ -247,22 +265,22 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
 
           <div className="flex-1 p-5 space-y-0">
             <StatRow label="Gross P&L">
-              <span className={grossPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#EF4444]'}>{formatPnl(grossPnl)}</span>
+              <span className={grossPnl >= 0 ? 'text-[var(--green)]' : 'text-[#EF4444]'}>{formatPnl(grossPnl)}</span>
             </StatRow>
             <StatRow label="Fees" value={`$${trade.fees.toFixed(2)}`} />
             <StatRow label="Side">
               <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                trade.side === 'Long' ? 'bg-green-500/15 text-[#4ADE80]' : 'bg-red-500/15 text-[#EF4444]'
+                trade.side === 'Long' ? 'bg-green-500/15 text-[var(--green)]' : 'bg-red-500/15 text-[#EF4444]'
               }`}>
                 {trade.side}
               </span>
             </StatRow>
             <StatRow label="Symbol">
-              <span className="font-mono font-bold text-xs bg-[#0F172A] px-2 py-0.5 rounded text-[#F1F5F9]">{trade.symbol}</span>
+              <span className="font-mono font-bold text-xs bg-[var(--bg-primary)] px-2 py-0.5 rounded text-[var(--text-primary)]">{trade.symbol}</span>
             </StatRow>
             {acct && (
               <StatRow label="Account">
-                <span className="text-[#94A3B8] font-mono text-xs">
+                <span className="text-[var(--text-secondary)] font-mono text-xs">
                   {formatAccountNumber(acct.accountNumber)}
                 </span>
               </StatRow>
@@ -277,15 +295,69 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
             {duration && <StatRow label="Duration" value={duration} />}
           </div>
 
+          {/* Setup */}
+          <div className="p-5 border-t border-[var(--border)]">
+            <div className="flex items-center gap-2 mb-2">
+              <BarChart3 size={14} className="text-[var(--text-secondary)]" />
+              <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-medium">Setup</span>
+            </div>
+            {savedSetups.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {savedSetups.map(s => (
+                  <button
+                    key={s}
+                    onClick={async () => {
+                      const val = setup === s ? '' : s
+                      setSetup(val)
+                      await updateTrade(trade.id, { setup: val || undefined })
+                    }}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                      setup === s
+                        ? 'border-[var(--green)] bg-[var(--green)]/15 text-[var(--green)]'
+                        : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-muted)]'
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <input
+                className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--green)] transition-colors"
+                placeholder="Type a setup name..."
+                value={setup}
+                onChange={e => setSetup(e.target.value)}
+                onBlur={async () => {
+                  if (setup !== (trade.setup || '')) {
+                    await updateTrade(trade.id, { setup: setup || undefined })
+                  }
+                }}
+              />
+            )}
+            {savedSetups.length > 0 && (
+              <input
+                className="w-full mt-2 bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-2.5 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--green)] transition-colors"
+                placeholder="Or type a custom setup..."
+                value={savedSetups.includes(setup) ? '' : setup}
+                onChange={e => setSetup(e.target.value)}
+                onBlur={async () => {
+                  if (setup !== (trade.setup || '')) {
+                    await updateTrade(trade.id, { setup: setup || undefined })
+                  }
+                }}
+              />
+            )}
+          </div>
+
           {/* Notes */}
-          <div className="p-5 border-t border-[#1E293B]">
+          <div className="p-5 border-t border-[var(--border)]">
             <div className="flex items-center gap-2 mb-2">
               <StickyNote size={14} className="text-[var(--text-secondary)]" />
-              <span className="text-xs text-[var(--text-secondary)] uppercase tracking-wider font-medium">Notes</span>
-              {saved && <Check size={14} className="text-[#4ADE80]" />}
+              <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-medium">Notes</span>
+              {saved && <Check size={14} className="text-[var(--green)]" />}
             </div>
             <textarea
-              className="w-full bg-[#0A0E17] border border-[#1E293B] rounded-lg p-3 text-sm text-[#F1F5F9] placeholder-[#475569] resize-none focus:outline-none focus:border-[#2D8B4E] transition-colors"
+              className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] resize-none focus:outline-none focus:border-[var(--green)] transition-colors"
               rows={4}
               placeholder="Add trade notes..."
               value={notes}
@@ -293,7 +365,7 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
               onBlur={saveNotes}
             />
             {saved && (
-              <p className="text-xs text-[#4ADE80] mt-1 flex items-center gap-1">
+              <p className="text-xs text-[var(--green)] mt-1 flex items-center gap-1">
                 <Check size={12} /> Saved
               </p>
             )}
@@ -311,7 +383,7 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
           </button>
 
           {/* Tabs */}
-          <div className="flex items-center gap-1 p-4 border-b border-[#1E293B]">
+          <div className="flex items-center gap-1 p-4 border-b border-[var(--border)]">
             <TabBtn active={tab === 'chart'} onClick={() => setTab('chart')}>
               <BarChart3 size={14} /> Chart
             </TabBtn>
@@ -327,8 +399,8 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
 
             {tab === 'pnl' && (
               <div className="h-full p-6">
-                <div className="rounded-xl p-4 h-full" style={{ background: '#151d2e', border: '1px solid rgba(30,41,59,0.5)' }}>
-                  <p className="text-xs text-[var(--text-secondary)] uppercase tracking-wider font-medium mb-4">
+                <div className="rounded-xl p-4 h-full" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+                  <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-medium mb-4">
                     Running P&L — Entry to Exit
                   </p>
                   {pnlLoading ? (
@@ -336,25 +408,7 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
                       Loading P&L data...
                     </div>
                   ) : (
-                  <ResponsiveContainer width="100%" height="85%">
-                    <AreaChart data={runningPnlData}>
-                      <defs>
-                        <linearGradient id="pnlGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={isWin ? '#4ADE80' : '#EF4444'} stopOpacity={0.3} />
-                          <stop offset="100%" stopColor={isWin ? '#4ADE80' : '#EF4444'} stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                      <XAxis dataKey="time" tick={{ fill: '#64748B', fontSize: 11 }} axisLine={{ stroke: '#1E293B' }} tickLine={false} />
-                      <YAxis tick={{ fill: '#64748B', fontSize: 11 }} axisLine={{ stroke: '#1E293B' }} tickLine={false} tickFormatter={(v: number) => `$${v.toFixed(0)}`} />
-                      <Tooltip
-                        contentStyle={{ background: '#111827', border: '1px solid #1E293B', borderRadius: '8px', color: '#F1F5F9', fontSize: '12px' }}
-                        formatter={(value: any) => [`$${Number(value ?? 0).toFixed(2)}`, 'P&L']}
-                        labelFormatter={(l: any) => l ?? ''}
-                      />
-                      <Area type="monotone" dataKey="pnl" stroke={isWin ? '#4ADE80' : '#EF4444'} strokeWidth={2} fill="url(#pnlGrad)" />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                  <RunningPnlChart data={runningPnlData} isWin={isWin} />
                   )}
                 </div>
               </div>
@@ -369,9 +423,9 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
 
 function StatRow({ label, value, children }: { label: string; value?: string; children?: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-[#1E293B]/50">
+    <div className="flex items-center justify-between py-2 border-b border-[var(--border)]/50">
       <span className="text-xs text-[var(--text-secondary)]">{label}</span>
-      {children || <span className="text-sm text-[#F1F5F9] font-mono">{value}</span>}
+      {children || <span className="text-sm text-[var(--text-primary)] font-mono">{value}</span>}
     </div>
   )
 }
@@ -381,10 +435,82 @@ function TabBtn({ active, onClick, children }: { active: boolean; onClick: () =>
     <button
       onClick={onClick}
       className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-        active ? 'bg-[#151d2e] text-[#F1F5F9]' : 'text-[var(--text-secondary)] hover:text-[#94A3B8] hover:bg-[#111827]'
+        active ? 'bg-[var(--bg-card)] text-[var(--text-primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
       }`}
     >
       {children}
     </button>
+  )
+}
+
+function RunningPnlChart({ data, isWin }: { data: { time: string; pnl: number }[]; isWin: boolean }) {
+  const minPnl = Math.min(...data.map(d => d.pnl))
+  const maxPnl = Math.max(...data.map(d => d.pnl))
+  // Calculate where $0 falls in the gradient (0=top, 1=bottom)
+  const range = maxPnl - minPnl
+  const zeroOffset = range > 0 ? maxPnl / range : 0.5
+  const clampedOffset = Math.max(0.01, Math.min(0.99, zeroOffset))
+
+  return (
+    <ResponsiveContainer width="100%" height="85%">
+      <AreaChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+        <defs>
+          <linearGradient id="splitStroke" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#4ADE80" />
+            <stop offset={`${clampedOffset * 100}%`} stopColor="#4ADE80" />
+            <stop offset={`${clampedOffset * 100}%`} stopColor="#EF4444" />
+            <stop offset="100%" stopColor="#EF4444" />
+          </linearGradient>
+          <linearGradient id="splitFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#4ADE80" stopOpacity={0.2} />
+            <stop offset={`${clampedOffset * 100}%`} stopColor="#4ADE80" stopOpacity={0.05} />
+            <stop offset={`${clampedOffset * 100}%`} stopColor="#EF4444" stopOpacity={0.05} />
+            <stop offset="100%" stopColor="#EF4444" stopOpacity={0.2} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke="rgba(30,41,59,0.4)" vertical={false} />
+        <XAxis
+          dataKey="time"
+          tick={{ fill: '#475569', fontSize: 10 }}
+          axisLine={false}
+          tickLine={false}
+          interval="preserveStartEnd"
+          minTickGap={40}
+        />
+        <YAxis
+          tick={{ fill: '#475569', fontSize: 10 }}
+          axisLine={false}
+          tickLine={false}
+          tickFormatter={(v: number) => `$${v >= 0 ? '' : ''}${v.toFixed(0)}`}
+          width={55}
+        />
+        <Tooltip
+          contentStyle={{ background: '#0f172a', border: '1px solid rgba(30,41,59,0.6)', borderRadius: '10px', color: '#F1F5F9', fontSize: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}
+          formatter={((value: any) => {
+            const v = Number(value ?? 0)
+            return [`${v >= 0 ? '+' : ''}$${v.toFixed(2)}`, 'P&L']
+          }) as any}
+          labelFormatter={(l: any) => l ?? ''}
+          cursor={{ stroke: 'rgba(148,163,184,0.3)', strokeDasharray: '4 4' }}
+        />
+        {/* Zero line */}
+        {minPnl < 0 && maxPnl > 0 && (
+          <CartesianGrid strokeDasharray="0" horizontal={false} vertical={false} />
+        )}
+        <Area
+          type="monotone"
+          dataKey="pnl"
+          stroke="url(#splitStroke)"
+          strokeWidth={2.5}
+          fill="url(#splitFill)"
+          dot={false}
+          activeDot={{ r: 4, fill: '#F1F5F9', stroke: isWin ? '#4ADE80' : '#EF4444', strokeWidth: 2 }}
+        />
+        {/* Render $0 reference line */}
+        {minPnl < 0 && maxPnl > 0 && (
+          <Area type="monotone" dataKey={() => 0} stroke="rgba(100,116,139,0.3)" strokeWidth={1} strokeDasharray="4 4" fill="none" dot={false} activeDot={false} />
+        )}
+      </AreaChart>
+    </ResponsiveContainer>
   )
 }

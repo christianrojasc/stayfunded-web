@@ -37,22 +37,22 @@ export default function SessionAlert({ openPositionCount = 0 }: SessionAlertProp
 
   const styles = {
     urgent: {
-      bg: 'bg-red-50 dark:bg-[#EF4444]/10',
-      border: 'border-red-200 dark:border-[#EF4444]/30',
+      bg: 'bg-red-50/10',
+      border: 'border-red-200/30',
       text: 'text-[#EF4444]',
-      sub: 'text-red-700 dark:text-red-400',
+      sub: 'text-red-700',
     },
     critical: {
-      bg: 'bg-orange-50 dark:bg-orange-500/10',
-      border: 'border-orange-200 dark:border-orange-500/30',
-      text: 'text-orange-600 dark:text-orange-400',
-      sub: 'text-orange-700 dark:text-orange-400',
+      bg: 'bg-orange-50',
+      border: 'border-orange-200',
+      text: 'text-orange-600',
+      sub: 'text-orange-700',
     },
     warning: {
-      bg: 'bg-amber-50 dark:bg-amber-500/10',
-      border: 'border-amber-200 dark:border-amber-500/30',
-      text: 'text-amber-600 dark:text-amber-400',
-      sub: 'text-amber-700 dark:text-amber-400',
+      bg: 'bg-amber-50',
+      border: 'border-amber-200',
+      text: 'text-amber-600',
+      sub: 'text-amber-700',
     },
     none: { bg: '', border: '', text: '', sub: '' },
   }[alertLevel]

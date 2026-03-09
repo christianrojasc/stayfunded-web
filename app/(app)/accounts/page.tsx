@@ -104,14 +104,14 @@ function AccountCard({
       <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
         <button
           onClick={e => { e.stopPropagation(); onEdit(account) }}
-          className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[#2D8B4E] hover:bg-green-50 dark:hover:bg-green-500/10 transition-all"
+          className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[#2D8B4E] hover:bg-[var(--border)] transition-all"
           title="Edit account"
         >
           <Edit2 size={13} />
         </button>
         <button
           onClick={e => { e.stopPropagation(); onDelete(account.id) }}
-          className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[#EF4444] hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
+          className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[#EF4444] hover:bg-[var(--border)] transition-all"
           title="Delete account"
         >
           <Trash2 size={13} />
@@ -137,7 +137,7 @@ function AccountCard({
               {account.status === 'funded' ? 'Funded' : 'Evaluation'}
             </span>
           </div>
-          <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-0.5 truncate">
+          <p className="text-xs text-[var(--text-muted)] mt-0.5 truncate">
             {account.firmName} · {fmtK(account.startingBalance)} · {fmtDrawdownType(account.drawdownType)}
           </p>
         </div>
@@ -146,13 +146,13 @@ function AccountCard({
       {/* P&L Row */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-[10px] text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium uppercase tracking-wider mb-0.5">Net P&L</p>
+          <p className="text-[10px] text-[var(--text-muted)] font-medium uppercase tracking-wider mb-0.5">Net P&L</p>
           <p className={`text-lg font-bold font-mono ${totalPnl >= 0 ? 'text-[#4ADE50]' : 'text-[#EF4444]'}`}>
             {formatPnl(totalPnl)}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-[10px] text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium uppercase tracking-wider mb-0.5">Today</p>
+          <p className="text-[10px] text-[var(--text-muted)] font-medium uppercase tracking-wider mb-0.5">Today</p>
           <p className={`text-sm font-semibold font-mono ${todayPnl >= 0 ? 'text-[#4ADE50]' : 'text-[#EF4444]'}`}>
             {formatPnl(todayPnl)}
           </p>
@@ -164,12 +164,12 @@ function AccountCard({
         {/* Max Drawdown */}
         <div>
           <div className="flex items-center justify-between text-[11px] mb-1">
-            <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)]">Max Drawdown</span>
+            <span className="text-[var(--text-muted)]">Max Drawdown</span>
             <span className="font-mono font-semibold" style={{ color: drawdownColor }}>
               {fmtK(drawdownUsed)} / {fmtK(account.maxLossLimit)}
             </span>
           </div>
-          <div className="h-1.5 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-card)] overflow-hidden">
+          <div className="h-1.5 rounded-full bg-[var(--bg-secondary)] overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"
               style={{ width: `${Math.min(drawdownPct * 100, 100)}%`, backgroundColor: drawdownColor }}
@@ -181,12 +181,12 @@ function AccountCard({
         {account.dailyLossLimit !== null && account.dailyLossLimit > 0 && (
           <div>
             <div className="flex items-center justify-between text-[11px] mb-1">
-              <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)]">Daily Loss</span>
+              <span className="text-[var(--text-muted)]">Daily Loss</span>
               <span className="font-mono font-semibold" style={{ color: dailyPct !== null ? progressColor(dailyPct, true) : '#6B7E91' }}>
                 {fmtK(dailyUsed)} / {fmtK(account.dailyLossLimit)}
               </span>
             </div>
-            <div className="h-1.5 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-card)] overflow-hidden">
+            <div className="h-1.5 rounded-full bg-[var(--bg-secondary)] overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-500"
                 style={{
@@ -202,13 +202,13 @@ function AccountCard({
         {account.profitTarget !== null && account.profitTarget > 0 && (
           <div>
             <div className="flex items-center justify-between text-[11px] mb-1">
-              <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)]">Profit Target</span>
+              <span className="text-[var(--text-muted)]">Profit Target</span>
               <span className="font-mono font-semibold text-[#4ADE50]">
                 {fmtK(Math.max(0, totalPnl))} / {fmtK(account.profitTarget)}
-                {profitPct !== null && <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)]"> ({(profitPct * 100).toFixed(0)}%)</span>}
+                {profitPct !== null && <span className="text-[var(--text-muted)]"> ({(profitPct * 100).toFixed(0)}%)</span>}
               </span>
             </div>
-            <div className="h-1.5 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-card)] overflow-hidden">
+            <div className="h-1.5 rounded-full bg-[var(--bg-secondary)] overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-500 bg-[#4ADE50]"
                 style={{ width: `${Math.min((profitPct || 0) * 100, 100)}%` }}
@@ -220,7 +220,7 @@ function AccountCard({
 
       {/* Footer */}
       <div className="flex items-center justify-between mt-3 pt-3 border-t border-[var(--border)]">
-        <div className="flex items-center gap-3 text-[11px] text-[var(--text-muted)] dark:text-[var(--text-muted)]">
+        <div className="flex items-center gap-3 text-[11px] text-[var(--text-muted)]">
           <span className="flex items-center gap-1">
             <Calendar size={11} />
             {daysTradedCount} day{daysTradedCount !== 1 ? 's' : ''} traded
@@ -299,12 +299,12 @@ function FirmSearchSelect({
                 key={firm.firmName}
                 type="button"
                 onClick={() => { onChange(firm); setOpen(false); setQuery('') }}
-                className="w-full text-left px-3 py-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[#1c2129] transition-colors flex items-center justify-between group"
+                className="w-full text-left px-3 py-2 hover:bg-[var(--bg-secondary)] transition-colors flex items-center justify-between group"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">{firm.firmName}</p>
                   {firm.description && (
-                    <p className="text-[11px] text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-0.5 line-clamp-1">{firm.description}</p>
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5 line-clamp-1">{firm.description}</p>
                   )}
                 </div>
                 {value?.firmName === firm.firmName && (
@@ -392,7 +392,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
             <Briefcase size={18} className="text-[#2D8B4E]" />
             <h2 className="font-bold text-[var(--text-primary)]">{isEdit ? 'Edit Account' : 'Add Prop Account'}</h2>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[#1c2129]">
+          <button onClick={onClose} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]">
             <X size={16} />
           </button>
         </div>
@@ -407,7 +407,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
             </div>
             <FirmSearchSelect value={selectedFirm} onChange={handleFirmChange} />
             {selectedFirm?.description && (
-              <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] flex items-start gap-1.5">
+              <p className="text-xs text-[var(--text-muted)] flex items-start gap-1.5">
                 <Info size={12} className="flex-shrink-0 mt-0.5" />
                 {selectedFirm.description}
               </p>
@@ -430,7 +430,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                     onClick={() => setSelectedPlan(plan)}
                     className={`text-left p-3 rounded-xl border transition-all ${
                       selectedPlan?.planId === plan.planId
-                        ? 'border-[#2D8B4E] bg-green-50 dark:bg-[#2D8B4E]/10'
+                        ? 'border-[#2D8B4E] bg-green-50/10'
                         : 'border-[var(--border)] hover:border-[#2D8B4E]/50'
                     }`}
                   >
@@ -438,10 +438,10 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                       <span className="font-semibold text-sm text-[var(--text-primary)]">{plan.label}</span>
                       <div className="flex items-center gap-2">
                         {plan.evalCost !== null && (
-                          <span className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">${plan.evalCost}/mo</span>
+                          <span className="text-xs text-[var(--text-muted)]">${plan.evalCost}/mo</span>
                         )}
                         {plan.activationFee !== null && (
-                          <span className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">+${plan.activationFee} activation</span>
+                          <span className="text-xs text-[var(--text-muted)]">+${plan.activationFee} activation</span>
                         )}
                         {selectedPlan?.planId === plan.planId && (
                           <Check size={14} className="text-[#2D8B4E]" />
@@ -450,23 +450,23 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                     </div>
                     <div className="flex flex-wrap gap-2 mt-1.5">
                       {plan.profitTarget !== null && (
-                        <span className="text-[10px] bg-green-50 dark:bg-[#2D8B4E]/10 text-[#2D8B4E] px-2 py-0.5 rounded-full font-medium">
+                        <span className="text-[10px] bg-green-50/10 text-[#2D8B4E] px-2 py-0.5 rounded-full font-medium">
                           Goal: {fmtK(plan.profitTarget)}
                         </span>
                       )}
-                      <span className="text-[10px] bg-red-50 dark:bg-[#EF4444]/10 text-[#EF4444] px-2 py-0.5 rounded-full font-medium">
+                      <span className="text-[10px] bg-red-50/10 text-[#EF4444] px-2 py-0.5 rounded-full font-medium">
                         DD: {fmtK(plan.drawdown)}
                       </span>
-                      <span className="text-[10px] bg-[var(--bg-secondary)] dark:bg-[#1c2129] text-[var(--text-muted)] dark:text-[var(--text-muted)] px-2 py-0.5 rounded-full font-medium">
+                      <span className="text-[10px] bg-[var(--bg-secondary)] text-[var(--text-muted)] px-2 py-0.5 rounded-full font-medium">
                         {fmtDrawdownType(plan.drawdownType)}
                       </span>
                       {plan.minTradingDays > 0 && (
-                        <span className="text-[10px] bg-[var(--bg-secondary)] dark:bg-[#1c2129] text-[var(--text-muted)] dark:text-[var(--text-muted)] px-2 py-0.5 rounded-full font-medium">
+                        <span className="text-[10px] bg-[var(--bg-secondary)] text-[var(--text-muted)] px-2 py-0.5 rounded-full font-medium">
                           Min {plan.minTradingDays}d
                         </span>
                       )}
                       {plan.daysToPayout <= 1 && (
-                        <span className="text-[10px] bg-amber-50 dark:bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded-full font-medium">
+                        <span className="text-[10px] bg-amber-50 text-amber-400 px-2 py-0.5 rounded-full font-medium">
                           Same-day payout
                         </span>
                       )}
@@ -590,11 +590,11 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                   </select>
                 </div>
                 {consistencyRule && (
-                  <div className="p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl">
-                    <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-1 flex items-center gap-1.5">
+                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                    <p className="text-xs font-semibold text-amber-700 mb-1 flex items-center gap-1.5">
                       <AlertTriangle size={12} /> Consistency Rule
                     </p>
-                    <p className="text-xs text-amber-600 dark:text-amber-300">{consistencyRule}</p>
+                    <p className="text-xs text-amber-400">{consistencyRule}</p>
                   </div>
                 )}
               </div>
@@ -658,7 +658,7 @@ export default function AccountsPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <h1 className="page-title">Prop Accounts</h1>
-          <p className="text-sm text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-0.5">
+          <p className="text-sm text-[var(--text-muted)] mt-0.5">
             {accounts.length} account{accounts.length !== 1 ? 's' : ''} · Track your funded & evaluation accounts
           </p>
         </div>
@@ -678,11 +678,11 @@ export default function AccountsPage() {
             { label: 'Funded', value: accounts.filter(a => a.status === 'funded').length, sub: 'active funded' },
           ].map(({ label, value, sub, pnl, val }) => (
             <div key={label} className="glass-card p-4">
-              <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">{label}</p>
+              <p className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">{label}</p>
               <p className={`text-xl font-bold ${pnl ? (val! >= 0 ? 'text-[#4ADE50]' : 'text-[#EF4444]') : 'text-[var(--text-primary)]'}`}>
                 {typeof value === 'number' && !pnl ? value : value}
               </p>
-              <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-0.5">{sub}</p>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">{sub}</p>
             </div>
           ))}
         </div>
@@ -696,7 +696,7 @@ export default function AccountsPage() {
             <Briefcase size={28} className="text-[#2D8B4E]" />
           </div>
           <h2 className="font-bold text-[var(--text-primary)] text-lg mb-2">No prop accounts yet</h2>
-          <p className="text-sm text-[var(--text-muted)] dark:text-[var(--text-muted)] mb-5 max-w-sm mx-auto">
+          <p className="text-sm text-[var(--text-muted)] mb-5 max-w-sm mx-auto">
             Add your prop firm evaluation or funded accounts to track rules, drawdown, and profit targets.
           </p>
 

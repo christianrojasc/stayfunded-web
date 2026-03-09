@@ -9,6 +9,10 @@ import {
 } from 'lucide-react'
 import { useSidebar } from './SidebarContext'
 import { useTheme } from './ThemeContext'
+import { useSubscription } from '@/hooks/useSubscription'
+import { Lock } from 'lucide-react'
+
+const PRO_ROUTES = new Set(['/calendar', '/analytics', '/insights', '/progress'])
 
 const NAV_SECTIONS = [
   {
@@ -45,9 +49,9 @@ const NAV_SECTIONS = [
 ]
 
 function NavItem({
-  href, icon: Icon, label, active, collapsed,
+  href, icon: Icon, label, active, collapsed, locked,
 }: {
-  href: string; icon: LucideIcon; label: string; active: boolean; collapsed: boolean
+  href: string; icon: LucideIcon; label: string; active: boolean; collapsed: boolean; locked?: boolean
 }) {
   return (
     <Link href={href}>
@@ -66,11 +70,16 @@ function NavItem({
         } : {}}
       >
         <Icon size={20} className="flex-shrink-0" />
-        {!collapsed && <span className="truncate">{label}</span>}
+        {!collapsed && (
+          <span className="truncate flex-1">{label}</span>
+        )}
+        {!collapsed && locked && (
+          <Lock size={12} className="flex-shrink-0 text-[var(--text-muted)] opacity-50" />
+        )}
         {collapsed && (
           <span className="absolute left-full ml-3 px-2.5 py-1.5 rounded-lg text-xs font-medium opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-all duration-150 z-50"
             style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)', backdropFilter: 'blur(20px)' }}>
-            {label}
+            {label}{locked ? ' 🔒' : ''}
           </span>
         )}
       </div>
@@ -82,6 +91,7 @@ export default function Sidebar() {
   const pathname = usePathname()
   const { collapsed, toggle, setHovered } = useSidebar()
   const { theme, toggle: toggleTheme } = useTheme()
+  const { isPro } = useSubscription()
 
   const isActive = (href: string) =>
     href === '/dashboard' ? pathname === '/dashboard' || pathname === '/' : pathname.startsWith(href)
@@ -140,7 +150,7 @@ export default function Sidebar() {
             )}
             <div className="space-y-0.5">
               {section.items.map(({ href, icon, label }) => (
-                <NavItem key={href} href={href} icon={icon} label={label} active={isActive(href)} collapsed={collapsed} />
+                <NavItem key={href} href={href} icon={icon} label={label} active={isActive(href)} collapsed={collapsed} locked={!isPro && PRO_ROUTES.has(href)} />
               ))}
             </div>
           </div>

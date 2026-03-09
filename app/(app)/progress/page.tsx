@@ -10,8 +10,10 @@ import {
 } from 'lucide-react'
 import * as dl from '@/lib/data-layer'
 import WeeklyReportCard from '@/components/WeeklyReportCard'
-import { DailyChecklist } from '@/lib/types'
+import { DailyChecklist, Trade } from '@/lib/types'
 import { getTodaySessionDate } from '@/lib/session'
+import ProGate from '@/components/ProGate'
+import { useTrades } from '@/components/TradeContext'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -44,7 +46,7 @@ const RULE_TYPE_ICONS: Record<ProgressRule['type'], typeof Clock> = {
   custom: Activity,
 }
 
-const GLASS = 'bg-[var(--border)] backdrop-blur-[20px] border border-[var(--border)] rounded-2xl'
+const GLASS = 'glass-card'
 
 const HEATMAP_COLORS = [
   'bg-[var(--border)]',
@@ -157,11 +159,17 @@ const ONBOARDING_RULES: OnboardingRule[] = [
   { type: 'profit_target', name: 'Profit target', description: 'Stop trading after reaching $X profit', icon: Target, hasInput: true, inputPlaceholder: '500', inputPrefix: '$' },
 ]
 
-function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) => void }) {
-  const [selected, setSelected] = useState<string[]>([])
-  const [values, setValues] = useState<Record<string, string>>({})
-  const [custom1, setCustom1] = useState('')
-  const [custom2, setCustom2] = useState('')
+function OnboardingModal({ onComplete, onClose, existingRules }: { onComplete: (rules: ProgressRule[]) => void; onClose?: () => void; existingRules?: ProgressRule[] }) {
+  // Pre-populate from existing rules if editing
+  const initSelected = existingRules?.filter(r => r.type !== 'custom').map(r => r.type) || []
+  const initValues: Record<string, string> = {}
+  existingRules?.forEach(r => { if (r.type !== 'custom' && r.condition) initValues[r.type] = r.condition })
+  const customRules = existingRules?.filter(r => r.type === 'custom') || []
+
+  const [selected, setSelected] = useState<string[]>(initSelected)
+  const [values, setValues] = useState<Record<string, string>>(initValues)
+  const [custom1, setCustom1] = useState(customRules[0]?.name || '')
+  const [custom2, setCustom2] = useState(customRules[1]?.name || '')
 
   const toggle = (type: string) => {
     setSelected(prev =>
@@ -206,11 +214,16 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
         className="w-full max-w-2xl bg-[var(--bg-primary)] border border-[var(--border)] rounded-3xl p-8 mx-auto my-8"
       >
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 relative">
+          {onClose && (
+            <button onClick={onClose} className="absolute top-0 right-0 w-8 h-8 rounded-full flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--border)] transition-all">
+              <X className="w-4 h-4" />
+            </button>
+          )}
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#4ADE80]/30 to-[#4ADE80]/10 border border-[#4ADE80]/20 flex items-center justify-center mx-auto mb-4">
             <Target className="w-7 h-7 text-[#4ADE80]" />
           </div>
-          <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Set your trading rules</h2>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">{existingRules ? 'Edit your trading rules' : 'Set your trading rules'}</h2>
           <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto">
             Choose the rules you want to track every session. You can always edit them later.
           </p>
@@ -304,7 +317,7 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
               : 'bg-[var(--border)] text-[var(--text-muted)] cursor-not-allowed'
           }`}
         >
-          {totalSelected > 0 ? `Start Tracking (${totalSelected} rule${totalSelected !== 1 ? 's' : ''})` : 'Select at least 1 rule'}
+          {totalSelected > 0 ? `${existingRules ? 'Save' : 'Start Tracking'} (${totalSelected} rule${totalSelected !== 1 ? 's' : ''})` : 'Select at least 1 rule'}
         </button>
       </motion.div>
     </motion.div>
@@ -415,7 +428,7 @@ function RuleEditor({
                 className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
                 style={newType === k
                   ? {background:'rgba(74,222,128,0.15)', border:'1px solid rgba(74,222,128,0.4)', color:'#4ADE80'}
-                  : {background:'rgba(255,255,255,0.04)', border:'1px solid var(--border)', color:'#64748B'}
+                  : {background:'var(--bg-card)', border:'1px solid var(--border)', color:'#64748B'}
                 }
               >
                 {v}
@@ -428,14 +441,14 @@ function RuleEditor({
             onChange={e => setNewName(e.target.value)}
             placeholder="Rule name (optional)"
             className="w-full rounded-2xl px-4 py-3 text-sm text-[var(--text-primary)] placeholder-[#475569] focus:outline-none transition-all"
-            style={{background:'rgba(255,255,255,0.04)', border:'1px solid var(--border)'}}
+            style={{background:'var(--bg-card)', border:'1px solid var(--border)'}}
           />
           <input
             value={newCondition}
             onChange={e => setNewCondition(e.target.value)}
             placeholder={newType === 'start_time' ? 'e.g. 09:30' : newType.includes('loss') ? 'e.g. $100' : 'Condition...'}
             className="w-full rounded-2xl px-4 py-3 text-sm text-[var(--text-primary)] placeholder-[#475569] focus:outline-none transition-all"
-            style={{background:'rgba(255,255,255,0.04)', border:'1px solid var(--border)'}}
+            style={{background:'var(--bg-card)', border:'1px solid var(--border)'}}
           />
           <button
             onClick={addRule}
@@ -471,7 +484,120 @@ function RuleEditor({
 
 // ── Main Page ──────────────────────────────────────────────────────────────────
 
+// ── Rule Evaluation Engine ─────────────────────────────────────────────────────
+function evaluateRuleForDay(rule: ProgressRule, dayTrades: Trade[]): boolean {
+  if (dayTrades.length === 0) return true // No trades = no violation
+
+  const condition = rule.condition?.replace(/[$,]/g, '') || ''
+  const numVal = parseFloat(condition)
+
+  switch (rule.type) {
+    case 'start_time': {
+      // Check if first trade was after the specified time
+      const limit = condition.replace(/[^0-9:]/g, '') // e.g. "09:30"
+      if (!limit) return true
+      const firstTrade = dayTrades.reduce((earliest, t) => {
+        if (!t.entryTime) return earliest
+        if (!earliest || t.entryTime < earliest) return t.entryTime
+        return earliest
+      }, '' as string)
+      if (!firstTrade) return true // No time data
+      return firstTrade >= limit
+    }
+    case 'max_loss_trade': {
+      // No single trade should lose more than $X
+      if (isNaN(numVal)) return true
+      return dayTrades.every(t => t.netPnl >= -numVal)
+    }
+    case 'max_loss_day': {
+      // Total daily loss shouldn't exceed $X
+      if (isNaN(numVal)) return true
+      const totalPnl = dayTrades.reduce((s, t) => s + t.netPnl, 0)
+      return totalPnl >= -numVal
+    }
+    case 'max_trades': {
+      // No more than X trades per day
+      if (isNaN(numVal)) return true
+      return dayTrades.length <= numVal
+    }
+    case 'no_revenge': {
+      // After a losing trade, must wait before re-entering
+      // Simple check: no two consecutive losing trades
+      const sorted = [...dayTrades].sort((a, b) => (a.entryTime || '').localeCompare(b.entryTime || ''))
+      for (let i = 1; i < sorted.length; i++) {
+        if (sorted[i - 1].netPnl < 0 && sorted[i].netPnl < 0) return false
+      }
+      return true
+    }
+    case 'profit_target': {
+      // Stop trading after reaching $X profit (check if traded past target)
+      if (isNaN(numVal)) return true
+      const sorted = [...dayTrades].sort((a, b) => (a.entryTime || '').localeCompare(b.entryTime || ''))
+      let running = 0
+      for (let i = 0; i < sorted.length; i++) {
+        running += sorted[i].netPnl
+        if (running >= numVal && i < sorted.length - 1) return false // Kept trading after target
+      }
+      return true
+    }
+    default:
+      return true // Custom rules can't be auto-evaluated
+  }
+}
+
+function evaluateRules(rules: ProgressRule[], trades: Trade[]): Map<string, { streak: number; followRate: number; avgPnlFollowed: number; avgPnlBroken: number; daysChecked: number }> {
+  // Group trades by session date
+  const byDay = new Map<string, Trade[]>()
+  trades.forEach(t => {
+    const sd = t.sessionDate || t.date
+    if (!byDay.has(sd)) byDay.set(sd, [])
+    byDay.get(sd)!.push(t)
+  })
+
+  // Get sorted trading days (most recent first)
+  const tradingDays = [...byDay.keys()].sort().reverse()
+
+  const results = new Map<string, { streak: number; followRate: number; avgPnlFollowed: number; avgPnlBroken: number; daysChecked: number }>()
+
+  for (const rule of rules) {
+    let streak = 0
+    let followed = 0
+    let broken = 0
+    let pnlFollowed = 0
+    let pnlBroken = 0
+    let streakActive = true
+
+    for (const day of tradingDays) {
+      const dayTrades = byDay.get(day)!
+      const passed = evaluateRuleForDay(rule, dayTrades)
+      const dayPnl = dayTrades.reduce((s, t) => s + t.netPnl, 0)
+
+      if (passed) {
+        followed++
+        pnlFollowed += dayPnl
+        if (streakActive) streak++
+      } else {
+        broken++
+        pnlBroken += dayPnl
+        streakActive = false
+      }
+    }
+
+    const total = followed + broken
+    results.set(rule.id, {
+      streak,
+      followRate: total > 0 ? (followed / total) * 100 : 0,
+      avgPnlFollowed: followed > 0 ? pnlFollowed / followed : 0,
+      avgPnlBroken: broken > 0 ? pnlBroken / broken : 0,
+      daysChecked: total,
+    })
+  }
+
+  return results
+}
+
 export default function ProgressPage() {
+  const { trades } = useTrades()
   const [rules, setRules] = useState<ProgressRule[]>([])
   const [todayChecklist, setTodayChecklist] = useState<DailyChecklist | null>(null)
   const [allChecklists, setAllChecklists] = useState<DailyChecklist[]>([])
@@ -488,6 +614,9 @@ export default function ProgressPage() {
     }
     setLoading(false)
   }, [])
+
+  // Evaluate rules against real trade data
+  const ruleStats = useMemo(() => evaluateRules(rules, trades), [rules, trades])
 
   const todayChecked = todayChecklist?.items.filter(i => i.checked).length ?? 0
   const todayTotal = todayChecklist?.items.length ?? 0
@@ -600,6 +729,7 @@ export default function ProgressPage() {
   }
 
   return (
+    <ProGate feature="progress" mode="block">
     <div className="space-y-4 sm:space-y-6 max-w-[1400px] mx-auto">
       {/* Onboarding */}
       <AnimatePresence>
@@ -678,7 +808,7 @@ export default function ProgressPage() {
                 {rules.map(rule => {
                   const Icon = RULE_TYPE_ICONS[rule.type]
                   return (
-                    <div key={rule.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                    <div key={rule.id} className="flex items-center gap-3 p-3 rounded-xl bg-[var(--bg-card)] border border-[var(--border)]">
                       <div className="w-8 h-8 rounded-lg bg-[var(--border)] flex items-center justify-center flex-shrink-0">
                         <Icon className="w-4 h-4 text-[var(--text-muted)]" />
                       </div>
@@ -691,7 +821,7 @@ export default function ProgressPage() {
                   )
                 })}
                 {todayChecklist?.items.map(item => (
-                  <div key={item.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                  <div key={item.id} className="flex items-center gap-3 p-3 rounded-xl bg-[var(--bg-card)] border border-[var(--border)]">
                     <div className="w-8 h-8 rounded-lg bg-[var(--border)] flex items-center justify-center flex-shrink-0">
                       {item.checked ? <CheckCircle2 className="w-4 h-4 text-[#4ADE80]" /> : <Circle className="w-4 h-4 text-[var(--text-muted)]/40" />}
                     </div>
@@ -739,7 +869,7 @@ export default function ProgressPage() {
                   }
                 })
                 return months.map((m, i) => (
-                  <span key={i} className="absolute text-[11px] font-medium text-[#475569]" style={{ left: `${m.pct}%` }}>{m.label}</span>
+                  <span key={i} className="absolute text-[11px] font-medium text-[var(--text-muted)]" style={{ left: `${m.pct}%` }}>{m.label}</span>
                 ))
               })()}
             </div>
@@ -763,7 +893,7 @@ export default function ProgressPage() {
                     const pct = day.pct
                     const isEmpty = pct < 0
                     const isToday = day.date.toDateString() === new Date().toDateString()
-                    const bg = isEmpty ? 'rgba(255,255,255,0.04)'
+                    const bg = isEmpty ? 'var(--bg-card)'
                       : pct < 25 ? '#14532d'
                       : pct < 50 ? '#166534'
                       : pct < 75 ? '#16a34a'
@@ -832,19 +962,55 @@ export default function ProgressPage() {
               <tbody>
                 {rules.map(rule => {
                   const Icon = RULE_TYPE_ICONS[rule.type]
+                  const stats = ruleStats.get(rule.id)
+                  const followRate = stats?.followRate ?? 0
+                  const streak = stats?.streak ?? 0
+                  const avgFollowed = stats?.avgPnlFollowed ?? 0
+                  const avgBroken = stats?.avgPnlBroken ?? 0
+                  const daysChecked = stats?.daysChecked ?? 0
+                  const avgDisplay = daysChecked > 0
+                    ? `${avgFollowed >= 0 ? '+' : ''}$${avgFollowed.toFixed(0)} / ${avgBroken >= 0 ? '+' : ''}$${avgBroken.toFixed(0)}`
+                    : '--'
                   return (
-                    <tr key={rule.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
-                      <td className="py-3 px-2">
-                        <div className="flex items-center gap-2">
-                          <Icon className="w-4 h-4 text-[var(--text-muted)]" />
-                          <span className="text-sm text-[var(--text-primary)]">{rule.name}</span>
+                    <tr key={rule.id} className="border-b border-[var(--border)] hover:bg-[var(--bg-secondary)] transition-colors">
+                      <td className="py-4 px-3">
+                        <div className="flex items-center gap-2.5">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${followRate >= 80 ? 'bg-[#4ADE80]/10' : followRate >= 50 ? 'bg-yellow-500/10' : daysChecked > 0 ? 'bg-[#FF453A]/10' : 'bg-[var(--border)]'}`}>
+                            <Icon className={`w-4 h-4 ${followRate >= 80 ? 'text-[#4ADE80]' : followRate >= 50 ? 'text-yellow-500' : daysChecked > 0 ? 'text-[#FF453A]' : 'text-[var(--text-muted)]'}`} />
+                          </div>
+                          <span className="text-sm font-medium text-[var(--text-primary)]">{rule.name}</span>
                         </div>
                       </td>
-                      <td className="py-3 px-2 text-sm text-[var(--text-muted)]">{getConditionDisplay(rule)}</td>
-                      <td className="py-3 px-2 text-sm text-[var(--text-primary)]">0 days</td>
-                      <td className="py-3 px-2 text-sm text-[var(--text-muted)]">--</td>
-                      <td className="py-3 px-2">
-                        <span className={`text-sm font-medium ${getFollowRateColor(0)}`}>--</span>
+                      <td className="py-4 px-3 text-sm text-[var(--text-secondary)]">{getConditionDisplay(rule)}</td>
+                      <td className="py-4 px-3">
+                        <span className={`text-sm font-semibold ${streak > 0 ? 'text-[#4ADE80]' : 'text-[var(--text-primary)]'}`}>
+                          {streak} {streak === 1 ? 'day' : 'days'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-3">
+                        {daysChecked > 0 ? (
+                          <div className="text-xs">
+                            <span className="text-[#4ADE80] font-medium">Followed: {avgFollowed >= 0 ? '+' : ''}${avgFollowed.toFixed(0)}</span>
+                            <span className="text-[var(--text-muted)] mx-1">/</span>
+                            <span className="text-[#FF453A] font-medium">Broke: {avgBroken >= 0 ? '+' : ''}${avgBroken.toFixed(0)}</span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-[var(--text-muted)]">--</span>
+                        )}
+                      </td>
+                      <td className="py-4 px-3">
+                        {daysChecked > 0 ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 h-1.5 rounded-full bg-[var(--border)] overflow-hidden">
+                              <div className="h-full rounded-full" style={{ width: `${followRate}%`, background: followRate >= 80 ? '#4ADE80' : followRate >= 50 ? '#EAB308' : '#FF453A' }} />
+                            </div>
+                            <span className={`text-sm font-bold ${followRate >= 80 ? 'text-[#4ADE80]' : followRate >= 50 ? 'text-yellow-500' : 'text-[#FF453A]'}`}>
+                              {followRate.toFixed(0)}%
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-[var(--text-muted)]">--</span>
+                        )}
                       </td>
                     </tr>
                   )
@@ -857,8 +1023,9 @@ export default function ProgressPage() {
 
       {/* Edit Rules Modal */}
       <AnimatePresence>
-        {editOpen && <RuleEditor rules={rules} onSave={handleSaveRules} onClose={() => setEditOpen(false)} />}
+        {editOpen && <OnboardingModal existingRules={rules} onComplete={(newRules) => { handleSaveRules(newRules); setEditOpen(false) }} onClose={() => setEditOpen(false)} />}
       </AnimatePresence>
     </div>
+    </ProGate>
   )
 }

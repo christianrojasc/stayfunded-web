@@ -4,8 +4,13 @@ import { Insight } from './types'
 function parseTime(trade: Trade): number | null {
   const t = trade.entryTime
   if (!t) return null
-  const d = new Date(t)
-  return isNaN(d.getTime()) ? null : d.getTime()
+  // entryTime is "HH:MM" or "HH:MM:SS" — convert to minutes since midnight
+  const parts = t.split(':')
+  if (parts.length < 2) return null
+  const hours = parseInt(parts[0], 10)
+  const mins = parseInt(parts[1], 10)
+  if (isNaN(hours) || isNaN(mins)) return null
+  return hours * 60 + mins // minutes since midnight
 }
 
 function groupBySessionDate(trades: Trade[]): Map<string, Trade[]> {

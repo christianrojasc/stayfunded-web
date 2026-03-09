@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import {
   Save, Trash2, AlertTriangle, Database,
@@ -73,7 +73,8 @@ export default function SettingsPage() {
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [feeSchedule, setFeeSchedule] = useState<Record<string, number>>({})
   const [activeTab, setActiveTab] = useState('profile')
-  const [upgradeOpen, setUpgradeOpen] = useState(false)
+  const settingsSearchParams = useSearchParams()
+  const [upgradeOpen, setUpgradeOpen] = useState(settingsSearchParams.get('upgrade') === 'true')
   const [portalLoading, setPortalLoading] = useState(false)
   const [displayName, setDisplayName] = useState('')
 

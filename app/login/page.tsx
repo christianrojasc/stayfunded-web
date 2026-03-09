@@ -1,9 +1,9 @@
 'use client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
-import { useState, FormEvent, useEffect, useRef } from 'react'
+import { useState, FormEvent, useEffect, useRef, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useAuth } from '@/components/AuthContext'
@@ -15,8 +15,18 @@ import { CanvasErrorBoundary } from '@/components/ui/canvas-error-boundary'
 type PageMode = 'signin' | 'signup' | 'reset'
 
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginPageInner />
+    </Suspense>
+  )
+}
+
+function LoginPageInner() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { signIn, signUp } = useAuth()
+  const redirectParam = searchParams.get('redirect')
 
   const [mode, setMode]               = useState<PageMode>('signin')
   const [email, setEmail]             = useState('')
@@ -66,7 +76,8 @@ export default function LoginPage() {
           setFailed(f => f + 1); setCooldown(true); setTimeout(() => setCooldown(false), 2000)
         } else {
           setStep('success')
-          setTimeout(() => { window.location.href = '/dashboard' }, 800)
+          const dest = redirectParam === 'upgrade' ? '/settings?upgrade=true' : '/dashboard'
+          setTimeout(() => { window.location.href = dest }, 800)
         }
       } else {
         const { error } = await signUp(email, password, displayName.trim() || undefined)

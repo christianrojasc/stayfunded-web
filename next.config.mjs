@@ -42,6 +42,8 @@ const securityHeaders = [
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
   // Full Content Security Policy
   { key: 'Content-Security-Policy', value: ContentSecurityPolicy },
+  // HSTS — force HTTPS for 2 years
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
 ]
 
 const nextConfig = {

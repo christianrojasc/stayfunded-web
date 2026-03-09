@@ -158,7 +158,7 @@ export default function SettingsPage() {
 
   const handleChangePassword = async () => {
     setPwMessage(null)
-    if (!newPassword || !confirmPassword) {
+    if (!currentPassword || !newPassword || !confirmPassword) {
       setPwMessage({ type: 'error', text: 'Please fill in all fields.' })
       return
     }
@@ -166,8 +166,8 @@ export default function SettingsPage() {
       setPwMessage({ type: 'error', text: 'New passwords do not match.' })
       return
     }
-    if (newPassword.length < 6) {
-      setPwMessage({ type: 'error', text: 'Password must be at least 6 characters.' })
+    if (newPassword.length < 8) {
+      setPwMessage({ type: 'error', text: 'Password must be at least 8 characters.' })
       return
     }
     setPwLoading(true)
@@ -176,6 +176,16 @@ export default function SettingsPage() {
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       )
+      // Verify current password first
+      const { error: reAuthError } = await supabase.auth.signInWithPassword({
+        email: user?.email || '',
+        password: currentPassword,
+      })
+      if (reAuthError) {
+        setPwMessage({ type: 'error', text: 'Current password is incorrect.' })
+        setPwLoading(false)
+        return
+      }
       const { error } = await supabase.auth.updateUser({ password: newPassword })
       if (error) {
         setPwMessage({ type: 'error', text: error.message })

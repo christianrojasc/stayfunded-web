@@ -4,8 +4,8 @@ import ShineBorder from '@/components/ShineBorder'
 import { X, Check, Zap, ArrowRight, Loader2 } from 'lucide-react'
 import { useAuth } from '@/components/AuthContext'
 
-const PRICE_MONTHLY = 'price_1T8DHOCheboU7tiQPTTAPQvv'
-const PRICE_YEARLY = 'price_1T8DHOCheboU7tiQR1S4s1gk'
+const PRICE_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY!
+const PRICE_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_YEARLY!
 
 const features = [
   'Unlimited prop firm accounts',
@@ -35,7 +35,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId, userId: user.id, email: user.email }),
+        body: JSON.stringify({ priceId }),
       })
       const { url } = await res.json()
       if (url) window.location.href = url

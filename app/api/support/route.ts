@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
 
   const { message, ticketId } = await req.json()
   if (!message?.trim()) return NextResponse.json({ error: 'Message required' }, { status: 400 })
+  if (message.length > 5000) return NextResponse.json({ error: 'Message too long (max 5000 characters)' }, { status: 400 })
 
   let activeTicketId = ticketId
 

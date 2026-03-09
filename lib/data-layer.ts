@@ -27,8 +27,8 @@ import { DEFAULT_CHECKLIST_ITEMS } from './storage'
 
 async function getUserId(): Promise<string | null> {
   if (typeof window === 'undefined') return null
-  const { data } = await supabase.auth.getSession()
-  return data.session?.user?.id ?? null
+  const { data: { user } } = await supabase.auth.getUser()
+  return user?.id ?? null
 }
 
 // ── Trades ────────────────────────────────────────────────────────────────────

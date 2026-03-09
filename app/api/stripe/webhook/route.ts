@@ -9,9 +9,15 @@ import { createClient } from '@supabase/supabase-js'
  * ALTER TABLE profiles ADD COLUMN IF NOT EXISTS stripe_customer_id text;
  */
 
+// Fail hard if service role key is missing — never fall back to anon key
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+if (!serviceKey) {
+  console.error('FATAL: SUPABASE_SERVICE_ROLE_KEY is not set')
+}
+
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  serviceKey || 'missing',
 )
 
 export async function POST(req: NextRequest) {
@@ -22,13 +28,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No signature' }, { status: 400 })
   }
 
+  // Fail hard if webhook secret is missing — never accept unsigned payloads
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+  if (!webhookSecret) {
+    console.error('FATAL: STRIPE_WEBHOOK_SECRET is not set')
+    return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 })
+  }
+
   let event: Stripe.Event
   try {
-    if (process.env.STRIPE_WEBHOOK_SECRET) {
-      event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET)
-    } else {
-      event = JSON.parse(body) as Stripe.Event
-    }
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
   } catch {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }

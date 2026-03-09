@@ -22,6 +22,7 @@ import SessionClock from '@/components/SessionClock'
 import SessionAlert from '@/components/SessionAlert'
 import AccountSelector from '@/components/AccountSelector'
 import TradingGrowthCurve from '@/components/TradingGrowthCurve'
+import { getTodaySessionDate } from '@/lib/session'
 import { format } from 'date-fns'
 import Link from 'next/link'
 
@@ -206,12 +207,14 @@ function WeeklyGradeCard() {
       const rules = JSON.parse(rulesRaw) as { id: string }[]
       if (rules.length === 0) return
 
-      const today = new Date()
+      // Use session dates (futures: 6PM-5PM EST) for the last 7 trading days
+      const todaySD = getTodaySessionDate()
+      const todayDate = new Date(todaySD + 'T12:00:00')
       let totalPct = 0
       let daysWithData = 0
 
       for (let i = 0; i < 7; i++) {
-        const d = new Date(today)
+        const d = new Date(todayDate)
         d.setDate(d.getDate() - i)
         const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
         const raw = localStorage.getItem(`sf_journal_rules_${dateStr}`)

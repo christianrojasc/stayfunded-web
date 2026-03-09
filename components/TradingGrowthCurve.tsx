@@ -275,6 +275,16 @@ export default function TradingGrowthCurve() {
     // Worst floor pct from starting balance
     const floorPct = ((lowestFloor - aggregatedStartingBalance) / aggregatedStartingBalance) * 100
 
+    // Actual max drawdown: peak equity - lowest balance after peak
+    let peakBalance = aggregatedStartingBalance
+    let maxDrawdownAmount = 0
+    for (const p of equityPoints) {
+      if (p.balance > peakBalance) peakBalance = p.balance
+      const dd = peakBalance - p.balance
+      if (dd > maxDrawdownAmount) maxDrawdownAmount = dd
+    }
+    const maxDrawdownPct = peakBalance > 0 ? (maxDrawdownAmount / peakBalance) * 100 : 0
+
     // Profit target remaining
     const profitTargetRemaining = selected?.profitTarget
       ? Math.max(0, (selected?.profitTarget ?? 0) - Math.max(0, totalPnl))
@@ -290,6 +300,8 @@ export default function TradingGrowthCurve() {
       equityChangePct,
       lowestFloor,
       floorPct,
+      maxDrawdownAmount,
+      maxDrawdownPct,
       profitTargetRemaining,
       profitTargetPct,
       isFunded: selected?.status === 'funded',
@@ -586,12 +598,12 @@ export default function TradingGrowthCurve() {
             {/* 4. MAX DRAWDOWN */}
             <MiniKPICard
               label="Max Drawdown"
-              value={fmtDollar(kpiData.lowestFloor)}
-              subValue={`Floor at ${fmtPct(kpiData.floorPct)} from start`}
+              value={kpiData.maxDrawdownAmount > 0 ? `-${fmtDollar(kpiData.maxDrawdownAmount)}` : '$0'}
+              subValue={kpiData.maxDrawdownAmount > 0 ? `${kpiData.maxDrawdownPct.toFixed(1)}% from peak · Floor: ${fmtDollar(kpiData.lowestFloor)}` : 'No drawdown yet'}
               change={null}
               icon={<CircleDot size={16} className="text-blue-400" />}
               iconBg="bg-blue-400/10"
-              valueColor="text-red-400"
+              valueColor={kpiData.maxDrawdownAmount > 0 ? 'text-red-400' : 'text-[var(--text-primary)]'}
             />
           </div>
         )}

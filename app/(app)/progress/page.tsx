@@ -885,7 +885,7 @@ export default function ProgressPage() {
               {['S','M','T','W','T','F','S'].map((dayLabel, di) => (
                 <>
                   <div key={`label-${di}`} className="flex items-center justify-end pr-1">
-                    <span className="text-[10px] text-[var(--text-muted)]">{di % 2 === 1 ? dayLabel : ''}</span>
+                    <span className="text-[10px] text-[var(--text-muted)]">{dayLabel}</span>
                   </div>
                   {heatmapWeeks.map((week, wi) => {
                     const day = week[di]

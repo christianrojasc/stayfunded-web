@@ -875,20 +875,21 @@ export default function ProgressPage() {
           </div>
 
           {/* Grid */}
-          <div className="flex gap-[3px]">
-            {/* Day labels */}
-            <div className="flex flex-col gap-[3px] w-5 shrink-0">
-              {['S','M','T','W','T','F','S'].map((d, i) => (
-                <div key={i} className="aspect-square flex items-center justify-end pr-1">
-                  <span className="text-[9px] text-[#374151]">{i % 2 === 1 ? d : ''}</span>
-                </div>
-              ))}
-            </div>
-            {/* Cells */}
-            <div className="grid gap-[3px] flex-1" style={{ gridTemplateColumns: `repeat(${heatmapWeeks.length}, 1fr)` }}>
-              {heatmapWeeks.map((week, wi) => (
-                <div key={wi} className="flex flex-col gap-[3px]">
-                  {week.map((day, di) => {
+          <div className="overflow-x-auto">
+            <div className="inline-grid gap-[4px]" style={{ gridTemplateColumns: `20px repeat(${heatmapWeeks.length}, minmax(0, 1fr))`, width: '100%' }}>
+              {/* Header row — empty corner + week columns (invisible) */}
+              <div />
+              {heatmapWeeks.map((_, wi) => <div key={wi} />)}
+
+              {/* 7 day rows */}
+              {['S','M','T','W','T','F','S'].map((dayLabel, di) => (
+                <>
+                  <div key={`label-${di}`} className="flex items-center justify-end pr-1">
+                    <span className="text-[10px] text-[var(--text-muted)]">{di % 2 === 1 ? dayLabel : ''}</span>
+                  </div>
+                  {heatmapWeeks.map((week, wi) => {
+                    const day = week[di]
+                    if (!day) return <div key={`${wi}-${di}`} />
                     const pct = day.pct
                     const isEmpty = pct < 0
                     const isToday = day.date.toDateString() === new Date().toDateString()
@@ -901,14 +902,14 @@ export default function ProgressPage() {
                     const tooltip = isEmpty ? 'No data' : `${day.checked}/${day.total} rules · ${Math.round(pct)}%`
                     return (
                       <div
-                        key={di}
+                        key={`${wi}-${di}`}
                         title={`${day.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${tooltip}`}
-                        className={`aspect-square w-full rounded-[3px] cursor-pointer transition-all duration-150 hover:opacity-80 hover:scale-110 ${isToday ? 'ring-1 ring-white/40' : ''}`}
+                        className={`aspect-square rounded-[4px] cursor-pointer transition-all duration-150 hover:opacity-80 hover:scale-110 ${isToday ? 'ring-1 ring-white/40' : ''}`}
                         style={{ background: bg }}
                       />
                     )
                   })}
-                </div>
+                </>
               ))}
             </div>
           </div>

@@ -47,7 +47,7 @@ export default function ProGate({ feature, children, mode = 'blur', label }: Pro
               {featureLabel}
             </h2>
             <p className="text-sm text-[var(--text-secondary)]">
-              This feature is available on the Pro plan. Upgrade to unlock {featureLabel.toLowerCase()} and more.
+              This feature is available on the Pro plan. Upgrade to unlock {featureLabel} and more.
             </p>
           </div>
           <button

@@ -459,11 +459,13 @@ function DayModal({
   currentIndex,
   onClose,
   onNavigate,
+  onSelectTrade,
 }: {
   groups: DayGroup[]
   currentIndex: number
   onClose: () => void
   onNavigate: (idx: number) => void
+  onSelectTrade?: (trade: Trade) => void
 }) {
   const [tab, setTab] = useState<ModalTab>('statistics')
   const group = groups[currentIndex]
@@ -554,7 +556,7 @@ function DayModal({
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {tab === 'statistics' && <StatsTab group={group} />}
           {tab === 'notes' && <NotesTab sessionDate={group.sessionDate} />}
-          {tab === 'trades' && <TradesTab trades={group.trades} />}
+          {tab === 'trades' && <TradesTab trades={group.trades} onSelectTrade={(t) => { onSelectTrade?.(t); onClose() }} />}
           {tab === 'rules' && <RulesTab sessionDate={group.sessionDate} trades={group.trades} allTrades={allGroupTrades} />}
         </div>
 
@@ -962,6 +964,7 @@ export default function JournalPage() {
           currentIndex={modalIndex}
           onClose={handleClose}
           onNavigate={handleNavigate}
+          onSelectTrade={setSelectedTrade}
         />
       )}
 

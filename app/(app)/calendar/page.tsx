@@ -46,7 +46,6 @@ export default function CalendarPage() {
   )
 
   return (
-    <ProGate feature="calendar" mode="block">
     <div className="space-y-5 animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -226,6 +225,5 @@ export default function CalendarPage() {
         </div>
       </div>
     </div>
-    </ProGate>
   )
 }

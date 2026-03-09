@@ -729,7 +729,6 @@ export default function ProgressPage() {
   }
 
   return (
-    <ProGate feature="progress" mode="block">
     <div className="space-y-4 sm:space-y-6 max-w-[1400px] mx-auto">
       {/* Onboarding */}
       <AnimatePresence>
@@ -1026,6 +1025,5 @@ export default function ProgressPage() {
         {editOpen && <OnboardingModal existingRules={rules} onComplete={(newRules) => { handleSaveRules(newRules); setEditOpen(false) }} onClose={() => setEditOpen(false)} />}
       </AnimatePresence>
     </div>
-    </ProGate>
   )
 }

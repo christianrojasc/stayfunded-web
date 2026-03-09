@@ -346,7 +346,6 @@ export default function Dashboard() {
       <AccountHealthCard />
 
       {/* Trading Growth Curve */}
-      <ProGate feature="dashboard_charts" mode="blur">
       <TradingGrowthCurve />
 
       {/* KPI Grid */}
@@ -524,7 +523,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      </ProGate>
     </div>
   )
 }

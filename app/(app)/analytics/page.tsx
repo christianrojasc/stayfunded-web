@@ -316,7 +316,6 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <ProGate feature="analytics" mode="block">
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-xl font-bold text-[var(--text-primary)]">Analytics</h1>
@@ -927,6 +926,5 @@ export default function AnalyticsPage() {
         </div>
       )}
     </div>
-    </ProGate>
   )
 }

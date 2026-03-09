@@ -12,7 +12,7 @@ import { useTheme } from './ThemeContext'
 import { useSubscription } from '@/hooks/useSubscription'
 import { Lock } from 'lucide-react'
 
-const PRO_ROUTES = new Set(['/calendar', '/analytics', '/insights', '/progress'])
+const PRO_ROUTES = new Set(['/insights'])
 
 const NAV_SECTIONS = [
   {

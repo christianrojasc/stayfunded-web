@@ -52,16 +52,24 @@ function AccountHealthCard() {
   // Calculate distance from drawdown floor
   const currentBalance = selected.startingBalance + totalPnl
   const isTrailing = selected.drawdownType === 'trailing'
+  // Trailing floor locks at startingBalance + 100 (e.g. 50K → locks at $50,100)
+  const trailingLockLevel = selected.startingBalance + 100
   let drawdownFloor = selected.startingBalance - selected.maxLossLimit
+  let floorLocked = false
   if (isTrailing && accountTrades.length > 0) {
-    // For trailing: floor = highWaterMark - maxLossLimit
     let hwm = selected.startingBalance
     let runningBal = selected.startingBalance
     for (const t of accountTrades) {
       runningBal += t.pnl - (t.fees || 0)
       if (runningBal > hwm) hwm = runningBal
     }
-    drawdownFloor = hwm - selected.maxLossLimit
+    const trailingFloor = hwm - selected.maxLossLimit
+    if (trailingFloor >= trailingLockLevel) {
+      drawdownFloor = trailingLockLevel
+      floorLocked = true
+    } else {
+      drawdownFloor = trailingFloor
+    }
   }
   const distanceFromDrawdown = currentBalance - drawdownFloor
 
@@ -145,7 +153,7 @@ function AccountHealthCard() {
               }} />
           </div>
           <p className="text-[11px] text-[var(--text-muted)]">
-            above {isTrailing ? 'trailing' : 'static'} floor (${drawdownFloor.toLocaleString()})
+            above {floorLocked ? '🔒 locked' : isTrailing ? 'trailing' : 'static'} floor (${drawdownFloor.toLocaleString()})
           </p>
         </div>
 

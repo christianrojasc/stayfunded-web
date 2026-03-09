@@ -612,6 +612,8 @@ export default function ProgressPage() {
     if (!isSetupDone() && storedRules.length === 0) {
       setShowOnboarding(true)
     }
+    // Load all checklists from Supabase for heatmap
+    dl.getAllChecklists().then(setAllChecklists).catch(() => setAllChecklists([]))
     setLoading(false)
   }, [])
 
@@ -915,7 +917,7 @@ export default function ProgressPage() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-[var(--border)]">
+          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-[var(--border)] mt-auto">
             {[
               { value: streak, label: 'Day streak' },
               { value: allChecklists.length, label: 'Days tracked' },

@@ -147,6 +147,12 @@ export async function getChecklist(sessionDate: string): Promise<DailyChecklist>
   }
 }
 
+export async function getAllChecklists(): Promise<DailyChecklist[]> {
+  const userId = await getUserId()
+  if (!userId) return []
+  return cloud.getChecklists(userId)
+}
+
 export async function saveChecklist(checklist: DailyChecklist): Promise<void> {
   const userId = await getUserId()
   if (!userId) throw new Error('Not authenticated')

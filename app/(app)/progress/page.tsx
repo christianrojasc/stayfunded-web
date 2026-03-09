@@ -830,9 +830,9 @@ export default function ProgressPage() {
               </>
             )}
           </div>
-          <button className="mt-4 w-full py-2.5 rounded-xl text-sm font-medium text-[#4ADE80] bg-[#4ADE80]/10 hover:bg-[#4ADE80]/20 border border-[#4ADE80]/20 transition-colors flex items-center justify-center gap-2">
+          <a href="/journal" className="mt-4 w-full py-2.5 rounded-xl text-sm font-medium text-[#4ADE80] bg-[#4ADE80]/10 hover:bg-[#4ADE80]/20 border border-[#4ADE80]/20 transition-colors flex items-center justify-center gap-2">
             View this day <ChevronRight className="w-4 h-4" />
-          </button>
+          </a>
         </motion.div>
 
         {/* Right: Heatmap */}
@@ -875,9 +875,9 @@ export default function ProgressPage() {
           </div>
 
           {/* Grid */}
-          <div className="flex gap-1">
+          <div className="flex gap-[3px]">
             {/* Day labels */}
-            <div className="flex flex-col gap-1 w-7 shrink-0">
+            <div className="flex flex-col gap-[3px] w-7 shrink-0">
               {['S','M','T','W','T','F','S'].map((d, i) => (
                 <div key={i} className="h-[18px] flex items-center justify-end pr-1.5">
                   <span className="text-[10px] text-[#374151]">{i % 2 === 1 ? d : ''}</span>
@@ -885,9 +885,9 @@ export default function ProgressPage() {
               ))}
             </div>
             {/* Cells */}
-            <div className="flex gap-1 flex-1">
+            <div className="grid gap-[3px]" style={{ gridTemplateColumns: `repeat(${heatmapWeeks.length}, 1fr)` }}>
               {heatmapWeeks.map((week, wi) => (
-                <div key={wi} className="flex flex-col gap-1 flex-1">
+                <div key={wi} className="flex flex-col gap-[3px]">
                   {week.map((day, di) => {
                     const pct = day.pct
                     const isEmpty = pct < 0

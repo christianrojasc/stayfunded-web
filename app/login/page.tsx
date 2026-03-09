@@ -117,8 +117,8 @@ export default function LoginPage() {
             className="flex flex-col items-center mb-8"
           >
             <img src="/logo.png" alt="StayFunded" className="h-12 w-auto mb-3" onError={e => (e.currentTarget.style.display='none')} />
-            <h1 className="text-2xl font-bold text-white tracking-tight">StayFunded</h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] tracking-tight">StayFunded</h1>
+            <p className="text-[var(--text-secondary)] text-sm mt-1">
               {mode === 'signin' ? 'Welcome back, trader' : mode === 'signup' ? 'Create your account' : 'Reset your password'}
             </p>
           </motion.div>
@@ -137,11 +137,11 @@ export default function LoginPage() {
                   transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
                   className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg shadow-green-500/30"
                 >
-                  <CheckCircle2 className="w-10 h-10 text-white" />
+                  <CheckCircle2 className="w-10 h-10 text-[var(--text-primary)]" />
                 </motion.div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white">You&apos;re in!</h2>
-                  <p className="text-gray-400 mt-1">Redirecting to dashboard…</p>
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">You&apos;re in!</h2>
+                  <p className="text-[var(--text-secondary)] mt-1">Redirecting to dashboard…</p>
                 </div>
               </motion.div>
             ) : (
@@ -156,7 +156,7 @@ export default function LoginPage() {
                   <div className="flex bg-white/5 rounded-xl p-1 mb-6">
                     {(['signin','signup'] as PageMode[]).map(m => (
                       <button key={m} onClick={() => switchMode(m)}
-                        className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${mode === m ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-gray-300'}`}>
+                        className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${mode === m ? 'bg-white/10 text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)]'}`}>
                         {m === 'signin' ? 'Sign In' : 'Sign Up'}
                       </button>
                     ))}
@@ -164,7 +164,7 @@ export default function LoginPage() {
                 )}
 
                 {mode === 'reset' && (
-                  <button onClick={() => switchMode('signin')} className="text-gray-500 hover:text-gray-300 text-sm mb-5 transition-colors flex items-center gap-1">
+                  <button onClick={() => switchMode('signin')} className="text-[var(--text-secondary)] hover:text-[var(--text-secondary)] text-sm mb-5 transition-colors flex items-center gap-1">
                     ← Back to sign in
                   </button>
                 )}
@@ -183,28 +183,28 @@ export default function LoginPage() {
                 <form onSubmit={mode === 'reset' ? handleReset : handleSubmit} className="space-y-4">
                   {mode === 'signup' && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-1.5">Display Name <span className="text-gray-600 font-normal">(optional)</span></label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">Display Name <span className="text-[var(--text-secondary)] font-normal">(optional)</span></label>
                       <input type="text" value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="e.g. ChrisT" maxLength={50}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-green-500/50 transition-all" />
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:border-green-500/50 transition-all" />
                     </div>
                   )}
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1.5">Email</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">Email</label>
                     <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="trader@example.com" required autoComplete="email"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-green-500/50 transition-all" />
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:border-green-500/50 transition-all" />
                   </div>
 
                   {mode !== 'reset' && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-1.5">Password</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">Password</label>
                       <div className="relative">
                         <input type={showPass ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
                           placeholder={mode === 'signup' ? 'At least 8 characters' : '••••••••'}
                           required autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-green-500/50 transition-all" />
+                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:border-green-500/50 transition-all" />
                         <button type="button" onClick={() => setShowPass(v => !v)} tabIndex={-1}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition-colors p-1">
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text-secondary)] transition-colors p-1">
                           {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                       </div>
@@ -212,7 +212,7 @@ export default function LoginPage() {
                   )}
 
                   <button type="submit" disabled={loading || cooldown || failedAttempts >= 5}
-                    className="w-full mt-2 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] flex items-center justify-center gap-2"
+                    className="w-full mt-2 py-3 rounded-xl text-sm font-semibold text-[var(--text-primary)] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] flex items-center justify-center gap-2"
                     style={{ background: 'linear-gradient(135deg, #2D8B4E 0%, #22C55E 50%, #4ADE50 100%)', boxShadow: '0 4px 20px rgba(45,139,78,0.4)' }}
                   >
                     {loading || cooldown ? <><Loader2 className="w-4 h-4 animate-spin" />{loading ? 'Please wait…' : 'Cooling down…'}</> :
@@ -221,7 +221,7 @@ export default function LoginPage() {
                 </form>
 
                 {mode === 'signin' && (
-                  <p className="text-center text-gray-600 text-xs mt-5">
+                  <p className="text-center text-[var(--text-secondary)] text-xs mt-5">
                     Forgot your password?{' '}
                     <button onClick={() => switchMode('reset')} className="text-green-500 hover:text-green-400 transition-colors underline-offset-2 hover:underline">
                       Reset it here
@@ -232,7 +232,7 @@ export default function LoginPage() {
             )}
           </AnimatePresence>
 
-          <p className="text-center text-gray-600 text-xs mt-6">Stay Funded. Stay Disciplined.</p>
+          <p className="text-center text-[var(--text-secondary)] text-xs mt-6">Stay Funded. Stay Disciplined.</p>
         </div>
       </div>
     </div>

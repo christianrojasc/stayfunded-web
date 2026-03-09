@@ -21,6 +21,7 @@ function fmt$(n: number | null | undefined, prefix = '$'): string {
 function fmtDrawdown(t: DrawdownType): string {
   const m: Record<DrawdownType, string> = {
     trailing: 'Trailing',
+    trailing_eod: 'Trailing EOD',
     static_eod: 'Static EOD',
     static_intraday: 'Static Intraday',
     static: 'Static',
@@ -31,6 +32,7 @@ function fmtDrawdown(t: DrawdownType): string {
 function drawdownColor(t: DrawdownType): { bg: string; text: string; dot: string } {
   switch (t) {
     case 'trailing':        return { bg: 'bg-orange-500/10 dark:bg-orange-500/15', text: 'text-orange-600 dark:text-orange-400', dot: 'bg-orange-500' }
+    case 'trailing_eod':    return { bg: 'bg-amber-500/10 dark:bg-amber-500/15',  text: 'text-amber-600 dark:text-amber-400',  dot: 'bg-amber-500' }
     case 'static_eod':      return { bg: 'bg-blue-500/10 dark:bg-blue-500/15',   text: 'text-blue-600 dark:text-blue-400',   dot: 'bg-blue-500' }
     case 'static_intraday': return { bg: 'bg-purple-500/10 dark:bg-purple-500/15', text: 'text-purple-600 dark:text-purple-400', dot: 'bg-purple-500' }
     case 'static':          return { bg: 'bg-cyan-500/10 dark:bg-cyan-500/15',   text: 'text-cyan-600 dark:text-cyan-400',   dot: 'bg-cyan-500' }
@@ -231,8 +233,8 @@ function PlanCard({
       <div className="p-4 border-b border-[#F0F3F7] dark:border-[#1a2035]">
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold text-[#6B7E91] dark:text-[#4d5566] uppercase tracking-wider mb-0.5 truncate">{row.firmName}</p>
-            <h3 className="text-sm font-bold text-[#1E2D3D] dark:text-[#e6edf3] truncate">{row.plan.label}</h3>
+            <p className="text-[11px] font-semibold text-[var(--text-muted)] dark:text-[var(--text-secondary)] uppercase tracking-wider mb-0.5 truncate">{row.firmName}</p>
+            <h3 className="text-sm font-bold text-[#1E2D3D] dark:text-[var(--text-primary)] truncate">{row.plan.label}</h3>
           </div>
           <div className="flex flex-col items-end gap-1 flex-shrink-0">
             {inCompareMode && (
@@ -247,7 +249,7 @@ function PlanCard({
                 <Check size={12} />
               </button>
             )}
-            <span className="text-lg font-bold text-[#1E2D3D] dark:text-[#e6edf3]">
+            <span className="text-lg font-bold text-[#1E2D3D] dark:text-[var(--text-primary)]">
               ${row.plan.size}K
             </span>
           </div>
@@ -269,7 +271,7 @@ function PlanCard({
             <p className="text-[10px] text-[#9EB0C0] dark:text-[#3a4252] uppercase tracking-wide font-semibold flex items-center gap-1">
               <DollarSign size={10} /> Eval Cost
             </p>
-            <p className={`text-sm font-bold ${cvClass(row.plan.evalCost, compareValues?.evalCost ?? [], 'lower-is-better') || 'text-[#1E2D3D] dark:text-[#e6edf3]'}`}>
+            <p className={`text-sm font-bold ${cvClass(row.plan.evalCost, compareValues?.evalCost ?? [], 'lower-is-better') || 'text-[#1E2D3D] dark:text-[var(--text-primary)]'}`}>
               {row.plan.evalCost != null ? `$${row.plan.evalCost}/mo` : row.plan.activationFee != null ? `$${row.plan.activationFee} once` : 'Free'}
             </p>
           </div>
@@ -279,7 +281,7 @@ function PlanCard({
             <p className="text-[10px] text-[#9EB0C0] dark:text-[#3a4252] uppercase tracking-wide font-semibold flex items-center gap-1">
               <Zap size={10} /> Payout
             </p>
-            <p className={`text-sm font-bold ${cvClass(row.plan.daysToPayout, compareValues?.daysToPayout ?? [], 'lower-is-better') || 'text-[#1E2D3D] dark:text-[#e6edf3]'}`}>
+            <p className={`text-sm font-bold ${cvClass(row.plan.daysToPayout, compareValues?.daysToPayout ?? [], 'lower-is-better') || 'text-[#1E2D3D] dark:text-[var(--text-primary)]'}`}>
               {row.plan.daysToPayout === 1 ? 'Same-day' : `${row.plan.daysToPayout}d`}
             </p>
           </div>
@@ -289,7 +291,7 @@ function PlanCard({
             <p className="text-[10px] text-[#9EB0C0] dark:text-[#3a4252] uppercase tracking-wide font-semibold flex items-center gap-1">
               <TrendingDown size={10} /> Max DD
             </p>
-            <p className={`text-sm font-bold ${cvClass(row.plan.drawdown, compareValues?.drawdown ?? [], 'higher-is-better') || 'text-[#1E2D3D] dark:text-[#e6edf3]'}`}>
+            <p className={`text-sm font-bold ${cvClass(row.plan.drawdown, compareValues?.drawdown ?? [], 'higher-is-better') || 'text-[#1E2D3D] dark:text-[var(--text-primary)]'}`}>
               {fmt$(row.plan.drawdown)}
             </p>
           </div>
@@ -299,7 +301,7 @@ function PlanCard({
             <p className="text-[10px] text-[#9EB0C0] dark:text-[#3a4252] uppercase tracking-wide font-semibold flex items-center gap-1">
               <Target size={10} /> Target
             </p>
-            <p className={`text-sm font-bold ${cvClass(row.plan.profitTarget, compareValues?.profitTarget ?? [], 'lower-is-better') || 'text-[#1E2D3D] dark:text-[#e6edf3]'}`}>
+            <p className={`text-sm font-bold ${cvClass(row.plan.profitTarget, compareValues?.profitTarget ?? [], 'lower-is-better') || 'text-[#1E2D3D] dark:text-[var(--text-primary)]'}`}>
               {fmt$(row.plan.profitTarget)}
             </p>
           </div>
@@ -309,7 +311,7 @@ function PlanCard({
             <p className="text-[10px] text-[#9EB0C0] dark:text-[#3a4252] uppercase tracking-wide font-semibold flex items-center gap-1">
               <AlertCircle size={10} /> Daily Loss
             </p>
-            <p className="text-sm font-bold text-[#1E2D3D] dark:text-[#e6edf3]">
+            <p className="text-sm font-bold text-[#1E2D3D] dark:text-[var(--text-primary)]">
               {row.plan.dailyLossLimit != null ? fmt$(row.plan.dailyLossLimit) : 'None'}
             </p>
           </div>
@@ -319,7 +321,7 @@ function PlanCard({
             <p className="text-[10px] text-[#9EB0C0] dark:text-[#3a4252] uppercase tracking-wide font-semibold flex items-center gap-1">
               <Calendar size={10} /> Min Days
             </p>
-            <p className="text-sm font-bold text-[#1E2D3D] dark:text-[#e6edf3]">
+            <p className="text-sm font-bold text-[#1E2D3D] dark:text-[var(--text-primary)]">
               {row.plan.minTradingDays === 0 ? 'None' : `${row.plan.minTradingDays}d`}
             </p>
           </div>
@@ -334,7 +336,7 @@ function PlanCard({
           {row.plan.consistencyRule && (
             <div className="group relative">
               <Info size={13} className="text-[#9EB0C0] dark:text-[#3a4252] cursor-help" />
-              <div className="absolute bottom-full left-0 mb-2 w-56 px-3 py-2 bg-[#1a2332] text-white text-[11px] rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none z-50 leading-relaxed shadow-2xl transition-opacity">
+              <div className="absolute bottom-full left-0 mb-2 w-56 px-3 py-2 bg-[var(--bg-secondary)] text-[var(--text-primary)] text-[11px] rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none z-50 leading-relaxed shadow-2xl transition-opacity">
                 <p className="font-semibold mb-1 text-emerald-400">Consistency Rule</p>
                 {row.plan.consistencyRule}
               </div>
@@ -463,14 +465,14 @@ function ComparePanel({
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#F0F3F7] dark:border-[#1a2035] bg-gradient-to-r from-emerald-500/5 to-transparent">
         <div className="flex items-center gap-2">
           <GitCompare size={16} className="text-emerald-500" />
-          <span className="font-semibold text-sm text-[#1E2D3D] dark:text-[#e6edf3]">
+          <span className="font-semibold text-sm text-[#1E2D3D] dark:text-[var(--text-primary)]">
             Comparing {rows.length} plans
           </span>
-          <span className="text-xs text-[#6B7E91] dark:text-[#4d5566]">
+          <span className="text-xs text-[var(--text-muted)] dark:text-[var(--text-secondary)]">
             — <span className="text-emerald-500">green</span> = best, <span className="text-red-500">red</span> = worst
           </span>
         </div>
-        <button onClick={onClear} className="text-xs text-[#6B7E91] dark:text-[#4d5566] hover:text-red-500 transition-colors flex items-center gap-1">
+        <button onClick={onClear} className="text-xs text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:text-red-500 transition-colors flex items-center gap-1">
           <X size={13} /> Clear
         </button>
       </div>
@@ -484,8 +486,8 @@ function ComparePanel({
               {rows.map(r => (
                 <th key={r.planKey} className="text-center px-4 py-2.5 min-w-[140px]">
                   <div className="flex flex-col items-center gap-1">
-                    <span className="text-[10px] text-[#6B7E91] dark:text-[#4d5566] font-medium">{r.firmName}</span>
-                    <span className="text-[#1E2D3D] dark:text-[#e6edf3] font-bold text-sm">{r.plan.label}</span>
+                    <span className="text-[10px] text-[var(--text-muted)] dark:text-[var(--text-secondary)] font-medium">{r.firmName}</span>
+                    <span className="text-[#1E2D3D] dark:text-[var(--text-primary)] font-bold text-sm">{r.plan.label}</span>
                     <button
                       onClick={() => onRemove(r.planKey)}
                       className="text-[#9EB0C0] hover:text-red-500 transition-colors"
@@ -500,13 +502,13 @@ function ComparePanel({
           <tbody>
             {metrics.map(m => (
               <tr key={m.label} className="border-b border-[#F0F3F7]/50 dark:border-[#1a2035]/50 hover:bg-[#F8FAFC] dark:hover:bg-[#0f1219]">
-                <td className="px-5 py-2.5 text-[#6B7E91] dark:text-[#4d5566] text-xs font-medium">
+                <td className="px-5 py-2.5 text-[var(--text-muted)] dark:text-[var(--text-secondary)] text-xs font-medium">
                   <span className="flex items-center gap-1.5">
                     {m.icon} {m.label}
                   </span>
                 </td>
                 {rows.map(r => (
-                  <td key={r.planKey} className={`px-4 py-2.5 text-center text-sm ${m.getClass(r) || 'text-[#1E2D3D] dark:text-[#e6edf3]'}`}>
+                  <td key={r.planKey} className={`px-4 py-2.5 text-center text-sm ${m.getClass(r) || 'text-[#1E2D3D] dark:text-[var(--text-primary)]'}`}>
                     {m.getValue(r)}
                   </td>
                 ))}
@@ -635,7 +637,7 @@ export default function PropFirmsPage() {
   }
 
   const SIZES = [25, 50, 75, 100, 150, 200, 250, 300]
-  const DD_TYPES: DrawdownType[] = ['trailing', 'static_eod', 'static_intraday', 'static']
+  const DD_TYPES: DrawdownType[] = ['trailing', 'trailing_eod', 'static_eod', 'static_intraday', 'static']
   const MAX_COSTS = [50, 100, 150, 200, 300, 500]
 
   return (
@@ -646,11 +648,11 @@ export default function PropFirmsPage() {
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-1">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1e7a3e 0%, #2D8B4E 100%)', boxShadow: '0 4px 12px rgba(45,139,78,0.3)' }}>
-              <Scale size={18} className="text-white" />
+              <Scale size={18} className="text-[var(--text-primary)]" />
             </div>
-            <h1 className="text-2xl font-bold text-[#1E2D3D] dark:text-[#e6edf3]">Prop Firms</h1>
+            <h1 className="text-2xl font-bold text-[#1E2D3D] dark:text-[var(--text-primary)]">Prop Firms</h1>
           </div>
-          <p className="text-sm text-[#6B7E91] dark:text-[#4d5566] ml-12">
+          <p className="text-sm text-[var(--text-muted)] dark:text-[var(--text-secondary)] ml-12">
             Compare {ALL_PLANS.length} plans across {PROP_FIRM_PRESETS.length} firms · Click "Add Account" to track a plan
           </p>
         </div>
@@ -665,10 +667,10 @@ export default function PropFirmsPage() {
               placeholder="Search firm or plan…"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#E4E9F0] dark:border-[#1a2035] bg-white dark:bg-[#0b0f19] text-sm text-[#1E2D3D] dark:text-[#e6edf3] placeholder-[#9EB0C0] dark:placeholder-[#3a4252] outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all"
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#E4E9F0] dark:border-[#1a2035] bg-white dark:bg-[#0b0f19] text-sm text-[#1E2D3D] dark:text-[var(--text-primary)] placeholder-[#9EB0C0] dark:placeholder-[#3a4252] outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all"
             />
             {search && (
-              <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9EB0C0] hover:text-[#1E2D3D] dark:hover:text-[#e6edf3]">
+              <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9EB0C0] hover:text-[#1E2D3D] dark:hover:text-[var(--text-primary)]">
                 <X size={14} />
               </button>
             )}
@@ -680,7 +682,7 @@ export default function PropFirmsPage() {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
               showFilters
                 ? 'border-emerald-500/60 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                : 'border-[#E4E9F0] dark:border-[#1a2035] bg-white dark:bg-[#0b0f19] text-[#6B7E91] dark:text-[#4d5566] hover:border-[#C8D4E0] dark:hover:border-[#2a3050]'
+                : 'border-[#E4E9F0] dark:border-[#1a2035] bg-white dark:bg-[#0b0f19] text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:border-[#C8D4E0] dark:hover:border-[#2a3050]'
             }`}
           >
             <SlidersHorizontal size={15} />
@@ -699,7 +701,7 @@ export default function PropFirmsPage() {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
               compareMode
                 ? 'border-emerald-500/60 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                : 'border-[#E4E9F0] dark:border-[#1a2035] bg-white dark:bg-[#0b0f19] text-[#6B7E91] dark:text-[#4d5566] hover:border-[#C8D4E0] dark:hover:border-[#2a3050]'
+                : 'border-[#E4E9F0] dark:border-[#1a2035] bg-white dark:bg-[#0b0f19] text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:border-[#C8D4E0] dark:hover:border-[#2a3050]'
             }`}
           >
             <GitCompare size={15} />
@@ -722,13 +724,13 @@ export default function PropFirmsPage() {
                 <div className="flex flex-wrap gap-1.5">
                   <button
                     onClick={() => setFilterSize('all')}
-                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterSize === 'all' ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[#6B7E91] dark:text-[#4d5566] hover:bg-[#EFF2F5]'}`}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterSize === 'all' ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:bg-[#EFF2F5]'}`}
                   >All</button>
                   {SIZES.map(s => (
                     <button
                       key={s}
                       onClick={() => setFilterSize(s === filterSize ? 'all' : s)}
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterSize === s ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[#6B7E91] dark:text-[#4d5566] hover:bg-[#EFF2F5]'}`}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterSize === s ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:bg-[#EFF2F5]'}`}
                     >${s}K</button>
                   ))}
                 </div>
@@ -740,13 +742,13 @@ export default function PropFirmsPage() {
                 <div className="flex flex-wrap gap-1.5">
                   <button
                     onClick={() => setFilterDDType('all')}
-                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterDDType === 'all' ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[#6B7E91] dark:text-[#4d5566] hover:bg-[#EFF2F5]'}`}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterDDType === 'all' ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:bg-[#EFF2F5]'}`}
                   >All</button>
                   {DD_TYPES.map(t => (
                     <button
                       key={t}
                       onClick={() => setFilterDDType(t === filterDDType ? 'all' : t)}
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterDDType === t ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[#6B7E91] dark:text-[#4d5566] hover:bg-[#EFF2F5]'}`}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterDDType === t ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:bg-[#EFF2F5]'}`}
                     >{fmtDrawdown(t)}</button>
                   ))}
                 </div>
@@ -758,13 +760,13 @@ export default function PropFirmsPage() {
                 <div className="flex flex-wrap gap-1.5">
                   <button
                     onClick={() => setFilterMaxCost('all')}
-                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterMaxCost === 'all' ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[#6B7E91] dark:text-[#4d5566] hover:bg-[#EFF2F5]'}`}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterMaxCost === 'all' ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:bg-[#EFF2F5]'}`}
                   >Any</button>
                   {MAX_COSTS.map(c => (
                     <button
                       key={c}
                       onClick={() => setFilterMaxCost(c === filterMaxCost ? 'all' : c)}
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterMaxCost === c ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[#6B7E91] dark:text-[#4d5566] hover:bg-[#EFF2F5]'}`}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${filterMaxCost === c ? 'bg-emerald-500 text-white' : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:bg-[#EFF2F5]'}`}
                     >≤${c}</button>
                   ))}
                 </div>
@@ -789,7 +791,7 @@ export default function PropFirmsPage() {
               className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 sortKey === key
                   ? 'bg-[#1E2D3D] dark:bg-[#e6edf3] text-white dark:text-[#0b0f19]'
-                  : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[#6B7E91] dark:text-[#4d5566] hover:bg-[#EFF2F5] dark:hover:bg-[#2a3050]'
+                  : 'bg-[#F5F7FA] dark:bg-[#1a2035] text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:bg-[#EFF2F5] dark:hover:bg-[#2a3050]'
               }`}
             >
               {label}
@@ -836,7 +838,7 @@ export default function PropFirmsPage() {
         ) : (
           <div className="py-16 text-center">
             <Scale size={40} className="mx-auto mb-3 text-[#C8D4E0] dark:text-[#1a2035]" />
-            <p className="text-[#6B7E91] dark:text-[#4d5566] font-medium">No plans match your filters</p>
+            <p className="text-[var(--text-muted)] dark:text-[var(--text-secondary)] font-medium">No plans match your filters</p>
             <button
               onClick={() => { setSearch(''); setFilterSize('all'); setFilterDDType('all'); setFilterMaxCost('all') }}
               className="mt-3 text-sm text-emerald-500 hover:text-emerald-600 font-semibold"

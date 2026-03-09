@@ -53,8 +53,10 @@ const nextConfig = {
   reactStrictMode: true,
 
   async headers() {
-    // Disable security headers in development (Safari blocks CSS/JS over HTTP with strict CSP)
-    if (process.env.NODE_ENV === 'development') return []
+    // Disable CSP headers when serving over HTTP (Safari blocks CSS/JS with strict CSP on non-HTTPS).
+    // Security headers will apply once deployed with HTTPS.
+    const isLocal = !process.env.DEPLOY_URL && !process.env.VERCEL_URL
+    if (process.env.NODE_ENV === 'development' || isLocal) return []
     return [
       {
         source: '/(.*)',

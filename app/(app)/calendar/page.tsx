@@ -50,12 +50,12 @@ export default function CalendarPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="page-title">Calendar</h1>
-          <p className="text-sm text-[#6B7E91] dark:text-[#94A3B8] mt-0.5">Daily P&L at a glance</p>
+          <p className="text-sm text-[var(--text-muted)] dark:text-[#94A3B8] mt-0.5">Daily P&L at a glance</p>
         </div>
         <div className="flex items-center gap-4">
           {/* Month summary */}
           <div className="flex items-center gap-3 text-sm">
-            <span className="text-[#6B7E91] dark:text-[#94A3B8]">{tradingDays} days · {monthTrades.length} trades</span>
+            <span className="text-[var(--text-muted)] dark:text-[#94A3B8]">{tradingDays} days · {monthTrades.length} trades</span>
             <span className={`font-bold px-3 py-1 rounded-full text-sm ${
               monthPnl >= 0 ? 'bg-[#166534]/20 text-[#4ADE80]' : 'bg-red-50 text-[#EF4444]'
             }`}>
@@ -70,11 +70,11 @@ export default function CalendarPage() {
         <div className="lg:col-span-2 glass-card p-6">
           {/* Nav */}
           <div className="flex items-center justify-between mb-6">
-            <button onClick={prev} className="p-2 rounded-xl hover:bg-[#F5F7FA] dark:bg-[#0F172A] text-[#6B7E91] dark:text-[#94A3B8] hover:text-[#1E2D3D] dark:text-[#F1F5F9] transition-colors">
+            <button onClick={prev} className="p-2 rounded-xl hover:bg-[#F5F7FA] dark:bg-[#0F172A] text-[var(--text-muted)] dark:text-[#94A3B8] hover:text-[#1E2D3D] dark:text-[#F1F5F9] transition-colors">
               <ChevronLeft size={18} />
             </button>
             <h2 className="text-lg font-bold text-[#1E2D3D] dark:text-[#F1F5F9]">{MONTHS[month - 1]} {year}</h2>
-            <button onClick={next} className="p-2 rounded-xl hover:bg-[#F5F7FA] dark:bg-[#0F172A] text-[#6B7E91] dark:text-[#94A3B8] hover:text-[#1E2D3D] dark:text-[#F1F5F9] transition-colors">
+            <button onClick={next} className="p-2 rounded-xl hover:bg-[#F5F7FA] dark:bg-[#0F172A] text-[var(--text-muted)] dark:text-[#94A3B8] hover:text-[#1E2D3D] dark:text-[#F1F5F9] transition-colors">
               <ChevronRight size={18} />
             </button>
           </div>
@@ -82,7 +82,7 @@ export default function CalendarPage() {
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1.5 mb-1.5">
             {DAYS.map(d => (
-              <div key={d} className="text-center text-xs font-semibold text-[#9EB0C0] dark:text-[#64748B] py-1 uppercase tracking-wide">{d}</div>
+              <div key={d} className="text-center text-xs font-semibold text-[#9EB0C0] dark:text-[var(--text-secondary)] py-1 uppercase tracking-wide">{d}</div>
             ))}
           </div>
 
@@ -116,7 +116,7 @@ export default function CalendarPage() {
                   <div className={`text-xs font-bold mb-1 ${
                     isToday ? 'text-[#2D8B4E]' :
                     isWeekend ? 'text-[#C8D4E0]' :
-                    'text-[#6B7E91] dark:text-[#94A3B8]'
+                    'text-[var(--text-muted)] dark:text-[#94A3B8]'
                   }`}>{day}</div>
 
                   {hasData && (
@@ -126,7 +126,7 @@ export default function CalendarPage() {
                       }`}>
                         {formatPnl(stats!.netPnl)}
                       </div>
-                      <div className="text-[10px] text-[#9EB0C0] dark:text-[#64748B] mt-0.5">
+                      <div className="text-[10px] text-[#9EB0C0] dark:text-[var(--text-secondary)] mt-0.5">
                         {stats!.tradeCount}T · {stats!.winRate.toFixed(0)}%
                       </div>
                     </>
@@ -137,7 +137,7 @@ export default function CalendarPage() {
           </div>
 
           {/* Legend */}
-          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-[#F0F3F7] text-xs text-[#9EB0C0] dark:text-[#64748B]">
+          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-[#F0F3F7] text-xs text-[#9EB0C0] dark:text-[var(--text-secondary)]">
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-[#166534]" />Win day</span>
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-[#7f1d1d]" />Loss day</span>
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-[#1E293B]" />No trades</span>
@@ -153,15 +153,15 @@ export default function CalendarPage() {
                   <h3 className="font-bold text-[#1E2D3D] dark:text-[#F1F5F9] text-base">
                     {format(parseISO(selectedDate), 'EEEE, MMM d')}
                   </h3>
-                  <p className="text-xs text-[#9EB0C0] dark:text-[#64748B] mt-0.5">{selectedTrades.length} trade{selectedTrades.length !== 1 ? 's' : ''}</p>
+                  <p className="text-xs text-[#9EB0C0] dark:text-[var(--text-secondary)] mt-0.5">{selectedTrades.length} trade{selectedTrades.length !== 1 ? 's' : ''}</p>
                 </div>
-                <button onClick={() => setSelectedDate(null)} className="p-1.5 rounded-xl hover:bg-[#F5F7FA] dark:bg-[#0F172A] text-[#9EB0C0] dark:text-[#64748B]">
+                <button onClick={() => setSelectedDate(null)} className="p-1.5 rounded-xl hover:bg-[#F5F7FA] dark:bg-[#0F172A] text-[#9EB0C0] dark:text-[var(--text-secondary)]">
                   <X size={15} />
                 </button>
               </div>
 
               {selectedTrades.length === 0 ? (
-                <div className="flex-1 flex items-center justify-center text-[#9EB0C0] dark:text-[#64748B] text-sm">
+                <div className="flex-1 flex items-center justify-center text-[#9EB0C0] dark:text-[var(--text-secondary)] text-sm">
                   No trades on this day
                 </div>
               ) : (
@@ -175,7 +175,7 @@ export default function CalendarPage() {
                         <p className={`text-xl font-bold ${dayPnl >= 0 ? 'text-[#2D8B4E]' : 'text-[#EF4444]'}`}>
                           {formatPnl(dayPnl)}
                         </p>
-                        <p className="text-xs text-[#6B7E91] dark:text-[#94A3B8] mt-0.5">
+                        <p className="text-xs text-[var(--text-muted)] dark:text-[#94A3B8] mt-0.5">
                           {dayWins}W / {selectedTrades.length - dayWins}L · {(dayWins / selectedTrades.length * 100).toFixed(0)}% WR
                         </p>
                       </div>
@@ -199,10 +199,10 @@ export default function CalendarPage() {
                             {formatPnl(t.netPnl)}
                           </span>
                         </div>
-                        <div className="text-xs text-[#9EB0C0] dark:text-[#64748B] flex gap-3">
+                        <div className="text-xs text-[#9EB0C0] dark:text-[var(--text-secondary)] flex gap-3">
                           <span>{t.contracts}x</span>
                           <span>{t.entryPrice} → {t.exitPrice}</span>
-                          {t.setup && <span className="text-[#6B7E91] dark:text-[#94A3B8]">{t.setup}</span>}
+                          {t.setup && <span className="text-[var(--text-muted)] dark:text-[#94A3B8]">{t.setup}</span>}
                         </div>
                       </div>
                     ))}
@@ -217,7 +217,7 @@ export default function CalendarPage() {
               </div>
               <div>
                 <p className="font-semibold text-[#1E2D3D] dark:text-[#F1F5F9] text-sm">Click a day</p>
-                <p className="text-xs text-[#9EB0C0] dark:text-[#64748B] mt-1">Select a trading day to see the breakdown</p>
+                <p className="text-xs text-[#9EB0C0] dark:text-[var(--text-secondary)] mt-1">Select a trading day to see the breakdown</p>
               </div>
             </div>
           )}

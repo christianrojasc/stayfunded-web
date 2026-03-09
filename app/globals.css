@@ -13,7 +13,7 @@
   --text-primary: #ffffff;
   --text-secondary: #94a3b8;
   --text-muted: #475569;
-  --sidebar-bg: #060a12;
+  --sidebar-bg: rgba(8,12,20,0.8);
   --sidebar-border: rgba(255,255,255,0.06);
   --input-bg: rgba(255,255,255,0.04);
   --green: #4ADE80;
@@ -33,17 +33,17 @@
 
 html.light {
   --bg-primary: #f8fafc;
-  --bg-secondary: #f1f5f9;
-  --bg-card: rgba(255,255,255,0.9);
+  --bg-secondary: #eef2f6;
+  --bg-card: rgba(255,255,255,0.95);
   --bg-card-hover: rgba(255,255,255,1);
-  --border: rgba(0,0,0,0.08);
-  --border-strong: rgba(0,0,0,0.15);
+  --border: rgba(0,0,0,0.12);
+  --border-strong: rgba(0,0,0,0.2);
   --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --sidebar-bg: #0f172a;
-  --sidebar-border: rgba(255,255,255,0.06);
-  --input-bg: rgba(0,0,0,0.04);
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --sidebar-bg: #ffffff;
+  --sidebar-border: rgba(0,0,0,0.08);
+  --input-bg: rgba(0,0,0,0.05);
   --green: #16a34a;
   --red: #dc2626;
 }

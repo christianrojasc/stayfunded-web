@@ -143,11 +143,11 @@ export default function ImportPage() {
     return (
       <div className="max-w-xl mx-auto py-16 space-y-6 animate-slide-up text-center">
         <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto" style={{ background: 'linear-gradient(135deg, #2D8B4E, #4ADE50)' }}>
-          <CheckCircle size={40} className="text-white" />
+          <CheckCircle size={40} className="text-[var(--text-primary)]" />
         </div>
         <div>
           <h2 className="text-2xl font-bold text-[#1E2D3D] dark:text-[#F1F5F9]">Import Complete!</h2>
-          <p className="text-[#6B7E91] dark:text-[#94A3B8] mt-2">{importCount} trades imported from <strong>{fileName}</strong></p>
+          <p className="text-[var(--text-muted)] dark:text-[#94A3B8] mt-2">{importCount} trades imported from <strong>{fileName}</strong></p>
         </div>
         <div className="flex gap-3 justify-center">
           <button onClick={reset} className="btn-secondary">
@@ -165,7 +165,7 @@ export default function ImportPage() {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="page-title">Import Trades</h1>
-        <p className="text-sm text-[#6B7E91] dark:text-[#94A3B8] mt-0.5">Import your trade history from Tradovate</p>
+        <p className="text-sm text-[var(--text-muted)] dark:text-[#94A3B8] mt-0.5">Import your trade history from Tradovate</p>
       </div>
 
       {/* New Account Wizard — shown as overlay when new account detected */}
@@ -187,7 +187,7 @@ export default function ImportPage() {
               className={`border-2 border-dashed rounded-3xl p-8 sm:p-16 text-center transition-all duration-200 cursor-pointer ${
                 dragging
                   ? 'border-[#4ADE80]/60 shadow-[0_0_40px_rgba(74,222,128,0.08)]'
-                  : 'border-white/[0.08] hover:border-[#4ADE80]/40 hover:shadow-[0_0_30px_rgba(74,222,128,0.05)]'
+                  : 'border-[var(--border)] hover:border-[#4ADE80]/40 hover:shadow-[0_0_30px_rgba(74,222,128,0.05)]'
               }`}
               style={{background: dragging ? 'rgba(74,222,128,0.04)' : 'rgba(255,255,255,0.02)'}}
               onDragOver={e => { e.preventDefault(); setDragging(true) }}
@@ -200,13 +200,13 @@ export default function ImportPage() {
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${
                   dragging ? 'scale-110' : ''
                 }`} style={{ background: 'linear-gradient(135deg, #2D8B4E, #4ADE50)' }}>
-                  <Upload size={32} className="text-white" />
+                  <Upload size={32} className="text-[var(--text-primary)]" />
                 </div>
                 <div>
-                  <p className="font-bold text-white text-lg">Drop your CSV here</p>
-                  <p className="text-[#64748B] text-sm mt-1">or click to browse your files</p>
+                  <p className="font-bold text-[var(--text-primary)] text-lg">Drop your CSV here</p>
+                  <p className="text-[var(--text-secondary)] text-sm mt-1">or click to browse your files</p>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs text-[#64748B]" style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs text-[var(--text-secondary)]" style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}>
                   <FileText size={13} />
                   Supports Tradovate Account Statement &amp; Trades Export CSV
                 </div>
@@ -224,18 +224,18 @@ export default function ImportPage() {
               <div className="space-y-3">
                 <div className="p-3 rounded-xl bg-[#F5F7FA] dark:bg-[#0F172A] border border-[#E4E9F0] dark:border-[#1E293B]">
                   <p className="text-xs font-bold text-[#1E2D3D] dark:text-[#F1F5F9] mb-0.5">Tradovate Account Statement</p>
-                  <p className="text-[11px] text-[#9EB0C0] dark:text-[#64748B]">Reports → Account Statement → Export CSV</p>
+                  <p className="text-[11px] text-[#9EB0C0] dark:text-[var(--text-secondary)]">Reports → Account Statement → Export CSV</p>
                 </div>
                 <div className="p-3 rounded-xl bg-[#F5F7FA] dark:bg-[#0F172A] border border-[#E4E9F0] dark:border-[#1E293B]">
                   <p className="text-xs font-bold text-[#1E2D3D] dark:text-[#F1F5F9] mb-0.5">Tradovate Trades Export</p>
-                  <p className="text-[11px] text-[#9EB0C0] dark:text-[#64748B]">Reports → Fills → Export CSV</p>
+                  <p className="text-[11px] text-[#9EB0C0] dark:text-[var(--text-secondary)]">Reports → Fills → Export CSV</p>
                 </div>
               </div>
             </div>
 
             <div className="glass-card p-5">
               <h3 className="font-bold text-[#1E2D3D] dark:text-[#F1F5F9] text-sm mb-3">How to Export from Tradovate</h3>
-              <ol className="space-y-2 text-xs text-[#6B7E91] dark:text-[#94A3B8]">
+              <ol className="space-y-2 text-xs text-[var(--text-muted)] dark:text-[#94A3B8]">
                 {[
                   'Log in to Tradovate',
                   'Go to Reports in the top menu',
@@ -245,7 +245,7 @@ export default function ImportPage() {
                   'Upload the file here',
                 ].map((s, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0 mt-0.5"
+                    <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold text-[var(--text-primary)] flex-shrink-0 mt-0.5"
                       style={{ background: 'linear-gradient(135deg, #2D8B4E, #4ADE50)' }}>
                       {i + 1}
                     </span>
@@ -269,7 +269,7 @@ export default function ImportPage() {
                 </div>
                 <div>
                   <p className="font-bold text-[#1E2D3D] dark:text-[#F1F5F9]">{fileName}</p>
-                  <p className="text-xs text-[#9EB0C0] dark:text-[#64748B] mt-0.5">
+                  <p className="text-xs text-[#9EB0C0] dark:text-[var(--text-secondary)] mt-0.5">
                     {parsed.trades.length} new trades
                     {duplicateCount > 0 && ` · ${duplicateCount} duplicates skipped`}
                     {parsed.skipped > 0 && ` · ${parsed.skipped} rows skipped`}
@@ -278,7 +278,7 @@ export default function ImportPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold text-[#6B7E91] dark:text-[#94A3B8]">
+                <span className="text-sm font-semibold text-[var(--text-muted)] dark:text-[#94A3B8]">
                   {selected.size} / {parsed.trades.length} selected
                 </span>
                 <button onClick={reset} className="btn-secondary text-xs py-1.5">
@@ -306,7 +306,7 @@ export default function ImportPage() {
                   {parsed.detectedAccountNumber && ` — ${parsed.detectedAccountNumber}`}
                 </p>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs text-[#6B7E91] dark:text-[#8b949e]">Link to account:</span>
+                  <span className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">Link to account:</span>
                   <select
                     className="input-field text-xs py-1 max-w-[200px]"
                     value={linkedAccountId || ''}
@@ -331,9 +331,9 @@ export default function ImportPage() {
 
           {/* No account match — show link option anyway */}
           {!parsed.detectedFirm && accounts.length > 0 && (
-            <div className="p-3 bg-[#F5F7FA] dark:bg-[#161b22] border border-[#E4E9F0] dark:border-[#21262d] rounded-xl flex items-center gap-3">
-              <Link2 size={14} className="text-[#6B7E91] flex-shrink-0" />
-              <span className="text-xs text-[#6B7E91] dark:text-[#8b949e]">Link trades to account:</span>
+            <div className="p-3 bg-[#F5F7FA] dark:bg-[var(--bg-secondary)] border border-[#E4E9F0] dark:border-[var(--border)] rounded-xl flex items-center gap-3">
+              <Link2 size={14} className="text-[var(--text-muted)] flex-shrink-0" />
+              <span className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">Link trades to account:</span>
               <select
                 className="input-field text-xs py-1 max-w-[200px]"
                 value={linkedAccountId || ''}
@@ -371,7 +371,7 @@ export default function ImportPage() {
             <span className="text-[#C8D4E0]">·</span>
             <button
               onClick={() => setSelected(new Set())}
-              className="text-xs text-[#9EB0C0] dark:text-[#64748B] hover:underline font-medium"
+              className="text-xs text-[#9EB0C0] dark:text-[var(--text-secondary)] hover:underline font-medium"
             >Deselect all</button>
           </div>
 
@@ -410,7 +410,7 @@ export default function ImportPage() {
                           onClick={e => e.stopPropagation()}
                         />
                       </td>
-                      <td className="text-[#6B7E91] dark:text-[#94A3B8] font-medium">{t.date}</td>
+                      <td className="text-[var(--text-muted)] dark:text-[#94A3B8] font-medium">{t.date}</td>
                       <td>
                         <span className="font-mono font-bold text-xs bg-[#F5F7FA] dark:bg-[#0F172A] px-2 py-0.5 rounded-lg">{t.symbol}</span>
                       </td>
@@ -428,7 +428,7 @@ export default function ImportPage() {
                           {formatPnl(t.netPnl)}
                         </span>
                       </td>
-                      <td className="font-mono text-[#9EB0C0] dark:text-[#64748B] text-xs">${t.fees.toFixed(2)}</td>
+                      <td className="font-mono text-[#9EB0C0] dark:text-[var(--text-secondary)] text-xs">${t.fees.toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

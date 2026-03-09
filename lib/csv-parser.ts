@@ -22,7 +22,15 @@ const CONTRACT_SPECS: Record<string, number> = {
 const ACCOUNT_FIRM_PREFIXES: { prefix: string; firm: string }[] = [
   { prefix: 'APEX',    firm: 'Apex Trader Funding' },
   { prefix: 'MFFU',   firm: 'My Funded Futures' },
-  { prefix: 'TDY',    firm: 'Tradeify' },
+  { prefix: 'FTDFYSLD', firm: 'Tradeify' },
+  { prefix: 'FTDFYG', firm: 'Tradeify' },
+  { prefix: 'FTDFYL', firm: 'Tradeify' },
+  { prefix: 'TDFYSL', firm: 'Tradeify' },
+  { prefix: 'FTDFY', firm: 'Tradeify' },
+  { prefix: 'TDYG',  firm: 'Tradeify' },
+  { prefix: 'TDYS',  firm: 'Tradeify' },
+  { prefix: 'TDY',   firm: 'Tradeify' },
+  { prefix: 'FTD',   firm: 'Tradeify' },
   { prefix: 'TPT',    firm: 'Take Profit Trader' },
   { prefix: 'FFN',    firm: 'Funded Futures Network' },
   { prefix: 'LEGENDS',firm: 'Legends Trading' },
@@ -45,7 +53,7 @@ const ACCOUNT_FIRM_PREFIXES: { prefix: string; firm: string }[] = [
   // TopStep and TradeDay are tricky — TS could clash, TD could clash with TDY
   { prefix: 'TS',     firm: 'TopStep' },
   { prefix: 'TD',     firm: 'TradeDay' },
-  { prefix: 'LFF',    firm: 'Leeloo Trading' },
+  { prefix: 'LFF',    firm: 'Lucid Trading' },
 ]
 
 export function detectFirmFromAccount(accountSpec: string): { firm: string; accountNumber: string } | null {

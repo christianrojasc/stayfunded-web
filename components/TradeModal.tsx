@@ -187,7 +187,7 @@ export default function TradeModal({ trade, onSave, onUpdate, onDelete, onClose 
               netPnl >= 0 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'
             }`}>
               <div>
-                <p className="text-xs font-semibold text-[#6B7E91] uppercase tracking-wide">Calculated P&L</p>
+                <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">Calculated P&L</p>
                 <p className={`text-xl font-bold mt-0.5 ${netPnl >= 0 ? 'text-[#2D8B4E]' : 'text-[#EF4444]'}`}>
                   {netPnl >= 0 ? '+' : ''}{netPnl.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                 </p>
@@ -195,7 +195,7 @@ export default function TradeModal({ trade, onSave, onUpdate, onDelete, onClose 
               <div className="text-right text-xs text-[#9EB0C0]">
                 <p>Gross: {rawPnl >= 0 ? '+' : ''}{rawPnl.toFixed(2)}</p>
                 <p>Fees: −{feesNum.toFixed(2)}</p>
-                <p className="mt-1 font-medium text-[#6B7E91]">{contracts} contract{contracts > 1 ? 's' : ''} · {form.symbol}</p>
+                <p className="mt-1 font-medium text-[var(--text-muted)]">{contracts} contract{contracts > 1 ? 's' : ''} · {form.symbol}</p>
               </div>
             </div>
           )}

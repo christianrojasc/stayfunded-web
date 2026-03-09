@@ -21,7 +21,7 @@ export default function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 lg:hidden border-t border-white/[0.06]"
+      className="fixed bottom-0 left-0 right-0 z-50 lg:hidden border-t border-[var(--border)]"
       style={{ background: 'rgba(5,8,16,0.95)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
     >
       <div className="flex items-center justify-around px-2 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
@@ -35,12 +35,12 @@ export default function MobileBottomNav() {
             >
               <Icon
                 size={22}
-                className={active ? 'text-[#4ADE80]' : 'text-[#64748B]'}
+                className={active ? 'text-[#4ADE80]' : 'text-[var(--text-secondary)]'}
                 strokeWidth={active ? 2.5 : 2}
               />
               <span
                 className={`text-[10px] font-medium ${
-                  active ? 'text-[#4ADE80]' : 'text-[#64748B]'
+                  active ? 'text-[#4ADE80]' : 'text-[var(--text-secondary)]'
                 }`}
               >
                 {label}

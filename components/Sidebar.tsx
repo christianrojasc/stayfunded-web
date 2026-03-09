@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, ListOrdered, Calendar, CalendarDays, BarChart3,
   BookOpen, Upload, Settings, ChevronLeft,
-  Menu, Moon, Sun, Briefcase, ClipboardCheck, Scale, Target,
+  Menu, Moon, Sun, Briefcase, ClipboardCheck, Scale, Target, Brain,
   type LucideIcon
 } from 'lucide-react'
 import { useSidebar } from './SidebarContext'
@@ -24,6 +24,7 @@ const NAV_SECTIONS = [
       { href: '/calendar',  icon: Calendar,     label: 'Calendar' },
       { href: '/economic-calendar', icon: CalendarDays, label: 'Econ Calendar' },
       { href: '/analytics', icon: BarChart3,    label: 'Analytics' },
+      { href: '/insights',  icon: Brain,        label: 'Insights' },
     ],
   },
   {
@@ -55,12 +56,12 @@ function NavItem({
           collapsed ? 'justify-center' : ''
         } ${
           active
-            ? 'text-[#4ADE80]'
-            : 'text-[rgba(255,255,255,0.4)] hover:text-[rgba(255,255,255,0.8)] hover:bg-[rgba(255,255,255,0.04)]'
+            ? 'text-[var(--green)]'
+            : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--border)]'
         }`}
         style={active ? {
-          background: 'rgba(74,222,128,0.12)',
-          borderLeft: collapsed ? 'none' : '2px solid #4ADE80',
+          background: 'color-mix(in srgb, var(--green) 12%, transparent)',
+          borderLeft: collapsed ? 'none' : '2px solid var(--green)',
           paddingLeft: collapsed ? '12px' : '10px',
         } : {}}
       >
@@ -68,7 +69,7 @@ function NavItem({
         {!collapsed && <span className="truncate">{label}</span>}
         {collapsed && (
           <span className="absolute left-full ml-3 px-2.5 py-1.5 rounded-lg text-xs font-medium opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-all duration-150 z-50"
-            style={{ background: 'rgba(20,25,35,0.95)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(20px)' }}>
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)', backdropFilter: 'blur(20px)' }}>
             {label}
           </span>
         )}
@@ -93,18 +94,18 @@ export default function Sidebar() {
         collapsed ? 'w-[64px]' : 'w-[220px]'
       }`}
       style={{
-        background: 'rgba(8,12,20,0.8)',
+        background: 'var(--sidebar-bg)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
-        borderRight: '1px solid rgba(255,255,255,0.06)',
+        borderRight: '1px solid var(--sidebar-border)',
       }}
     >
       {/* Logo */}
       <div className={`flex items-center h-16 px-5 flex-shrink-0 ${collapsed ? 'justify-center' : 'justify-between'}`}
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        style={{ borderBottom: '1px solid var(--border)' }}>
         {!collapsed && (
           <div className="flex items-center min-w-0">
-            <img src="/logo.png" alt="StayFunded" className="h-9 w-auto" />
+            <img src={theme === 'light' ? '/logo-light.png' : '/logo.png'} alt="StayFunded" className="h-9 w-auto" />
           </div>
         )}
         {collapsed && (
@@ -116,7 +117,7 @@ export default function Sidebar() {
         {!collapsed && (
           <button onClick={toggle}
             className="p-1.5 rounded-lg transition-colors"
-            style={{ color: 'rgba(255,255,255,0.3)' }}>
+            style={{ color: 'var(--text-muted)' }}>
             <ChevronLeft size={16} />
           </button>
         )}
@@ -129,13 +130,13 @@ export default function Sidebar() {
             {!collapsed && (
               <div className="px-3 pt-4 pb-1.5">
                 <span className="text-[9px] font-bold tracking-[0.15em] uppercase select-none"
-                  style={{ color: 'rgba(255,255,255,0.2)' }}>
+                  style={{ color: 'var(--text-muted)' }}>
                   {section.label}
                 </span>
               </div>
             )}
             {collapsed && si > 0 && (
-              <div className="mx-3 my-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }} />
+              <div className="mx-3 my-2" style={{ borderTop: '1px solid var(--border)' }} />
             )}
             <div className="space-y-0.5">
               {section.items.map(({ href, icon, label }) => (
@@ -148,18 +149,18 @@ export default function Sidebar() {
 
       {/* Bottom */}
       <div className="flex-shrink-0 px-2 pb-3 pt-2 space-y-0.5"
-        style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        style={{ borderTop: '1px solid var(--border)' }}>
         {collapsed && (
           <button onClick={toggle}
             className="w-full flex justify-center p-2.5 rounded-xl transition-colors group relative"
-            style={{ color: 'rgba(255,255,255,0.3)' }}>
+            style={{ color: 'var(--text-muted)' }}>
             <Menu size={20} />
           </button>
         )}
 
         <button onClick={toggleTheme}
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors group relative ${collapsed ? 'justify-center' : ''}`}
-          style={{ color: 'rgba(255,255,255,0.4)' }}>
+          style={{ color: 'var(--text-muted)' }}>
           {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
           {!collapsed && <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>}
         </button>
@@ -167,9 +168,9 @@ export default function Sidebar() {
         <Link href="/settings">
           <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 group relative ${collapsed ? 'justify-center' : ''}`}
             style={isActive('/settings') ? {
-              background: 'rgba(74,222,128,0.12)',
-              color: '#4ADE80',
-            } : { color: 'rgba(255,255,255,0.4)' }}>
+              background: 'color-mix(in srgb, var(--green) 12%, transparent)',
+              color: 'var(--green)',
+            } : { color: 'var(--text-muted)' }}>
             <Settings size={20} className="flex-shrink-0" />
             {!collapsed && <span>Settings</span>}
           </div>

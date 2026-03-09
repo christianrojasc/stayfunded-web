@@ -347,6 +347,16 @@ export async function savePropAccount(userId: string, account: PropAccount): Pro
 }
 
 export async function deletePropAccount(userId: string, accountId: string): Promise<void> {
+  // Delete trades associated with this account first
+  const { error: tradesError } = await supabase
+    .from('trades')
+    .delete()
+    .eq('account_id', accountId)
+    .eq('user_id', userId)
+
+  if (tradesError) console.error('[supabase] deletePropAccount trades:', tradesError)
+
+  // Then delete the account
   const { error } = await supabase
     .from('prop_accounts')
     .delete()

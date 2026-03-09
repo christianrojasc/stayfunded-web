@@ -8,7 +8,7 @@ export type Symbol =
 
 export type TradeStatus = 'open' | 'closed'
 export type AccountStatus = 'evaluation' | 'funded'
-export type DrawdownType = 'static_eod' | 'trailing' | 'static_intraday' | 'static'
+export type DrawdownType = 'static_eod' | 'trailing' | 'trailing_eod' | 'static_intraday' | 'static'
 
 export interface Trade {
   id: string
@@ -138,25 +138,26 @@ export const PROP_FIRM_PRESETS: PropFirmPreset[] = [
   // ─── Tradeify ─────────────────────────────────────────────────────────────
   {
     firmName: 'Tradeify',
-    prefixes: ['TDY', 'TDYS'],
-    description: 'Static EOD drawdown. Consistency rule applies. Same-day payout available. Includes Standard, Pro, Instant Funded, and Selects account types.',
+    prefixes: ['TDY', 'TDYS', 'TDYG', 'FTD', 'FTDFY', 'FTDFYG', 'FTDFYL', 'TDFYSL', 'FTDFYSLD'],
+    description: 'Trailing EOD drawdown. Growth (1-day eval), Select (3-day eval, Daily/Flex payouts), Lightning (instant funding). No activation fees.',
     plans: [
-      { planId: 'tdy-50k-std', label: '50K Standard', size: 50, evalCost: 97, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: 1000, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 85, consistencyRule: 'No single trading day can exceed 30% of total profits' },
-      { planId: 'tdy-50k-pro', label: '50K Pro', size: 50, evalCost: 111, activationFee: null, profitTarget: 2500, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: 1000, minTradingDays: 3, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 95, consistencyRule: 'No single trading day can exceed 30% of total profits' },
-      { planId: 'tdy-50k-funded', label: '50K Instant Funded', size: 50, evalCost: null, activationFee: 328, profitTarget: null, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: 1000, minTradingDays: 0, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: '' },
-      { planId: 'tdy-100k-std', label: '100K Standard', size: 100, evalCost: 174, activationFee: null, profitTarget: 6000, drawdown: 3500, drawdownType: 'static_eod', dailyLossLimit: 2000, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 169, consistencyRule: 'No single trading day can exceed 30% of total profits' },
-      { planId: 'tdy-100k-pro', label: '100K Pro', size: 100, evalCost: 181, activationFee: null, profitTarget: 6000, drawdown: 3000, drawdownType: 'static_eod', dailyLossLimit: 2000, minTradingDays: 3, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 155, consistencyRule: 'No single trading day can exceed 30% of total profits' },
-      { planId: 'tdy-100k-funded', label: '100K Instant Funded', size: 100, evalCost: null, activationFee: 440, profitTarget: null, drawdown: 4000, drawdownType: 'static_eod', dailyLossLimit: 2000, minTradingDays: 0, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: '' },
-      { planId: 'tdy-150k-std', label: '150K Standard', size: 150, evalCost: 215, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'static_eod', dailyLossLimit: 3000, minTradingDays: 3, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 215, consistencyRule: 'No single trading day can exceed 30% of total profits' },
-      {planId: 'tdy-150k-pro', label: '150K Pro', size: 150, evalCost: 251, activationFee: null, profitTarget: 9000, drawdown: 5000, drawdownType: 'static_eod', dailyLossLimit: 3000, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 197, consistencyRule: 'No single trading day can exceed 30% of total profits' },
-      {planId: 'tdy-150k-funded', label: '150K Instant Funded', size: 150, evalCost: null, activationFee: 531, profitTarget: null, drawdown: 6000, drawdownType: 'static_eod', dailyLossLimit: 3000, minTradingDays: 0, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: '' },
-      // Selects (account type within Tradeify)
-      { planId: 'tdys-50k-daily', label: '50K Selects Daily', size: 50, evalCost: 150, activationFee: null, profitTarget: 2500, drawdown: 2000, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 3, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 130, consistencyRule: 'No single trading day can exceed 40% of total profits' },
-      { planId: 'tdys-50k-flex', label: '50K Selects 5-Day Flex', size: 50, evalCost: 150, activationFee: null, profitTarget: 2500, drawdown: 2000, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 3, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 130, consistencyRule: 'No single trading day can exceed 40% of total profits' },
-      { planId: 'tdys-100k-daily', label: '100K Selects Daily', size: 100, evalCost: 250, activationFee: null, profitTarget: 6000, drawdown: 3500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 3, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 220, consistencyRule: 'No single trading day can exceed 40% of total profits' },
-      { planId: 'tdys-100k-flex', label: '100K Selects 5-Day Flex', size: 100, evalCost: 250, activationFee: null, profitTarget: 6000, drawdown: 3500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 3, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 220, consistencyRule: 'No single trading day can exceed 40% of total profits' },
-      { planId: 'tdys-150k-daily', label: '150K Selects Daily', size: 150, evalCost: 350, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 3, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 300, consistencyRule: 'No single trading day can exceed 40% of total profits' },
-      { planId: 'tdys-150k-flex', label: '150K Selects 5-Day Flex', size: 150, evalCost: 350, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 3, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 300, consistencyRule: 'No single trading day can exceed 40% of total profits' },
+      // ── Growth Eval ──
+      { planId: 'tdy-growth-50k', label: 'Growth 50K', size: 50, evalCost: 97, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'trailing_eod', dailyLossLimit: 1250, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 95, consistencyRule: 'No consistency in eval. 35% once funded. DLL increases to max DD at 6% account profit.' },
+      { planId: 'tdy-growth-100k', label: 'Growth 100K', size: 100, evalCost: 174, activationFee: null, profitTarget: 6000, drawdown: 3500, drawdownType: 'trailing_eod', dailyLossLimit: 2500, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 169, consistencyRule: 'No consistency in eval. 35% once funded. DLL increases to max DD at 6% account profit.' },
+      { planId: 'tdy-growth-150k', label: 'Growth 150K', size: 150, evalCost: 251, activationFee: null, profitTarget: 9000, drawdown: 5000, drawdownType: 'trailing_eod', dailyLossLimit: 3750, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 243, consistencyRule: 'No consistency in eval. 35% once funded. DLL increases to max DD at 6% account profit.' },
+      // ── Select Eval (Daily Payout Path) ──
+      { planId: 'tdy-select-50k-daily', label: 'Select 50K (Daily)', size: 50, evalCost: 111, activationFee: null, profitTarget: 2500, drawdown: 2000, drawdownType: 'trailing_eod', dailyLossLimit: 1000, minTradingDays: 3, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 95, consistencyRule: '40% consistency in eval. No consistency once funded. Max daily payout $1,000.' },
+      { planId: 'tdy-select-100k-daily', label: 'Select 100K (Daily)', size: 100, evalCost: 181, activationFee: null, profitTarget: 6000, drawdown: 2500, drawdownType: 'trailing_eod', dailyLossLimit: 1250, minTradingDays: 3, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 155, consistencyRule: '40% consistency in eval. No consistency once funded. Max daily payout $1,500.' },
+      { planId: 'tdy-select-150k-daily', label: 'Select 150K (Daily)', size: 150, evalCost: 251, activationFee: null, profitTarget: 9000, drawdown: 3500, drawdownType: 'trailing_eod', dailyLossLimit: 1500, minTradingDays: 3, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 215, consistencyRule: '40% consistency in eval. No consistency once funded. Max daily payout $2,000.' },
+      // ── Select Eval (5-Day Flex Payout Path) ──
+      { planId: 'tdy-select-50k-flex', label: 'Select 50K (Flex)', size: 50, evalCost: 111, activationFee: null, profitTarget: 2500, drawdown: 2000, drawdownType: 'trailing_eod', dailyLossLimit: null, minTradingDays: 3, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 95, consistencyRule: '40% consistency in eval. No consistency once funded. Max payout $3,000.' },
+      { planId: 'tdy-select-100k-flex', label: 'Select 100K (Flex)', size: 100, evalCost: 181, activationFee: null, profitTarget: 6000, drawdown: 3000, drawdownType: 'trailing_eod', dailyLossLimit: null, minTradingDays: 3, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 155, consistencyRule: '40% consistency in eval. No consistency once funded. Max payout $4,000.' },
+      { planId: 'tdy-select-150k-flex', label: 'Select 150K (Flex)', size: 150, evalCost: 251, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'trailing_eod', dailyLossLimit: null, minTradingDays: 3, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 215, consistencyRule: '40% consistency in eval. No consistency once funded. Max payout $6,000.' },
+      // ── Lightning (Instant Funded — no eval) ──
+      { planId: 'tdy-lightning-25k', label: 'Lightning 25K', size: 25, evalCost: null, activationFee: 165, profitTarget: null, drawdown: 1500, drawdownType: 'trailing_eod', dailyLossLimit: null, minTradingDays: 0, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: '20% consistency, relaxes after each payout.' },
+      { planId: 'tdy-lightning-50k', label: 'Lightning 50K', size: 50, evalCost: null, activationFee: 328, profitTarget: null, drawdown: 2000, drawdownType: 'trailing_eod', dailyLossLimit: null, minTradingDays: 0, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: '20% consistency, relaxes after each payout.' },
+      { planId: 'tdy-lightning-100k', label: 'Lightning 100K', size: 100, evalCost: null, activationFee: 440, profitTarget: null, drawdown: 3500, drawdownType: 'trailing_eod', dailyLossLimit: null, minTradingDays: 0, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: '20% consistency, relaxes after each payout.' },
+      { planId: 'tdy-lightning-150k', label: 'Lightning 150K', size: 150, evalCost: null, activationFee: 531, profitTarget: null, drawdown: 5000, drawdownType: 'trailing_eod', dailyLossLimit: null, minTradingDays: 0, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: '20% consistency, relaxes after each payout.' },
     ],
   },
 
@@ -252,7 +253,7 @@ export const PROP_FIRM_PRESETS: PropFirmPreset[] = [
   // ─── Lucid Trading ────────────────────────────────────────────────────────
   {
     firmName: 'Lucid Trading',
-    prefixes: ['LUCID'],
+    prefixes: ['LUCID', 'LFF'],
     description: 'Static EOD. Instant funded options. Competitive pricing.',
     plans: [
       { planId: 'lucid-25k', label: '25K Standard', size: 25, evalCost: 50, activationFee: null, profitTarget: 1250, drawdown: 1000, drawdownType: 'static_eod', dailyLossLimit: 500, minTradingDays: 2, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 60, consistencyRule: '' },

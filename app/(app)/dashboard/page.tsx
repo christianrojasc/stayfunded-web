@@ -97,12 +97,12 @@ function AccountHealthCard() {
         {/* Max Drawdown */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-[rgba(255,255,255,0.45)] font-medium">Max Drawdown</span>
+            <span className="text-[var(--text-muted)] font-medium">Max Drawdown</span>
             <span className="font-mono font-semibold" style={{ color: barColor(drawdownPct, true) }}>
               ${drawdownUsed.toFixed(0)} / ${selected.maxLossLimit.toFixed(0)}
             </span>
           </div>
-          <div className="h-2 rounded-full bg-[rgba(255,255,255,0.08)] overflow-hidden">
+          <div className="h-2 rounded-full bg-[var(--border)] overflow-hidden">
             <div className="h-full rounded-full transition-all duration-500"
               style={{ width: `${Math.min(drawdownPct * 100, 100)}%`, backgroundColor: barColor(drawdownPct, true) }} />
           </div>
@@ -115,27 +115,27 @@ function AccountHealthCard() {
         {selected.dailyLossLimit !== null && selected.dailyLossLimit > 0 ? (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[rgba(255,255,255,0.45)] font-medium">Daily Loss</span>
+              <span className="text-[var(--text-muted)] font-medium">Daily Loss</span>
               <span className="font-mono font-semibold" style={{ color: dailyPct !== null ? barColor(dailyPct, true) : '#6B7E91' }}>
                 ${dailyLossUsed.toFixed(0)} / ${selected.dailyLossLimit.toFixed(0)}
               </span>
             </div>
-            <div className="h-2 rounded-full bg-[rgba(255,255,255,0.08)] overflow-hidden">
+            <div className="h-2 rounded-full bg-[var(--border)] overflow-hidden">
               <div className="h-full rounded-full transition-all duration-500"
                 style={{
                   width: `${Math.min((dailyPct || 0) * 100, 100)}%`,
                   backgroundColor: dailyPct !== null ? barColor(dailyPct, true) : '#6B7E91'
                 }} />
             </div>
-            <p className="text-[11px] text-[rgba(255,255,255,0.45)]">
+            <p className="text-[11px] text-[var(--text-muted)]">
               {dailyPct !== null ? `${(dailyPct * 100).toFixed(0)}% used today` : '—'}
             </p>
           </div>
         ) : (
           <div className="space-y-1.5 flex flex-col justify-center">
-            <p className="text-xs font-medium text-[rgba(255,255,255,0.45)]">Daily Loss</p>
+            <p className="text-xs font-medium text-[var(--text-muted)]">Daily Loss</p>
             <p className="text-sm font-semibold text-[#4ADE50]">No limit</p>
-            <p className="text-[11px] text-[rgba(255,255,255,0.45)]">This firm has no daily loss rule</p>
+            <p className="text-[11px] text-[var(--text-muted)]">This firm has no daily loss rule</p>
           </div>
         )}
 
@@ -143,50 +143,50 @@ function AccountHealthCard() {
         {selected.profitTarget !== null && selected.profitTarget > 0 ? (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[rgba(255,255,255,0.45)] font-medium">Profit Target</span>
+              <span className="text-[var(--text-muted)] font-medium">Profit Target</span>
               <span className="font-mono font-semibold text-[#4ADE50]">
                 {profitPct !== null ? `${(profitPct * 100).toFixed(0)}%` : '—'}
               </span>
             </div>
-            <div className="h-2 rounded-full bg-[rgba(255,255,255,0.08)] overflow-hidden">
+            <div className="h-2 rounded-full bg-[var(--border)] overflow-hidden">
               <div className="h-full rounded-full transition-all duration-500 bg-[#4ADE50]"
                 style={{ width: `${Math.min((profitPct || 0) * 100, 100)}%` }} />
             </div>
-            <p className="text-[11px] text-[rgba(255,255,255,0.45)]">
+            <p className="text-[11px] text-[var(--text-muted)]">
               ${Math.max(0, totalPnl).toFixed(0)} / ${selected.profitTarget.toFixed(0)} goal
             </p>
           </div>
         ) : (
           <div className="space-y-1.5 flex flex-col justify-center">
-            <p className="text-xs font-medium text-[rgba(255,255,255,0.45)]">Profit Target</p>
-            <p className="text-sm font-semibold text-[rgba(255,255,255,0.9)]">Funded</p>
-            <p className="text-[11px] text-[rgba(255,255,255,0.45)]">No profit target required</p>
+            <p className="text-xs font-medium text-[var(--text-muted)]">Profit Target</p>
+            <p className="text-sm font-semibold text-[var(--text-primary)]">Funded</p>
+            <p className="text-[11px] text-[var(--text-muted)]">No profit target required</p>
           </div>
         )}
 
         {/* Days Traded */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-[rgba(255,255,255,0.45)] font-medium">Days Traded</span>
-            <span className="font-mono font-semibold text-[rgba(255,255,255,0.9)]">
+            <span className="text-[var(--text-muted)] font-medium">Days Traded</span>
+            <span className="font-mono font-semibold text-[var(--text-primary)]">
               {daysTradedCount}
               {selected.minTradingDays > 0 && ` / ${selected.minTradingDays}`}
             </span>
           </div>
           {selected.minTradingDays > 0 ? (
             <>
-              <div className="h-2 rounded-full bg-[rgba(255,255,255,0.08)] overflow-hidden">
+              <div className="h-2 rounded-full bg-[var(--border)] overflow-hidden">
                 <div className="h-full rounded-full transition-all duration-500 bg-[#4ADE50]"
                   style={{ width: `${Math.min((daysTradedCount / selected.minTradingDays) * 100, 100)}%` }} />
               </div>
-              <p className="text-[11px] text-[rgba(255,255,255,0.45)]">
+              <p className="text-[11px] text-[var(--text-muted)]">
                 {Math.max(0, selected.minTradingDays - daysTradedCount)} more days needed
               </p>
             </>
           ) : (
             <>
-              <div className="h-2 rounded-full bg-[rgba(255,255,255,0.08)]" />
-              <p className="text-[11px] text-[rgba(255,255,255,0.45)]">No minimum required</p>
+              <div className="h-2 rounded-full bg-[var(--border)]" />
+              <p className="text-[11px] text-[var(--text-muted)]">No minimum required</p>
             </>
           )}
         </div>
@@ -231,12 +231,12 @@ function WeeklyGradeCard() {
   if (!grade) return null
 
   return (
-    <Link href="/journal" className="glass-card p-4 flex items-center gap-3 hover:bg-white/[0.05] transition-all cursor-pointer">
+    <Link href="/journal" className="glass-card p-4 flex items-center gap-3 hover:bg-[var(--border)] transition-all cursor-pointer">
       <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${grade.color}15` }}>
         <span className="text-lg font-bold" style={{ color: grade.color }}>{grade.grade}</span>
       </div>
       <div>
-        <p className="text-xs text-[rgba(255,255,255,0.45)]">Weekly Grade</p>
+        <p className="text-xs text-[var(--text-muted)]">Weekly Grade</p>
         <p className="text-sm font-bold" style={{ color: grade.color }}>{grade.grade}</p>
       </div>
     </Link>
@@ -290,15 +290,15 @@ export default function Dashboard() {
               <Sparkles className="w-4 h-4 text-[#4ADE80]" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-white">You're on the Free plan</p>
-              <p className="text-xs text-[#64748B] mt-0.5">Unlock unlimited accounts, charts, reports and AI insights.</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">You're on the Free plan</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-0.5">Unlock unlimited accounts, charts, reports and AI insights.</p>
             </div>
           </div>
           <div className="flex items-center gap-3 flex-shrink-0">
             <button onClick={() => setUpgradeOpen(true)} className="px-5 py-2 rounded-2xl bg-gradient-to-r from-[#4ADE80] to-[#22C55E] text-black text-sm font-bold hover:opacity-90 transition-opacity whitespace-nowrap">
               Upgrade to Pro
             </button>
-            <button onClick={() => setBannerDismissed(true)} className="w-7 h-7 rounded-full flex items-center justify-center text-[#64748B] hover:text-white hover:bg-white/10 transition-all">
+            <button onClick={() => setBannerDismissed(true)} className="w-7 h-7 rounded-full flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--border)] transition-all">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -307,9 +307,9 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl font-bold text-white">Dashboard</h1>
+          <h1 className="text-xl font-bold text-[var(--text-primary)]">Dashboard</h1>
           <div className="flex items-center gap-3 mt-1 flex-wrap">
-            <p className="text-sm text-[rgba(255,255,255,0.45)]">{today}</p>
+            <p className="text-sm text-[var(--text-muted)]">{today}</p>
             <span className="text-[rgba(255,255,255,0.15)]">·</span>
             <SessionClock />
           </div>
@@ -327,7 +327,7 @@ export default function Dashboard() {
           )}
           <button
             onClick={toggleTheme}
-            className="hidden sm:flex p-2.5 rounded-xl border border-[#E4E9F0]  bg-white dark:bg-[#161b22] text-[#6B7E91] hover:text-[#1E2D3D] dark:hover:text-white hover:bg-[#F5F7FA] dark:hover:bg-[#1c2129] transition-all"
+            className="hidden sm:flex p-2.5 rounded-xl border border-[#E4E9F0]  bg-white dark:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[#1E2D3D] dark:hover:text-[var(--text-primary)] hover:bg-[#F5F7FA] dark:hover:bg-[#1c2129] transition-all"
           >
             {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           </button>
@@ -379,7 +379,7 @@ export default function Dashboard() {
           valueNode={
             <span className="font-bold text-2xl">
               <span className="text-[#4ADE80]">{formatCurrency(analytics.avgWin, true)}</span>
-              <span className="text-[#8b949e]"> / </span>
+              <span className="text-[var(--text-muted)]"> / </span>
               <span className="text-[#FF453A]">{formatCurrency(analytics.avgLoss, true)}</span>
             </span>
           }
@@ -432,7 +432,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="section-title">Cumulative P&L</h2>
-              <p className="text-xs text-[rgba(255,255,255,0.35)] mt-0.5">Running total over time</p>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">Running total over time</p>
             </div>
             <span className={`text-sm font-bold px-3 py-1 rounded-full ${
               analytics.netPnl >= 0 ? 'bg-green-50 text-[#4ADE80]' : 'bg-[rgba(255,69,58,0.1)] text-[#FF453A]'
@@ -444,9 +444,9 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="section-title">Daily P&L</h2>
-              <p className="text-xs text-[rgba(255,255,255,0.35)] mt-0.5">Last 20 sessions</p>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">Last 20 sessions</p>
             </div>
-            <div className="flex items-center gap-3 text-xs text-[rgba(255,255,255,0.35)]">
+            <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#4ADE50]" />Win</span>
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#FF453A]" />Loss</span>
             </div>
@@ -461,7 +461,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="section-title">Drawdown</h2>
-              <p className="text-xs text-[rgba(255,255,255,0.35)] mt-0.5">% from equity peak</p>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">% from equity peak</p>
             </div>
             <span className="text-sm font-bold text-[#FF453A] px-3 py-1 bg-red-50 rounded-full">
               -{analytics.maxDrawdownPct.toFixed(2)}%
@@ -471,10 +471,10 @@ export default function Dashboard() {
         </div>
 
         <div className="lg:col-span-2 glass-card overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-[rgba(255,255,255,0.06)]">
+          <div className="flex items-center justify-between p-5 border-b border-[var(--border)]">
             <div>
               <h2 className="section-title">Recent Trades</h2>
-              <p className="text-xs text-[rgba(255,255,255,0.35)] mt-0.5">Latest activity</p>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">Latest activity</p>
             </div>
             <Link href="/trades" className="text-xs font-semibold text-[#4ADE80] hover:text-[#4ADE50] transition-colors flex items-center gap-1">
               View all <ArrowUpRight size={12} />
@@ -496,14 +496,14 @@ export default function Dashboard() {
               <tbody>
                 {recentTrades.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="text-center text-[rgba(255,255,255,0.35)] py-8">
+                    <td colSpan={7} className="text-center text-[var(--text-muted)] py-8">
                       No trades yet. <Link href="/trades" className="text-[#4ADE80] hover:underline">Add your first trade</Link>
                     </td>
                   </tr>
                 ) : recentTrades.map((t, idx) => (
                   <tr key={t.id} className={idx % 2 === 1 ? "bg-white/[0.02]" : ""}>
-                    <td className="font-medium text-[rgba(255,255,255,0.45)]">{t.date}</td>
-                    <td><span className="font-mono font-bold text-[rgba(255,255,255,0.9)] text-xs bg-[rgba(255,255,255,0.06)] px-2 py-0.5 rounded-lg">{t.symbol}</span></td>
+                    <td className="font-medium text-[var(--text-muted)]">{t.date}</td>
+                    <td><span className="font-mono font-bold text-[var(--text-primary)] text-xs bg-[var(--border)] px-2 py-0.5 rounded-lg">{t.symbol}</span></td>
                     <td>
                       <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
                         t.side === 'Long' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'

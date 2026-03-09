@@ -23,6 +23,7 @@ interface Props {
 
 const DRAWDOWN_LABELS: Record<DrawdownType, string> = {
   trailing: 'Trailing',
+  trailing_eod: 'Trailing EOD',
   static_eod: 'Static (EOD)',
   static_intraday: 'Static (Intraday)',
   static: 'Static',
@@ -144,9 +145,8 @@ export default function NewAccountWizard({
       <div
         className="relative w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-slide-up"
         style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)',
-          backdropFilter: 'blur(24px)',
-          border: '1px solid rgba(255,255,255,0.12)',
+          background: 'var(--bg-primary)',
+          border: '1px solid var(--border)',
         }}
       >
         {/* ── Header ─────────────────────────────────────────────────────── */}
@@ -160,20 +160,20 @@ export default function NewAccountWizard({
                 className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg, #2D8B4E, #4ADE50)' }}
               >
-                <Building2 size={20} className="text-white" />
+                <Building2 size={20} className="text-[var(--text-primary)]" />
               </div>
               <div>
-                <h2 className="text-[#1E2D3D] dark:text-[#F1F5F9] font-bold text-lg leading-tight">
+                <h2 className="text-[var(--text-primary)] font-bold text-lg leading-tight">
                   New Account Detected
                 </h2>
-                <p className="text-xs text-[#6B7E91] dark:text-[#94A3B8] mt-0.5">
+                <p className="text-xs text-[var(--text-muted)] dark:text-[#94A3B8] mt-0.5">
                   Set up this account before importing trades
                 </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-[#9EB0C0] hover:text-[#1E2D3D] dark:hover:text-[#F1F5F9] hover:bg-white/10 transition-all"
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--border)] transition-all"
             >
               <X size={16} />
             </button>
@@ -197,7 +197,7 @@ export default function NewAccountWizard({
           {/* Firm + Plan row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-[#6B7E91] dark:text-[#94A3B8] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
                 Prop Firm
               </label>
               <div className="relative">
@@ -210,12 +210,12 @@ export default function NewAccountWizard({
                     <option key={p.firmName} value={p.firmName}>{p.firmName}</option>
                   ))}
                 </select>
-                <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#9EB0C0] pointer-events-none" />
+                <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#6B7E91] dark:text-[#94A3B8] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
                 Plan
               </label>
               <div className="relative">
@@ -228,18 +228,18 @@ export default function NewAccountWizard({
                     <option key={p.planId} value={p.planId}>{p.label}</option>
                   ))}
                 </select>
-                <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#9EB0C0] pointer-events-none" />
+                <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none" />
               </div>
             </div>
           </div>
 
           {/* Divider */}
-          <div className="border-t border-[#E4E9F0]/40 dark:border-[#1E293B]/60" />
+          <div className="border-t border-[var(--border)]" />
 
           {/* Nickname + Account number */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-[#6B7E91] dark:text-[#94A3B8] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
                 Nickname
               </label>
               <input
@@ -251,7 +251,7 @@ export default function NewAccountWizard({
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#6B7E91] dark:text-[#94A3B8] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
                 Account Number
               </label>
               <input
@@ -266,7 +266,7 @@ export default function NewAccountWizard({
 
           {/* Status */}
           <div>
-            <label className="block text-xs font-semibold text-[#6B7E91] dark:text-[#94A3B8] mb-1.5">
+            <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
               Status
             </label>
             <div className="flex gap-2">
@@ -277,7 +277,7 @@ export default function NewAccountWizard({
                   className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition-all ${
                     status === s
                       ? 'border-[#2D8B4E] text-[#2D8B4E] bg-[#2D8B4E]/10'
-                      : 'border-[#E4E9F0] dark:border-[#1E293B] text-[#9EB0C0] hover:border-[#2D8B4E]/40'
+                      : 'border-[var(--border)] text-[var(--text-muted)] hover:border-[#2D8B4E]/40'
                   }`}
                 >
                   {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -287,19 +287,19 @@ export default function NewAccountWizard({
           </div>
 
           {/* Divider */}
-          <div className="border-t border-[#E4E9F0]/40 dark:border-[#1E293B]/60" />
+          <div className="border-t border-[var(--border)]" />
 
           {/* Risk params grid */}
           <div>
             <div className="flex items-center gap-1.5 mb-3">
-              <Info size={12} className="text-[#9EB0C0]" />
-              <span className="text-[10px] text-[#9EB0C0] dark:text-[#64748B]">
+              <Info size={12} className="text-[var(--text-muted)]" />
+              <span className="text-[10px] text-[var(--text-muted)] dark:text-[var(--text-secondary)]">
                 Pre-filled from plan — adjust as needed
               </span>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-[#6B7E91] dark:text-[#94A3B8] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
                   Starting Balance ($)
                 </label>
                 <input
@@ -310,7 +310,7 @@ export default function NewAccountWizard({
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#6B7E91] dark:text-[#94A3B8] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
                   Max Drawdown / Loss ($)
                 </label>
                 <input
@@ -321,9 +321,9 @@ export default function NewAccountWizard({
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#6B7E91] dark:text-[#94A3B8] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
                   Daily Loss Limit ($)
-                  <span className="ml-1 text-[#9EB0C0] font-normal">(optional)</span>
+                  <span className="ml-1 text-[var(--text-muted)] font-normal">(optional)</span>
                 </label>
                 <input
                   type="number"
@@ -334,9 +334,9 @@ export default function NewAccountWizard({
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#6B7E91] dark:text-[#94A3B8] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
                   Profit Target ($)
-                  <span className="ml-1 text-[#9EB0C0] font-normal">(optional)</span>
+                  <span className="ml-1 text-[var(--text-muted)] font-normal">(optional)</span>
                 </label>
                 <input
                   type="number"
@@ -347,7 +347,7 @@ export default function NewAccountWizard({
                 />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs font-semibold text-[#6B7E91] dark:text-[#94A3B8] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5">
                   Drawdown Type
                 </label>
                 <div className="grid grid-cols-4 gap-1.5">
@@ -365,7 +365,7 @@ export default function NewAccountWizard({
                       className={`py-1.5 rounded-lg text-[10px] font-semibold border transition-all ${
                         drawdownType === val
                           ? 'border-[#2D8B4E] text-[#2D8B4E] bg-[#2D8B4E]/10'
-                          : 'border-[#E4E9F0] dark:border-[#1E293B] text-[#9EB0C0] hover:border-[#2D8B4E]/40'
+                          : 'border-[var(--border)] text-[var(--text-muted)] hover:border-[#2D8B4E]/40'
                       }`}
                     >
                       {label}
@@ -383,11 +383,11 @@ export default function NewAccountWizard({
         {/* ── Footer ─────────────────────────────────────────────────────── */}
         <div
           className="px-6 py-4 flex items-center justify-between gap-3"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
+          style={{ borderTop: '1px solid var(--border)' }}
         >
           <button
             onClick={onSkip}
-            className="text-xs text-[#9EB0C0] hover:text-[#6B7E91] dark:hover:text-[#94A3B8] transition-colors font-medium"
+            className="text-xs text-[var(--text-muted)] hover:text-[var(--text-muted)] dark:hover:text-[#94A3B8] transition-colors font-medium"
           >
             Skip — import without linking
           </button>
@@ -399,7 +399,7 @@ export default function NewAccountWizard({
           >
             {saved ? (
               <>
-                <CheckCircle size={15} className="text-white" />
+                <CheckCircle size={15} className="text-[var(--text-primary)]" />
                 Account Created!
               </>
             ) : saving ? (

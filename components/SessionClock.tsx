@@ -54,7 +54,7 @@ export default function SessionClock() {
           style={{ backgroundColor: statusColor }}
         />
         <span className="font-semibold" style={{ color: statusColor }}>{statusLabel}</span>
-        <span className="text-[#6B7E91]">6 PM – 5 PM EST</span>
+        <span className="text-[var(--text-muted)]">6 PM – 5 PM EST</span>
       </div>
 
       {!isWeekend && (
@@ -64,7 +64,7 @@ export default function SessionClock() {
       )}
 
       {liveTime && (
-        <span className="font-mono text-[#6B7E91] hidden sm:inline">
+        <span className="font-mono text-[var(--text-muted)] hidden sm:inline">
           {liveTime}
         </span>
       )}

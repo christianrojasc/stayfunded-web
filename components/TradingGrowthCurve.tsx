@@ -139,20 +139,20 @@ function CustomTooltip({ active, payload, label }: any) {
   const target = payload.find((p: any) => p.dataKey === 'profitTarget')?.value
 
   return (
-    <div className="bg-[#0d1117] border border-[#30363d] rounded-xl shadow-2xl p-3 text-xs min-w-[180px]">
-      <p className="text-[#8b949e] mb-2 font-semibold text-[11px] uppercase tracking-wide">{label}</p>
+    <div className="bg-[var(--bg-primary)] border border-[#30363d] rounded-xl shadow-2xl p-3 text-xs min-w-[180px]">
+      <p className="text-[var(--text-muted)] mb-2 font-semibold text-[11px] uppercase tracking-wide">{label}</p>
       {balance !== undefined && (
         <div className="flex items-center justify-between gap-4 mb-1">
-          <span className="text-[#8b949e] flex items-center gap-1">
+          <span className="text-[var(--text-muted)] flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
             Balance
           </span>
-          <span className="font-mono font-bold text-[#e6edf3]">{fmtDollar(balance)}</span>
+          <span className="font-mono font-bold text-[var(--text-primary)]">{fmtDollar(balance)}</span>
         </div>
       )}
       {target !== undefined && target !== null && (
         <div className="flex items-center justify-between gap-4 mb-1">
-          <span className="text-[#8b949e] flex items-center gap-1">
+          <span className="text-[var(--text-muted)] flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-green-400 inline-block" />
             Profit Target
           </span>
@@ -161,7 +161,7 @@ function CustomTooltip({ active, payload, label }: any) {
       )}
       {floor !== undefined && (
         <div className="flex items-center justify-between gap-4">
-          <span className="text-[#8b949e] flex items-center gap-1">
+          <span className="text-[var(--text-muted)] flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
             Min Balance
           </span>
@@ -184,21 +184,21 @@ interface KPICardProps {
   valueColor?: string
 }
 
-function MiniKPICard({ label, value, subValue, change, icon, iconBg = 'bg-[#21262d]', valueColor }: KPICardProps) {
+function MiniKPICard({ label, value, subValue, change, icon, iconBg = 'bg-[var(--bg-card)]', valueColor }: KPICardProps) {
   const pctColor = change !== undefined && change !== null
     ? change >= 0 ? 'text-green-400' : 'text-red-400'
-    : 'text-[#8b949e]'
+    : 'text-[var(--text-muted)]'
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#0d1117]/60 border border-[#21262d] hover:border-[#30363d] transition-colors flex-1">
+    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--bg-primary)]/60 border border-[var(--border)] hover:border-[#30363d] transition-colors flex-1">
       <div className={`w-9 h-9 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0`}>
         {icon}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-[#8b949e] truncate">{label}</p>
-        <p className={`text-sm font-bold leading-tight mt-0.5 ${valueColor || 'text-[#e6edf3]'}`}>{value}</p>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] truncate">{label}</p>
+        <p className={`text-sm font-bold leading-tight mt-0.5 ${valueColor || 'text-[var(--text-primary)]'}`}>{value}</p>
         {(subValue || change !== null) && (
-          <p className={`text-[10px] mt-0.5 ${change !== null && change !== undefined ? pctColor : 'text-[#8b949e]'}`}>
+          <p className={`text-[10px] mt-0.5 ${change !== null && change !== undefined ? pctColor : 'text-[var(--text-muted)]'}`}>
             {subValue}
             {change !== null && change !== undefined && ` (${fmtPct(change)})`}
           </p>
@@ -335,8 +335,8 @@ export default function TradingGrowthCurve() {
           <TrendingUp size={22} className="text-amber-400" />
         </div>
         <div>
-          <p className="font-semibold text-[#e6edf3] text-sm">No Trades Yet</p>
-          <p className="text-[#8b949e] text-xs mt-1">
+          <p className="font-semibold text-[var(--text-primary)] text-sm">No Trades Yet</p>
+          <p className="text-[var(--text-muted)] text-xs mt-1">
             Add trades for <span className="text-amber-400 font-semibold">{selected?.nickname || selected?.firmName || 'this account'}</span> to see your equity curve
           </p>
         </div>
@@ -353,16 +353,16 @@ export default function TradingGrowthCurve() {
   return (
     <div className="glass-card overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-[#21262d] flex-wrap gap-3">
+      <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-[var(--border)] flex-wrap gap-3">
         <div className="flex items-center gap-2 flex-wrap">
           <div className="flex items-center gap-2">
-            <h2 className="section-title text-[#e6edf3]">Trading Growth Curve</h2>
+            <h2 className="section-title text-[var(--text-primary)]">Trading Growth Curve</h2>
             <span title="Equity curve showing your account balance over time with drawdown and target levels">
-              <Info size={13} className="text-[#8b949e] cursor-help" />
+              <Info size={13} className="text-[var(--text-muted)] cursor-help" />
             </span>
           </div>
           {dateRange && (
-            <span className="text-[11px] text-[#8b949e] bg-[#21262d] px-2 py-0.5 rounded-full">
+            <span className="text-[11px] text-[var(--text-muted)] bg-[var(--bg-card)] px-2 py-0.5 rounded-full">
               {dateRange}
             </span>
           )}
@@ -379,12 +379,12 @@ export default function TradingGrowthCurve() {
         <div className="flex items-center gap-1.5 text-xs font-mono">
           <Clock size={12} className={
             sessionInfo.status === 'closing_soon' ? 'text-red-400 animate-pulse' :
-            sessionInfo.status === 'closed' ? 'text-[#8b949e]' : 'text-amber-400'
+            sessionInfo.status === 'closed' ? 'text-[var(--text-muted)]' : 'text-amber-400'
           } />
-          <span className="text-[#8b949e] font-sans text-[11px]">Session Ends In</span>
+          <span className="text-[var(--text-muted)] font-sans text-[11px]">Session Ends In</span>
           <span className={`font-bold text-sm tabular-nums ${
             sessionInfo.status === 'closing_soon' ? 'text-red-400' :
-            sessionInfo.status === 'closed' ? 'text-[#8b949e]' : 'text-amber-400'
+            sessionInfo.status === 'closed' ? 'text-[var(--text-muted)]' : 'text-amber-400'
           }`}>
             {sessionInfo.status === 'closed'
               ? 'Closed'
@@ -502,17 +502,17 @@ export default function TradingGrowthCurve() {
 
           {/* Legend */}
           <div className="flex items-center gap-4 mt-1 pl-14 flex-wrap">
-            <span className="flex items-center gap-1.5 text-[11px] text-[#8b949e]">
+            <span className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)]">
               <span className="w-8 h-0.5 bg-amber-400 rounded inline-block" />
               Balance
             </span>
             {profitTargetLevel && (
-              <span className="flex items-center gap-1.5 text-[11px] text-[#8b949e]">
+              <span className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)]">
                 <span className="w-8 border-t-2 border-dashed border-green-400 inline-block" />
                 Profit Target
               </span>
             )}
-            <span className="flex items-center gap-1.5 text-[11px] text-[#8b949e]">
+            <span className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)]">
               <span className="w-8 border-t-2 border-dashed border-red-400 inline-block" />
               Min Balance ({selected?.drawdownType === 'trailing' ? 'Trailing' : 'Static'})
             </span>
@@ -521,7 +521,7 @@ export default function TradingGrowthCurve() {
 
         {/* KPI Cards (right, 20%) */}
         {kpiData && (
-          <div className="lg:w-[20%] lg:min-w-[200px] flex flex-row lg:flex-col gap-3 p-4 lg:pl-0 lg:border-l border-[#21262d] overflow-x-auto lg:overflow-visible">
+          <div className="lg:w-[20%] lg:min-w-[200px] flex flex-row lg:flex-col gap-3 p-4 lg:pl-0 lg:border-l border-[var(--border)] overflow-x-auto lg:overflow-visible">
             {/* 1. NET P&L */}
             <MiniKPICard
               label="Net Profit Loss"
@@ -568,7 +568,7 @@ export default function TradingGrowthCurve() {
                 valueColor={
                   kpiData.profitTargetPct !== null && kpiData.profitTargetPct >= 100
                     ? 'text-green-400'
-                    : 'text-[#e6edf3]'
+                    : 'text-[var(--text-primary)]'
                 }
               />
             )}

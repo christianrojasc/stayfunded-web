@@ -109,20 +109,20 @@ export default function TradeCandleChart({ trade }: Props) {
         textColor: '#8896b3',
       },
       grid: {
-        vertLines: { color: 'rgba(255,255,255,0.04)' },
-        horzLines: { color: 'rgba(255,255,255,0.04)' },
+        vertLines: { color: 'var(--text-muted)' },
+        horzLines: { color: 'var(--text-muted)' },
       },
       timeScale: {
         timeVisible: true,
         secondsVisible: false,
-        borderColor: 'rgba(255,255,255,0.08)',
+        borderColor: 'var(--border)',
       },
       rightPriceScale: {
-        borderColor: 'rgba(255,255,255,0.08)',
+        borderColor: 'var(--border)',
       },
       crosshair: {
-        vertLine: { color: 'rgba(255,255,255,0.1)' },
-        horzLine: { color: 'rgba(255,255,255,0.1)' },
+        vertLine: { color: 'var(--text-muted)' },
+        horzLine: { color: 'var(--text-muted)' },
       },
     })
 
@@ -227,7 +227,7 @@ export default function TradeCandleChart({ trade }: Props) {
             className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
               interval === iv
                 ? 'bg-[#2D8B4E]/20 text-[#4ADE80]'
-                : 'text-[#64748B] hover:text-[#94A3B8] hover:bg-[#111827]'
+                : 'text-[var(--text-secondary)] hover:text-[#94A3B8] hover:bg-[#111827]'
             }`}
           >
             {iv}
@@ -237,12 +237,12 @@ export default function TradeCandleChart({ trade }: Props) {
       <div className="flex-1 relative" ref={containerRef}>
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-[#0a0e17] z-10">
-            <Loader2 size={24} className="animate-spin text-[#64748B]" />
+            <Loader2 size={24} className="animate-spin text-[var(--text-secondary)]" />
           </div>
         )}
         {error && !loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-[#0a0e17] z-10">
-            <p className="text-[#64748B] text-sm">Chart unavailable</p>
+            <p className="text-[var(--text-secondary)] text-sm">Chart unavailable</p>
           </div>
         )}
       </div>
@@ -252,7 +252,8 @@ export default function TradeCandleChart({ trade }: Props) {
 
 function findClosestCandle(candles: CandlestickData<Time>[], date: string, time?: string): CandlestickData<Time> | null {
   if (!time || !candles.length) return candles.length ? candles[Math.floor(candles.length / 2)] : null
-  const target = new Date(`${date}T${time}`).getTime() / 1000
+  // Tradovate timestamps are CT (UTC-6), match what fetchCandles uses
+  const target = new Date(`${date}T${time}-06:00`).getTime() / 1000
   let closest = candles[0]
   let minDiff = Math.abs((closest.time as number) - target)
   for (const c of candles) {

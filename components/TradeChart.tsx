@@ -211,24 +211,24 @@ export default function TradeChart({ trade }: Props) {
           {trade.side}
         </span>
 
-        <span className="text-[#64748B]">
+        <span className="text-[var(--text-secondary)]">
           <span className="font-mono font-bold text-[#94A3B8]">{trade.symbol}</span>
           {' · '}
           {trade.date}
         </span>
 
-        <span className="text-[#64748B]">
+        <span className="text-[var(--text-secondary)]">
           Entry{' '}
           <span className="font-mono text-[#94A3B8]">{trade.entryPrice.toFixed(2)}</span>
         </span>
 
-        <span className="text-[#64748B]">
+        <span className="text-[var(--text-secondary)]">
           Exit{' '}
           <span className="font-mono text-[#94A3B8]">{trade.exitPrice.toFixed(2)}</span>
         </span>
 
         {trade.contracts > 1 && (
-          <span className="text-[#64748B]">
+          <span className="text-[var(--text-secondary)]">
             <span className="font-mono text-[#94A3B8]">{trade.contracts}</span>
             {' cts'}
           </span>

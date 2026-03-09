@@ -139,7 +139,7 @@ export default function RuleBreakCostCalculator({ trades, allTrades, rules, comp
 
       {costLines.map((line, i) => (
         <div key={i} className="space-y-1">
-          <div className="text-sm font-medium text-white">
+          <div className="text-sm font-medium text-[var(--text-primary)]">
             {line.ruleName} — <span className="text-[#FF453A]">Broken</span>
           </div>
           {line.details.map((d, j) => (
@@ -148,9 +148,9 @@ export default function RuleBreakCostCalculator({ trades, allTrades, rules, comp
         </div>
       ))}
 
-      <div className="border-t border-white/[0.06] pt-2 mt-2">
+      <div className="border-t border-[var(--border)] pt-2 mt-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-bold text-white">Total rule break cost this session:</span>
+          <span className="text-sm font-bold text-[var(--text-primary)]">Total rule break cost this session:</span>
           <span className="text-sm font-bold text-[#FF453A]">{formatPnl(totalCost)}</span>
         </div>
       </div>

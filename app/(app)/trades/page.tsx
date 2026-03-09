@@ -101,8 +101,8 @@ export default function TradesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-white">Trade Log</h1>
-          <p className="text-sm text-[#64748B] mt-0.5">
+          <h1 className="text-xl font-bold text-[var(--text-primary)]">Trade Log</h1>
+          <p className="text-sm text-[var(--text-secondary)] mt-0.5">
             {filtered.length} trades · {wins}W {filtered.length - wins}L · Net {' '}
             <span className={totalPnl >= 0 ? 'text-[#2D8B4E] font-semibold' : 'text-[#EF4444] font-semibold'}>
               {formatPnl(totalPnl)}
@@ -126,7 +126,7 @@ export default function TradesPage() {
       <div className="glass-card p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9EB0C0] dark:text-[#64748B]" />
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9EB0C0] dark:text-[var(--text-secondary)]" />
             <input
               className="input-field pl-9 pr-4"
               placeholder="Search symbol, setup, notes..."
@@ -134,7 +134,7 @@ export default function TradesPage() {
               onChange={e => { setSearch(e.target.value); setPage(1) }}
             />
             {search && (
-              <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9EB0C0] dark:text-[#64748B] hover:text-[#1E2D3D] dark:text-[#F1F5F9]">
+              <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9EB0C0] dark:text-[var(--text-secondary)] hover:text-[#1E2D3D] dark:text-[#F1F5F9]">
                 <X size={14} />
               </button>
             )}
@@ -184,6 +184,7 @@ export default function TradesPage() {
                   [null, 'Entry'],
                   [null, 'Exit'],
                   ['setup', 'Setup'],
+                  [null, 'Duration'],
                   ['netPnl', 'Net P&L'],
                   [null, 'Fees'],
                   [null, 'Account'],
@@ -191,7 +192,7 @@ export default function TradesPage() {
                   <th
                     key={label}
                     onClick={key ? () => toggleSort(key) : undefined}
-                    className={key ? 'cursor-pointer hover:bg-white/[0.03] select-none' : ''}
+                    className={key ? 'cursor-pointer hover:bg-[var(--border)] select-none' : ''}
                   >
                     <div className="flex items-center gap-1">
                       {label}
@@ -205,9 +206,9 @@ export default function TradesPage() {
             <tbody>
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="text-center py-12 text-[#9EB0C0] dark:text-[#64748B]">
+                  <td colSpan={12} className="text-center py-12 text-[#9EB0C0] dark:text-[var(--text-secondary)]">
                     {trades.length === 0 ? (
-                      <div className="flex flex-col items-center gap-3"><ListOrdered size={32} className="text-[#64748B] opacity-40" /><p className="font-medium text-[#94A3B8]">No trades yet</p><p className="text-xs text-[#64748B]">Click &quot;Log Trade&quot; to add your first trade, or import from CSV</p></div>
+                      <div className="flex flex-col items-center gap-3"><ListOrdered size={32} className="text-[var(--text-secondary)] opacity-40" /><p className="font-medium text-[#94A3B8]">No trades yet</p><p className="text-xs text-[var(--text-secondary)]">Click &quot;Log Trade&quot; to add your first trade, or import from CSV</p></div>
                     ) : 'No trades match your filters'}
                   </td>
                 </tr>
@@ -218,7 +219,7 @@ export default function TradesPage() {
                     className="cursor-pointer hover:bg-white/[0.02] transition-colors"
                     onClick={() => setDrawerTrade(t)}
                   >
-                    <td className="text-[#6B7E91] dark:text-[#94A3B8] font-medium">{t.date}</td>
+                    <td className="text-[var(--text-muted)] dark:text-[#94A3B8] font-medium">{t.date}</td>
                     <td>
                       <span className="font-mono font-bold text-xs bg-[#F5F7FA] dark:bg-[#0F172A] px-2 py-0.5 rounded-lg text-[#1E2D3D] dark:text-[#F1F5F9]">{t.symbol}</span>
                     </td>
@@ -235,15 +236,30 @@ export default function TradesPage() {
                     <td className="font-mono text-[#1E2D3D] dark:text-[#F1F5F9]">{t.exitPrice.toFixed(2)}</td>
                     <td>
                       {t.setup ? (
-                        <span className="text-xs text-[#6B7E91] dark:text-[#94A3B8] bg-[#F5F7FA] dark:bg-[#0F172A] px-2 py-0.5 rounded-lg">{t.setup}</span>
+                        <span className="text-xs text-[var(--text-muted)] dark:text-[#94A3B8] bg-[#F5F7FA] dark:bg-[#0F172A] px-2 py-0.5 rounded-lg">{t.setup}</span>
                       ) : <span className="text-[#C8D4E0]">—</span>}
+                    </td>
+                    <td className="font-mono text-xs text-[#9EB0C0] dark:text-[var(--text-secondary)]">
+                      {(() => {
+                        if (!t.entryTime || !t.exitTime) return '—'
+                        const [eh, em] = t.entryTime.split(':').map(Number)
+                        const [xh, xm] = t.exitTime.split(':').map(Number)
+                        let mins = (xh * 60 + xm) - (eh * 60 + em)
+                        if (mins < 0) mins += 24 * 60
+                        if (mins >= 60) {
+                          const h = Math.floor(mins / 60)
+                          const m = mins % 60
+                          return m > 0 ? `${h}h ${m}m` : `${h}h`
+                        }
+                        return `${mins}m`
+                      })()}
                     </td>
                     <td>
                       <span className={`font-mono font-bold text-sm ${t.netPnl >= 0 ? 'text-[#2D8B4E]' : 'text-[#EF4444]'}`}>
                         {formatPnl(t.netPnl)}
                       </span>
                     </td>
-                    <td className="font-mono text-[#9EB0C0] dark:text-[#64748B] text-xs">${t.fees.toFixed(2)}</td>
+                    <td className="font-mono text-[#9EB0C0] dark:text-[var(--text-secondary)] text-xs">${t.fees.toFixed(2)}</td>
                     <td onClick={e => e.stopPropagation()}>
                       {t.accountId ? (() => {
                         const acct = accounts.find(a => a.id === t.accountId)
@@ -263,14 +279,14 @@ export default function TradesPage() {
                           className={`p-1.5 rounded-lg transition-colors ${
                             expandedId === t.id
                               ? 'bg-[#2D8B4E]/20 text-[#4ADE50]'
-                              : 'text-[#9EB0C0] dark:text-[#64748B] hover:text-[#2D8B4E] hover:bg-green-50 dark:hover:bg-[#0F172A]'
+                              : 'text-[#9EB0C0] dark:text-[var(--text-secondary)] hover:text-[#2D8B4E] hover:bg-green-50 dark:hover:bg-[#0F172A]'
                           }`}
                         >
                           <BarChart2 size={14} />
                         </button>
                         <button
                           onClick={() => setDrawerTrade(t)}
-                          className="text-xs text-[#9EB0C0] dark:text-[#64748B] hover:text-[#2D8B4E] font-medium transition-colors px-2 py-1 rounded-lg hover:bg-green-50"
+                          className="text-xs text-[#9EB0C0] dark:text-[var(--text-secondary)] hover:text-[#2D8B4E] font-medium transition-colors px-2 py-1 rounded-lg hover:bg-green-50"
                         >
                           Edit
                         </button>
@@ -301,13 +317,13 @@ export default function TradesPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-white/[0.06] text-xs text-[#64748B]">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border)] text-xs text-[var(--text-secondary)]">
             <span>Showing {(page - 1) * PER_PAGE + 1}–{Math.min(page * PER_PAGE, filtered.length)} of {filtered.length}</span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1.5 rounded-lg border border-white/[0.06] disabled:opacity-40 hover:bg-white/[0.03] transition-colors"
+                className="px-3 py-1.5 rounded-lg border border-[var(--border)] disabled:opacity-40 hover:bg-[var(--border)] transition-colors"
               >
                 ← Prev
               </button>
@@ -318,7 +334,7 @@ export default function TradesPage() {
                     key={p}
                     onClick={() => setPage(p)}
                     className={`px-3 py-1.5 rounded-lg border transition-colors ${
-                      p === page ? 'border-[#4ADE80] text-[#4ADE80] bg-[#4ADE80]/10' : 'border-white/[0.06] hover:bg-white/[0.03]'
+                      p === page ? 'border-[#4ADE80] text-[#4ADE80] bg-[#4ADE80]/10' : 'border-[var(--border)] hover:bg-[var(--border)]'
                     }`}
                   >{p}</button>
                 )
@@ -326,7 +342,7 @@ export default function TradesPage() {
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1.5 rounded-lg border border-white/[0.06] disabled:opacity-40 hover:bg-white/[0.03] transition-colors"
+                className="px-3 py-1.5 rounded-lg border border-[var(--border)] disabled:opacity-40 hover:bg-[var(--border)] transition-colors"
               >
                 Next →
               </button>

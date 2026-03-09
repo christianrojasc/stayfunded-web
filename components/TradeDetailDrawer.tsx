@@ -15,7 +15,7 @@ import {
 const TradeCandleChart = dynamic(() => import('@/components/TradeCandleChart'), {
   ssr: false,
   loading: () => (
-    <div className="flex items-center justify-center h-full text-[#64748B] text-xs">
+    <div className="flex items-center justify-center h-full text-[var(--text-secondary)] text-xs">
       Loading chart...
     </div>
   ),
@@ -117,11 +117,11 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
         className={`fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none transition-all duration-300 ease-out ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
       >
         <div className="pointer-events-auto flex w-full max-w-[980px] h-[85vh] rounded-2xl overflow-hidden shadow-2xl"
-          style={{ background: '#0D1117', border: '1px solid rgba(255,255,255,0.08)' }}
+          style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)' }}
           onClick={e => e.stopPropagation()}
         >
         {/* Left sidebar */}
-        <div className="w-[300px] shrink-0 flex flex-col overflow-y-auto relative" style={{ background: '#111827', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="w-[300px] shrink-0 flex flex-col overflow-y-auto relative" style={{ background: 'var(--bg-secondary)', borderRight: '1px solid var(--border)' }}>
           {/* Header */}
           <div className="p-5 border-b border-[#1E293B]">
             <div className="flex items-center gap-2 mb-2">
@@ -133,7 +133,7 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
                 {trade.side}
               </span>
             </div>
-            <p className="text-xs text-[#64748B] uppercase tracking-wider font-medium mb-1">Net P&L</p>
+            <p className="text-xs text-[var(--text-secondary)] uppercase tracking-wider font-medium mb-1">Net P&L</p>
             <p
               className="font-bold"
               style={{ fontFamily: 'Outfit, sans-serif', fontSize: '36px', color: isWin ? '#4ADE80' : '#EF4444' }}
@@ -177,8 +177,8 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
           {/* Notes */}
           <div className="p-5 border-t border-[#1E293B]">
             <div className="flex items-center gap-2 mb-2">
-              <StickyNote size={14} className="text-[#64748B]" />
-              <span className="text-xs text-[#64748B] uppercase tracking-wider font-medium">Notes</span>
+              <StickyNote size={14} className="text-[var(--text-secondary)]" />
+              <span className="text-xs text-[var(--text-secondary)] uppercase tracking-wider font-medium">Notes</span>
               {saved && <Check size={14} className="text-[#4ADE80]" />}
             </div>
             <textarea
@@ -198,11 +198,11 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
         </div>
 
         {/* Right panel */}
-        <div className="flex-1 flex flex-col overflow-hidden relative" style={{ background: '#0A0E17', borderLeft: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="flex-1 flex flex-col overflow-hidden relative" style={{ background: 'var(--bg-primary)', borderLeft: '1px solid var(--border)' }}>
           {/* Close button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 z-10 p-1.5 rounded-lg text-[#64748B] hover:text-white hover:bg-[#1E293B] transition-colors"
+            className="absolute top-4 right-4 z-10 p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[#1E293B] transition-colors"
           >
             <X size={18} />
           </button>
@@ -225,7 +225,7 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
             {tab === 'pnl' && (
               <div className="h-full p-6">
                 <div className="rounded-xl p-4 h-full" style={{ background: '#151d2e', border: '1px solid rgba(30,41,59,0.5)' }}>
-                  <p className="text-xs text-[#64748B] uppercase tracking-wider font-medium mb-4">
+                  <p className="text-xs text-[var(--text-secondary)] uppercase tracking-wider font-medium mb-4">
                     Running P&L — Entry to Exit
                   </p>
                   <ResponsiveContainer width="100%" height="85%">
@@ -261,7 +261,7 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
 function StatRow({ label, value, children }: { label: string; value?: string; children?: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between py-2 border-b border-[#1E293B]/50">
-      <span className="text-xs text-[#64748B]">{label}</span>
+      <span className="text-xs text-[var(--text-secondary)]">{label}</span>
       {children || <span className="text-sm text-[#F1F5F9] font-mono">{value}</span>}
     </div>
   )
@@ -272,7 +272,7 @@ function TabBtn({ active, onClick, children }: { active: boolean; onClick: () =>
     <button
       onClick={onClick}
       className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-        active ? 'bg-[#151d2e] text-[#F1F5F9]' : 'text-[#64748B] hover:text-[#94A3B8] hover:bg-[#111827]'
+        active ? 'bg-[#151d2e] text-[#F1F5F9]' : 'text-[var(--text-secondary)] hover:text-[#94A3B8] hover:bg-[#111827]'
       }`}
     >
       {children}

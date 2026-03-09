@@ -16,14 +16,14 @@ import { getSettings as localGetSettings } from '@/lib/storage'
 import { Account, AppSettings, DEFAULT_FEE_SCHEDULE } from '@/lib/types'
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
-  return <label className="block text-[11px] font-semibold tracking-wider uppercase text-[#64748B] mb-1.5">{children}</label>
+  return <label className="block text-[11px] font-semibold tracking-wider uppercase text-[var(--text-secondary)] mb-1.5">{children}</label>
 }
 
 function StyledInput({ className = '', ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className={`w-full px-4 py-3 rounded-2xl text-sm text-white focus:outline-none transition-all placeholder:text-[#475569] ${className}`}
+      className={`w-full px-4 py-3 rounded-2xl text-sm text-[var(--text-primary)] focus:outline-none transition-all placeholder:text-[#475569] ${className}`}
       style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}
     />
   )
@@ -33,7 +33,7 @@ function StyledSelect({ className = '', children, ...props }: React.SelectHTMLAt
   return (
     <select
       {...props}
-      className={`w-full px-4 py-3 rounded-2xl text-sm text-white focus:outline-none transition-all appearance-none cursor-pointer ${className}`}
+      className={`w-full px-4 py-3 rounded-2xl text-sm text-[var(--text-primary)] focus:outline-none transition-all appearance-none cursor-pointer ${className}`}
       style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}
     >
       {children}
@@ -44,8 +44,8 @@ function StyledSelect({ className = '', children, ...props }: React.SelectHTMLAt
 function SectionHeader({ title, description }: { title: string; description?: string }) {
   return (
     <div className="mb-6">
-      <h3 className="text-base font-bold text-white">{title}</h3>
-      {description && <p className="text-sm text-[#64748B] mt-0.5">{description}</p>}
+      <h3 className="text-base font-bold text-[var(--text-primary)]">{title}</h3>
+      {description && <p className="text-sm text-[var(--text-secondary)] mt-0.5">{description}</p>}
     </div>
   )
 }
@@ -209,20 +209,20 @@ export default function SettingsPage() {
     <div className="space-y-8 animate-fade-in max-w-2xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-white">Settings</h1>
-        <p className="text-sm text-[#64748B] mt-1">Manage your account and preferences</p>
+        <h1 className="text-xl font-bold text-[var(--text-primary)]">Settings</h1>
+        <p className="text-sm text-[var(--text-secondary)] mt-1">Manage your account and preferences</p>
       </div>
 
       {/* Tab Bar — underline style */}
-      <div className="flex overflow-x-auto border-b border-white/[0.06] -mx-4 px-4 sm:mx-0 sm:px-0 flex-nowrap">
+      <div className="flex overflow-x-auto border-b border-[var(--border)] -mx-4 px-4 sm:mx-0 sm:px-0 flex-nowrap">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 sm:px-5 py-3 text-sm font-semibold transition-all relative whitespace-nowrap flex-shrink-0 ${
               activeTab === tab.id
-                ? 'text-white'
-                : 'text-[#64748B] hover:text-[#94A3B8]'
+                ? 'text-[var(--text-primary)]'
+                : 'text-[var(--text-secondary)] hover:text-[#94A3B8]'
             }`}
           >
             {tab.label}
@@ -241,9 +241,9 @@ export default function SettingsPage() {
               {user?.email?.[0]?.toUpperCase() || '?'}
             </div>
             <div>
-              <p className="text-lg font-bold text-white">{displayName || user?.email || 'User'}</p>
+              <p className="text-lg font-bold text-[var(--text-primary)]">{displayName || user?.email || 'User'}</p>
               <div className="flex items-center gap-2 mt-1">
-                <p className="text-sm text-[#64748B]">{user?.email}</p>
+                <p className="text-sm text-[var(--text-secondary)]">{user?.email}</p>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#4ADE80]/15 text-[#4ADE80]">Verified</span>
               </div>
             </div>
@@ -285,7 +285,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Logout */}
-          <div className="pt-6 border-t border-white/[0.06]">
+          <div className="pt-6 border-t border-[var(--border)]">
             <SectionHeader title="Sign Out" description="Log out of your StayFunded account" />
             <button
               onClick={handleLogout}
@@ -312,7 +312,7 @@ export default function SettingsPage() {
                   onChange={e => setCurrentPassword(e.target.value)}
                   placeholder="Enter current password"
                 />
-                <button onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-white transition-colors">
+                <button onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   {showCurrentPw ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -326,7 +326,7 @@ export default function SettingsPage() {
                   onChange={e => setNewPassword(e.target.value)}
                   placeholder="Enter new password"
                 />
-                <button onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-white transition-colors">
+                <button onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   {showNewPw ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -340,7 +340,7 @@ export default function SettingsPage() {
                   onChange={e => setConfirmPassword(e.target.value)}
                   placeholder="Confirm new password"
                 />
-                <button onClick={() => setShowConfirmPw(!showConfirmPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-white transition-colors">
+                <button onClick={() => setShowConfirmPw(!showConfirmPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   {showConfirmPw ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -412,14 +412,14 @@ export default function SettingsPage() {
                 <Zap size={16} className="text-[#F59E0B]" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">Auto-calculate fees on import</p>
-                <p className="text-[11px] text-[#64748B]">Apply fee schedule automatically when importing CSV trades</p>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">Auto-calculate fees on import</p>
+                <p className="text-[11px] text-[var(--text-secondary)]">Apply fee schedule automatically when importing CSV trades</p>
               </div>
             </div>
             <button
               onClick={() => setSettings(s => ({ ...s, autoFees: !s.autoFees }))}
               className={`relative inline-flex h-7 w-12 items-center rounded-full transition-all duration-300 ${
-                settings.autoFees ? 'bg-[#2D8B4E] shadow-md shadow-green-500/20' : 'bg-[#21262d]'
+                settings.autoFees ? 'bg-[#2D8B4E] shadow-md shadow-green-500/20' : 'bg-[var(--bg-card)]'
               }`}
             >
               <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform duration-300 ${
@@ -428,23 +428,23 @@ export default function SettingsPage() {
             </button>
           </div>
 
-          <p className="text-[11px] text-[#4d5566] px-1">
+          <p className="text-[11px] text-[var(--text-secondary)] px-1">
             Fee per side (entry + exit = 2 sides). Round-trip fee = fee x 2 x contracts.
           </p>
 
           <div className="space-y-4">
             {feeGroups.map(group => (
               <div key={group.label}>
-                <p className="text-[10px] font-bold tracking-widest uppercase text-[#4d5566] mb-2 px-1">{group.label}</p>
+                <p className="text-[10px] font-bold tracking-widest uppercase text-[var(--text-secondary)] mb-2 px-1">{group.label}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {group.symbols.filter(sym => sym in feeSchedule).map(sym => (
-                    <div key={sym} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[#21262d] hover:border-[#F59E0B]/30 transition-colors" style={{background:'rgba(255,255,255,0.02)'}}>
-                      <span className="text-xs font-mono font-bold text-white w-8 flex-shrink-0">{sym}</span>
-                      <span className="text-xs text-[#4d5566]">$</span>
+                    <div key={sym} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] hover:border-[#F59E0B]/30 transition-colors" style={{background:'rgba(255,255,255,0.02)'}}>
+                      <span className="text-xs font-mono font-bold text-[var(--text-primary)] w-8 flex-shrink-0">{sym}</span>
+                      <span className="text-xs text-[var(--text-secondary)]">$</span>
                       <input
                         type="number"
                         step="0.01"
-                        className="flex-1 bg-transparent text-xs font-mono text-white focus:outline-none w-12"
+                        className="flex-1 bg-transparent text-xs font-mono text-[var(--text-primary)] focus:outline-none w-12"
                         value={feeSchedule[sym]}
                         onChange={e => setFeeSchedule(f => ({ ...f, [sym]: parseFloat(e.target.value) || 0 }))}
                       />
@@ -458,7 +458,7 @@ export default function SettingsPage() {
           <div className="flex gap-3">
             <button
               onClick={() => setFeeSchedule(DEFAULT_FEE_SCHEDULE)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[#64748B] hover:text-white transition-colors" style={{background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)'}}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" style={{background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)'}}
             >
               <RotateCcw size={12} /> Reset to Defaults
             </button>
@@ -484,7 +484,7 @@ export default function SettingsPage() {
 
           <div className="flex items-center justify-between">
             <SectionHeader title="Current Plan" description="Manage your subscription and billing" />
-            <span className={`px-3 py-1 rounded-full text-xs font-bold ${isPro ? 'bg-[#4ADE80]/15 text-[#4ADE80]' : 'bg-white/[0.06] text-[#64748B]'}`}>
+            <span className={`px-3 py-1 rounded-full text-xs font-bold ${isPro ? 'bg-[#4ADE80]/15 text-[#4ADE80]' : 'bg-[var(--border)] text-[var(--text-secondary)]'}`}>
               {isPro ? 'Pro' : 'Free'}
             </span>
           </div>
@@ -492,22 +492,22 @@ export default function SettingsPage() {
           {isPro ? (
             <div className="space-y-6">
               <div className="space-y-3">
-                <div className="flex justify-between py-3 border-b border-white/[0.06]">
-                  <span className="text-sm text-[#64748B]">Plan</span>
-                  <span className="text-sm font-semibold text-white">StayFunded Pro</span>
+                <div className="flex justify-between py-3 border-b border-[var(--border)]">
+                  <span className="text-sm text-[var(--text-secondary)]">Plan</span>
+                  <span className="text-sm font-semibold text-[var(--text-primary)]">StayFunded Pro</span>
                 </div>
-                <div className="flex justify-between py-3 border-b border-white/[0.06]">
-                  <span className="text-sm text-[#64748B]">Accounts</span>
-                  <span className="text-sm text-white">Unlimited</span>
+                <div className="flex justify-between py-3 border-b border-[var(--border)]">
+                  <span className="text-sm text-[var(--text-secondary)]">Accounts</span>
+                  <span className="text-sm text-[var(--text-primary)]">Unlimited</span>
                 </div>
-                <div className="flex justify-between py-3 border-b border-white/[0.06]">
-                  <span className="text-sm text-[#64748B]">Storage</span>
-                  <span className="text-sm text-white">1GB</span>
+                <div className="flex justify-between py-3 border-b border-[var(--border)]">
+                  <span className="text-sm text-[var(--text-secondary)]">Storage</span>
+                  <span className="text-sm text-[var(--text-primary)]">1GB</span>
                 </div>
               </div>
 
               <div>
-                <p className="text-xs font-bold tracking-widest uppercase text-[#4d5566] mb-3">Included Features</p>
+                <p className="text-xs font-bold tracking-widest uppercase text-[var(--text-secondary)] mb-3">Included Features</p>
                 <div className="space-y-2">
                   {['CSV import (Tradovate)', 'Advanced analytics & charts', 'Trade journal', 'Progress tracker', 'AI insights', 'Reports'].map(f => (
                     <div key={f} className="flex items-center gap-2">
@@ -521,7 +521,7 @@ export default function SettingsPage() {
               <button
                 onClick={handleManageBilling}
                 disabled={portalLoading}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-[#64748B] hover:text-white transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all"
                 style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}
               >
                 <ExternalLink size={14} />
@@ -531,26 +531,26 @@ export default function SettingsPage() {
           ) : (
             <div className="space-y-6">
               <div className="space-y-3">
-                <div className="flex justify-between py-3 border-b border-white/[0.06]">
-                  <span className="text-sm text-[#64748B]">Plan</span>
-                  <span className="text-sm font-semibold text-white">Free</span>
+                <div className="flex justify-between py-3 border-b border-[var(--border)]">
+                  <span className="text-sm text-[var(--text-secondary)]">Plan</span>
+                  <span className="text-sm font-semibold text-[var(--text-primary)]">Free</span>
                 </div>
-                <div className="flex justify-between py-3 border-b border-white/[0.06]">
-                  <span className="text-sm text-[#64748B]">Billing Cycle</span>
-                  <span className="text-sm text-white">Free forever</span>
+                <div className="flex justify-between py-3 border-b border-[var(--border)]">
+                  <span className="text-sm text-[var(--text-secondary)]">Billing Cycle</span>
+                  <span className="text-sm text-[var(--text-primary)]">Free forever</span>
                 </div>
-                <div className="flex justify-between py-3 border-b border-white/[0.06]">
-                  <span className="text-sm text-[#64748B]">Accounts</span>
-                  <span className="text-sm text-white">Up to 3 accounts</span>
+                <div className="flex justify-between py-3 border-b border-[var(--border)]">
+                  <span className="text-sm text-[var(--text-secondary)]">Accounts</span>
+                  <span className="text-sm text-[var(--text-primary)]">Up to 3 accounts</span>
                 </div>
-                <div className="flex justify-between py-3 border-b border-white/[0.06]">
-                  <span className="text-sm text-[#64748B]">Storage</span>
-                  <span className="text-sm text-white">No file storage</span>
+                <div className="flex justify-between py-3 border-b border-[var(--border)]">
+                  <span className="text-sm text-[var(--text-secondary)]">Storage</span>
+                  <span className="text-sm text-[var(--text-primary)]">No file storage</span>
                 </div>
               </div>
 
               <div>
-                <p className="text-xs font-bold tracking-widest uppercase text-[#4d5566] mb-3">Included Features</p>
+                <p className="text-xs font-bold tracking-widest uppercase text-[var(--text-secondary)] mb-3">Included Features</p>
                 <div className="space-y-2">
                   {['CSV import (Tradovate)', 'Basic analytics', 'Trade journal', 'Progress tracker'].map(f => (
                     <div key={f} className="flex items-center gap-2">
@@ -581,10 +581,10 @@ export default function SettingsPage() {
 
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <HardDrive size={16} className="text-[#64748B]" />
-              <p className="text-sm font-medium text-white">Local Storage</p>
+              <HardDrive size={16} className="text-[var(--text-secondary)]" />
+              <p className="text-sm font-medium text-[var(--text-primary)]">Local Storage</p>
             </div>
-            <p className="text-sm text-[#64748B]">
+            <p className="text-sm text-[var(--text-secondary)]">
               All data is stored locally in your browser. No account or server required. Clear your browser data to reset everything.
             </p>
 
@@ -602,16 +602,16 @@ export default function SettingsPage() {
                   <AlertTriangle size={18} className="text-[#EF4444] flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-semibold text-[#EF4444] text-sm">Permanently delete all trades and notes?</p>
-                    <p className="text-[11px] text-[#64748B] mt-0.5">This action cannot be undone.</p>
+                    <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">This action cannot be undone.</p>
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <button onClick={handleResetDemo}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#EF4444] hover:bg-[#DC2626] transition-colors">
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[var(--text-primary)] bg-[#EF4444] hover:bg-[#DC2626] transition-colors">
                     <Trash2 size={12} /> Yes, Delete Everything
                   </button>
                   <button onClick={() => setShowResetConfirm(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold text-[#64748B] border border-[#21262d] hover:border-[#64748B]/30 transition-colors" style={{background:'rgba(255,255,255,0.03)'}}>
+                    className="px-4 py-2 rounded-xl text-xs font-semibold text-[var(--text-secondary)] border border-[var(--border)] hover:border-[#64748B]/30 transition-colors" style={{background:'rgba(255,255,255,0.03)'}}>
                     Cancel
                   </button>
                 </div>

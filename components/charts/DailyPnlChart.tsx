@@ -13,7 +13,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   const val = payload[0].value
   return (
     <div className="bg-white border border-[#E4E9F0] rounded-xl shadow-card p-3 text-xs min-w-[120px]">
-      <p className="text-[#6B7E91] dark:text-[#94A3B8] mb-1.5 font-medium">{label}</p>
+      <p className="text-[var(--text-muted)] dark:text-[#94A3B8] mb-1.5 font-medium">{label}</p>
       <p className={`font-bold text-sm ${val >= 0 ? 'text-[#2D8B4E]' : 'text-[#EF4444]'}`}>
         {val >= 0 ? '+' : ''}{val.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
       </p>
@@ -23,7 +23,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function DailyPnlChart({ data }: Props) {
   if (!data.length) return (
-    <div className="h-full flex items-center justify-center text-[#9EB0C0] dark:text-[#64748B] text-sm">No data</div>
+    <div className="h-full flex items-center justify-center text-[#9EB0C0] dark:text-[var(--text-secondary)] text-sm">No data</div>
   )
 
   const formatted = data.slice(-20).map(d => ({

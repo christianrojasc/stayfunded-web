@@ -26,7 +26,7 @@ export default function KPICard({
       {/* Label row */}
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-medium uppercase tracking-wider"
-          style={{ color: 'rgba(255,255,255,0.45)', letterSpacing: '0.04em' }}>
+          style={{ color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
           {title}
         </span>
         {icon && (
@@ -48,7 +48,7 @@ export default function KPICard({
           {suffix && <span className="text-base font-semibold ml-1" style={{ opacity: 0.6 }}>{suffix}</span>}
         </div>
         {subValue && (
-          <div className="text-xs mt-1.5 font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>
+          <div className="text-xs mt-1.5 font-medium" style={{ color: 'var(--text-muted)' }}>
             {subValue}
           </div>
         )}
@@ -67,10 +67,10 @@ export default function KPICard({
                 {trend > 0 ? <TrendingUp size={11} /> : trend < 0 ? <TrendingDown size={11} /> : <Minus size={11} />}
                 <span>{Math.abs(trend).toFixed(1)}%</span>
               </div>
-              {trendLabel && <span className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>{trendLabel}</span>}
+              {trendLabel && <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{trendLabel}</span>}
             </>
           ) : (
-            <span className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>{trendLabel}</span>
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{trendLabel}</span>
           )}
         </div>
       )}

@@ -14,6 +14,7 @@ import { formatPnl } from '@/lib/calculations'
 function fmtDrawdownType(t: DrawdownType) {
   const m: Record<DrawdownType, string> = {
     trailing: 'Trailing (follows equity peak)',
+    trailing_eod: 'Trailing EOD',
     static_eod: 'Static EOD (checked end-of-day)',
     static_intraday: 'Static Intraday (real-time)',
     static: 'Static Fixed Amount',
@@ -56,16 +57,16 @@ function RuleSection({
 }) {
   if (hideIfNoLimit && (limit === null || limit === 0)) {
     return (
-      <div className="p-5 rounded-xl border border-[#E4E9F0] dark:border-[#21262d] bg-[#F5F7FA] dark:bg-[#0d1117]">
+      <div className="p-5 rounded-xl border border-[#E4E9F0] dark:border-[var(--border)] bg-[#F5F7FA] dark:bg-[var(--bg-primary)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#E4E9F0] dark:bg-[#21262d] flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-[var(--bg-secondary)] dark:bg-[var(--bg-card)] flex items-center justify-center">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {React.createElement(Icon as any, { size: 16, className: "text-[#6B7E91]" })}
+              {React.createElement(Icon as any, { size: 16, className: "text-[var(--text-muted)]" })}
             </div>
-            <span className="font-semibold text-[#6B7E91] dark:text-[#8b949e]">{title}</span>
+            <span className="font-semibold text-[var(--text-muted)] dark:text-[var(--text-muted)]">{title}</span>
           </div>
-          <span className="text-xs px-2.5 py-1 rounded-full bg-[#E4E9F0] dark:bg-[#21262d] text-[#6B7E91] dark:text-[#8b949e] font-medium">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-card)] text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium">
             No limit
           </span>
         </div>
@@ -83,7 +84,7 @@ function RuleSection({
   })()
 
   return (
-    <div className="p-5 rounded-xl border border-[#E4E9F0] dark:border-[#21262d] bg-[#F5F7FA] dark:bg-[#0d1117]">
+    <div className="p-5 rounded-xl border border-[#E4E9F0] dark:border-[var(--border)] bg-[#F5F7FA] dark:bg-[var(--bg-primary)]">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center"
@@ -91,7 +92,7 @@ function RuleSection({
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {React.createElement(Icon as any, { size: 16, style: { color } })}
           </div>
-          <span className="font-semibold text-[#1E2D3D] dark:text-[#e6edf3] text-sm">{title}</span>
+          <span className="font-semibold text-[#1E2D3D] dark:text-[var(--text-primary)] text-sm">{title}</span>
         </div>
         {limit !== null && limit > 0 && <TrafficLight pct={pct} invert={invert} />}
       </div>
@@ -103,30 +104,30 @@ function RuleSection({
               <span className="text-2xl font-bold font-mono" style={{ color }}>
                 ${used.toFixed(0)}
               </span>
-              <span className="text-[#6B7E91] dark:text-[#8b949e] font-mono text-sm"> / ${limit.toFixed(0)}</span>
+              <span className="text-[var(--text-muted)] dark:text-[var(--text-muted)] font-mono text-sm"> / ${limit.toFixed(0)}</span>
             </div>
             {invert && (
-              <span className="text-sm font-semibold font-mono text-[#6B7E91] dark:text-[#8b949e]">
+              <span className="text-sm font-semibold font-mono text-[var(--text-muted)] dark:text-[var(--text-muted)]">
                 ${(limit - used).toFixed(0)} remaining
               </span>
             )}
           </div>
-          <div className="h-3 rounded-full bg-[#E4E9F0] dark:bg-[#21262d] overflow-hidden">
+          <div className="h-3 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-card)] overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-700"
               style={{ width: `${pct * 100}%`, backgroundColor: color }}
             />
           </div>
-          <p className="text-[11px] text-[#6B7E91] dark:text-[#8b949e] mt-1.5">
+          <p className="text-[11px] text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-1.5">
             {(pct * 100).toFixed(1)}% {invert ? 'used' : 'achieved'}
           </p>
         </>
       ) : (
-        <p className="text-[#6B7E91] dark:text-[#8b949e] text-sm">No limit set</p>
+        <p className="text-[var(--text-muted)] dark:text-[var(--text-muted)] text-sm">No limit set</p>
       )}
 
       {note && (
-        <p className="text-[11px] text-[#6B7E91] dark:text-[#8b949e] mt-2 pt-2 border-t border-[#E4E9F0] dark:border-[#21262d]">
+        <p className="text-[11px] text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-2 pt-2 border-t border-[#E4E9F0] dark:border-[var(--border)]">
           {note}
         </p>
       )}
@@ -181,7 +182,7 @@ export default function RulesPage({ params }: { params: { id: string } }) {
       {/* Header */}
       <div className="flex items-center gap-4">
         <button onClick={() => router.back()}
-          className="p-2 rounded-xl border border-[#E4E9F0] dark:border-[#21262d] bg-white dark:bg-[#161b22] text-[#6B7E91] hover:text-[#1E2D3D] dark:hover:text-white transition-all">
+          className="p-2 rounded-xl border border-[#E4E9F0] dark:border-[var(--border)] bg-white dark:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[#1E2D3D] dark:hover:text-[var(--text-primary)] transition-all">
           <ArrowLeft size={16} />
         </button>
         <div className="flex-1">
@@ -189,7 +190,7 @@ export default function RulesPage({ params }: { params: { id: string } }) {
             <Shield size={18} className="text-[#2D8B4E]" />
             <h1 className="page-title">Account Rules</h1>
           </div>
-          <p className="text-sm text-[#6B7E91] dark:text-[#8b949e] mt-0.5">
+          <p className="text-sm text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-0.5">
             {account.nickname || account.firmName} · {account.firmName}
           </p>
         </div>
@@ -209,7 +210,7 @@ export default function RulesPage({ params }: { params: { id: string } }) {
       {editing ? (
         /* Edit Mode */
         <div className="glass-card p-5 space-y-4">
-          <h2 className="font-bold text-[#1E2D3D] dark:text-[#e6edf3]">Edit Rules</h2>
+          <h2 className="font-bold text-[#1E2D3D] dark:text-[var(--text-primary)]">Edit Rules</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="label">Max Loss Limit ($)</label>
@@ -240,6 +241,7 @@ export default function RulesPage({ params }: { params: { id: string } }) {
               onChange={e => setForm(f => ({ ...f, drawdownType: e.target.value as DrawdownType }))}>
               <option value="static_eod">Static EOD — checked end-of-day</option>
               <option value="trailing">Trailing — follows equity peak intraday</option>
+              <option value="trailing_eod">Trailing EOD — trails equity peak, checked end-of-day</option>
               <option value="static_intraday">Static Intraday — real-time fixed limit</option>
               <option value="static">Static Fixed — never moves</option>
             </select>
@@ -323,9 +325,9 @@ export default function RulesPage({ params }: { params: { id: string } }) {
               </div>
             )}
             {account.drawdownType === 'static' && (
-              <div className="p-3 bg-[#F5F7FA] dark:bg-[#0d1117] rounded-xl border border-[#E4E9F0] dark:border-[#21262d]">
-                <p className="text-sm font-semibold text-[#1E2D3D] dark:text-[#e6edf3] mb-1">Static Fixed Drawdown</p>
-                <p className="text-xs text-[#6B7E91] dark:text-[#8b949e]">
+              <div className="p-3 bg-[#F5F7FA] dark:bg-[var(--bg-primary)] rounded-xl border border-[#E4E9F0] dark:border-[var(--border)]">
+                <p className="text-sm font-semibold text-[#1E2D3D] dark:text-[var(--text-primary)] mb-1">Static Fixed Drawdown</p>
+                <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">
                   A fixed dollar amount that is the maximum loss allowed from your starting balance.
                   This limit never changes regardless of profits made.
                 </p>
@@ -343,7 +345,7 @@ export default function RulesPage({ params }: { params: { id: string } }) {
               <div className="p-4 bg-amber-50 dark:bg-amber-500/10 rounded-xl border border-amber-200 dark:border-amber-500/30">
                 <p className="text-sm text-amber-700 dark:text-amber-300">{account.consistencyRule}</p>
               </div>
-              <p className="text-xs text-[#6B7E91] dark:text-[#8b949e] mt-3">
+              <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-3">
                 Violating the consistency rule may result in failing the evaluation even if you hit the profit target.
                 Trade consistently every day rather than making it all in one session.
               </p>
@@ -356,27 +358,27 @@ export default function RulesPage({ params }: { params: { id: string } }) {
               <h2 className="section-title mb-4">Plan Costs</h2>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 {account.evalCost && (
-                  <div className="p-3 bg-[#F5F7FA] dark:bg-[#0d1117] rounded-xl">
-                    <p className="text-[10px] text-[#6B7E91] uppercase tracking-wider mb-1">Eval Cost</p>
-                    <p className="font-semibold text-[#1E2D3D] dark:text-[#e6edf3]">${account.evalCost}/mo</p>
+                  <div className="p-3 bg-[#F5F7FA] dark:bg-[var(--bg-primary)] rounded-xl">
+                    <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider mb-1">Eval Cost</p>
+                    <p className="font-semibold text-[#1E2D3D] dark:text-[var(--text-primary)]">${account.evalCost}/mo</p>
                   </div>
                 )}
                 {account.activationFee ? (
-                  <div className="p-3 bg-[#F5F7FA] dark:bg-[#0d1117] rounded-xl">
-                    <p className="text-[10px] text-[#6B7E91] uppercase tracking-wider mb-1">Activation</p>
-                    <p className="font-semibold text-[#1E2D3D] dark:text-[#e6edf3]">${account.activationFee}</p>
+                  <div className="p-3 bg-[#F5F7FA] dark:bg-[var(--bg-primary)] rounded-xl">
+                    <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider mb-1">Activation</p>
+                    <p className="font-semibold text-[#1E2D3D] dark:text-[var(--text-primary)]">${account.activationFee}</p>
                   </div>
                 ) : null}
                 {account.resetFee ? (
-                  <div className="p-3 bg-[#F5F7FA] dark:bg-[#0d1117] rounded-xl">
-                    <p className="text-[10px] text-[#6B7E91] uppercase tracking-wider mb-1">Reset Fee</p>
-                    <p className="font-semibold text-[#1E2D3D] dark:text-[#e6edf3]">${account.resetFee}</p>
+                  <div className="p-3 bg-[#F5F7FA] dark:bg-[var(--bg-primary)] rounded-xl">
+                    <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider mb-1">Reset Fee</p>
+                    <p className="font-semibold text-[#1E2D3D] dark:text-[var(--text-primary)]">${account.resetFee}</p>
                   </div>
                 ) : null}
                 {account.daysToPayout ? (
-                  <div className="p-3 bg-[#F5F7FA] dark:bg-[#0d1117] rounded-xl">
-                    <p className="text-[10px] text-[#6B7E91] uppercase tracking-wider mb-1">Days to Payout</p>
-                    <p className="font-semibold text-[#1E2D3D] dark:text-[#e6edf3]">
+                  <div className="p-3 bg-[#F5F7FA] dark:bg-[var(--bg-primary)] rounded-xl">
+                    <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider mb-1">Days to Payout</p>
+                    <p className="font-semibold text-[#1E2D3D] dark:text-[var(--text-primary)]">
                       {account.daysToPayout <= 1 ? 'Same day' : `${account.daysToPayout} days`}
                     </p>
                   </div>

@@ -117,6 +117,10 @@ export function savePropAccount(account: PropAccount): void {
 }
 
 export function deletePropAccount(id: string): void {
+  // Delete trades associated with this account
+  const allTrades: Trade[] = get(KEYS.TRADES, [] as Trade[])
+  set(KEYS.TRADES, allTrades.filter(t => t.accountId !== id))
+  // Delete the account
   set(KEYS.PROP_ACCOUNTS, getPropAccounts().filter(a => a.id !== id))
 }
 

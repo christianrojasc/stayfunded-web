@@ -108,7 +108,7 @@ export default function ChecklistPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="page-title">Pre-Session Checklist</h1>
-          <p className="text-sm text-[#6B7E91] dark:text-[#8b949e] mt-0.5">
+          <p className="text-sm text-[var(--text-muted)] dark:text-[var(--text-muted)] mt-0.5">
             Session: {sessionDate} · Resets at 6 PM EST
           </p>
         </div>
@@ -134,10 +134,10 @@ export default function ChecklistPage() {
       <div className="glass-card p-6">
         <div className="flex items-center justify-between mb-5">
           <div>
-            <p className="text-xs text-[#6B7E91] dark:text-[#8b949e] font-medium uppercase tracking-wider mb-1">Readiness Score</p>
+            <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">Readiness Score</p>
             <div className="flex items-end gap-3">
               <span className="text-5xl font-light font-mono" style={{ color: grade.color }}>
-                {checkedCount}<span className="text-2xl text-[#6B7E91]">/{totalCount}</span>
+                {checkedCount}<span className="text-2xl text-[var(--text-muted)]">/{totalCount}</span>
               </span>
               <span className="pb-1 text-sm font-semibold" style={{ color: grade.color }}>{grade.label}</span>
             </div>
@@ -163,7 +163,7 @@ export default function ChecklistPage() {
         </div>
 
         {/* Progress bar */}
-        <div className="h-2 rounded-full bg-[#E4E9F0] dark:bg-[#21262d] overflow-hidden">
+        <div className="h-2 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-card)] overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{ width: `${pct}%`, backgroundColor: grade.color }}
@@ -173,12 +173,12 @@ export default function ChecklistPage() {
 
       {/* Checklist Items */}
       <div className="glass-card overflow-hidden">
-        <div className="p-4 border-b border-[#E4E9F0] dark:border-[#21262d] flex items-center justify-between">
+        <div className="p-4 border-b border-[#E4E9F0] dark:border-[var(--border)] flex items-center justify-between">
           <h2 className="section-title flex items-center gap-2">
             <ClipboardCheck size={16} className="text-[#2D8B4E]" />
             Items
           </h2>
-          <span className="text-xs text-[#6B7E91] dark:text-[#8b949e]">{checkedCount}/{totalCount} checked</span>
+          <span className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">{checkedCount}/{totalCount} checked</span>
         </div>
 
         <div className="divide-y divide-[#E4E9F0] dark:divide-[#21262d]">
@@ -197,8 +197,8 @@ export default function ChecklistPage() {
               )}
               <span className={`flex-1 text-sm transition-colors ${
                 item.checked
-                  ? 'text-[#1E2D3D] dark:text-[#e6edf3] font-medium'
-                  : 'text-[#6B7E91] dark:text-[#8b949e]'
+                  ? 'text-[#1E2D3D] dark:text-[var(--text-primary)] font-medium'
+                  : 'text-[var(--text-muted)] dark:text-[var(--text-muted)]'
               }`}>{item.text}</span>
               {item.category && (
                 <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full capitalize ${CATEGORY_COLORS[item.category] ?? ''}`}>
@@ -219,7 +219,7 @@ export default function ChecklistPage() {
 
         {/* Add Item (edit mode) */}
         {editMode && (
-          <div className="p-4 border-t border-[#E4E9F0] dark:border-[#21262d] space-y-2">
+          <div className="p-4 border-t border-[#E4E9F0] dark:border-[var(--border)] space-y-2">
             <div className="flex gap-2">
               <input
                 className="input-field flex-1 text-sm"
@@ -260,7 +260,7 @@ export default function ChecklistPage() {
               className={`flex-1 py-3 rounded-xl text-lg font-bold border transition-all ${
                 readinessScore >= n
                   ? 'border-[#2D8B4E] text-[#4ADE50]'
-                  : 'border-[#E4E9F0] dark:border-[#21262d] text-[#C8D4E0] dark:text-[#30363d]'
+                  : 'border-[#E4E9F0] dark:border-[var(--border)] text-[#C8D4E0] dark:text-[#30363d]'
               }`}
               style={readinessScore >= n ? { background: `${READINESS_COLORS[n]}15` } : {}}
             >
@@ -296,7 +296,7 @@ export default function ChecklistPage() {
           <Save size={14} />
           {saved ? 'Saved!' : 'Save Checklist'}
         </button>
-        <p className="text-xs text-[#6B7E91] dark:text-[#8b949e]">
+        <p className="text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">
           Auto-resets at the start of each new trading session (6 PM EST)
         </p>
       </div>

@@ -24,10 +24,12 @@ export default function ShineBorder({ className = '', borderRadius = 24, color =
       <div
         className={`absolute pointer-events-none ${className}`}
         style={{
-          inset: '-2px',
-          borderRadius: `${borderRadius + 2}px`,
+          inset: '-3px',
+          borderRadius: `${borderRadius + 3}px`,
           overflow: 'hidden',
           zIndex: 0,
+          filter: 'blur(0.5px)',
+          boxShadow: `0 0 20px ${color}40, 0 0 40px ${color}20`,
         }}
       >
         <div

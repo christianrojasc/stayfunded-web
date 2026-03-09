@@ -44,10 +44,10 @@ const RULE_TYPE_ICONS: Record<ProgressRule['type'], typeof Clock> = {
   custom: Activity,
 }
 
-const GLASS = 'bg-white/[0.04] backdrop-blur-[20px] border border-white/[0.06] rounded-2xl'
+const GLASS = 'bg-[var(--border)] backdrop-blur-[20px] border border-[var(--border)] rounded-2xl'
 
 const HEATMAP_COLORS = [
-  'bg-white/[0.05]',
+  'bg-[var(--border)]',
   'bg-[#14532d]/60',
   'bg-[#166534]/80',
   'bg-[#15803d]',
@@ -119,7 +119,7 @@ function SemiCircleGauge({ value }: { value: number | null }) {
       <svg width="140" height="80" viewBox="0 0 140 80">
         <path
           d={`M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`}
-          fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" strokeLinecap="round"
+          fill="none" stroke="var(--border)" strokeWidth="10" strokeLinecap="round"
         />
         {pct > 0 && (
           <path
@@ -128,7 +128,7 @@ function SemiCircleGauge({ value }: { value: number | null }) {
           />
         )}
       </svg>
-      <span className="text-2xl font-bold text-white -mt-4">
+      <span className="text-2xl font-bold text-[var(--text-primary)] -mt-4">
         {value !== null ? `${Math.round(pct)}%` : '--'}
       </span>
     </div>
@@ -203,15 +203,15 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.92, y: 30 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-full max-w-2xl bg-[#0c1120] border border-white/[0.08] rounded-3xl p-8 mx-auto my-8"
+        className="w-full max-w-2xl bg-[var(--bg-primary)] border border-[var(--border)] rounded-3xl p-8 mx-auto my-8"
       >
         {/* Header */}
         <div className="text-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#4ADE80]/30 to-[#4ADE80]/10 border border-[#4ADE80]/20 flex items-center justify-center mx-auto mb-4">
             <Target className="w-7 h-7 text-[#4ADE80]" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Set your trading rules</h2>
-          <p className="text-sm text-[#94A3B8] max-w-md mx-auto">
+          <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Set your trading rules</h2>
+          <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto">
             Choose the rules you want to track every session. You can always edit them later.
           </p>
         </div>
@@ -228,25 +228,25 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
                 className={`relative cursor-pointer p-4 rounded-2xl border transition-all duration-200 ${
                   isSelected
                     ? 'bg-[#4ADE80]/[0.08] border-[#4ADE80]/30 shadow-[0_0_20px_rgba(74,222,128,0.08)]'
-                    : 'bg-white/[0.03] border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.05]'
+                    : 'bg-[var(--border)] border-[var(--border)] hover:border-[var(--border-strong)] hover:bg-[var(--border)]'
                 }`}
               >
                 {/* Checkmark */}
                 <div className={`absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200 ${
-                  isSelected ? 'bg-[#4ADE80] scale-100' : 'bg-white/[0.06] scale-90'
+                  isSelected ? 'bg-[#4ADE80] scale-100' : 'bg-[var(--border)] scale-90'
                 }`}>
                   {isSelected && <Check className="w-3 h-3 text-[#050810]" strokeWidth={3} />}
                 </div>
 
                 <div className="flex items-start gap-3">
                   <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
-                    isSelected ? 'bg-[#4ADE80]/20' : 'bg-white/[0.06]'
+                    isSelected ? 'bg-[#4ADE80]/20' : 'bg-[var(--border)]'
                   }`}>
-                    <Icon className={`w-4 h-4 ${isSelected ? 'text-[#4ADE80]' : 'text-[#94A3B8]'}`} />
+                    <Icon className={`w-4 h-4 ${isSelected ? 'text-[#4ADE80]' : 'text-[var(--text-muted)]'}`} />
                   </div>
                   <div className="flex-1 min-w-0 pr-4">
-                    <p className={`text-sm font-medium mb-0.5 ${isSelected ? 'text-white' : 'text-[#CBD5E1]'}`}>{rule.name}</p>
-                    <p className="text-xs text-[#94A3B8] leading-relaxed">{rule.description}</p>
+                    <p className={`text-sm font-medium mb-0.5 ${isSelected ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}`}>{rule.name}</p>
+                    <p className="text-xs text-[var(--text-muted)] leading-relaxed">{rule.description}</p>
                   </div>
                 </div>
 
@@ -258,14 +258,14 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
                   >
                     <div className="relative">
                       {rule.inputPrefix && (
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#94A3B8]">{rule.inputPrefix}</span>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--text-muted)]">{rule.inputPrefix}</span>
                       )}
                       <input
                         type="text"
                         value={values[rule.type] || ''}
                         onChange={e => setValues(v => ({ ...v, [rule.type]: e.target.value }))}
                         placeholder={rule.inputPlaceholder}
-                        className={`w-full bg-white/[0.06] border border-white/[0.1] rounded-xl py-2 text-sm text-white placeholder-[#94A3B8]/40 focus:outline-none focus:border-[#4ADE80]/40 ${
+                        className={`w-full bg-[var(--border)] border border-[var(--border)] rounded-xl py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)]/40 focus:outline-none focus:border-[#4ADE80]/40 ${
                           rule.inputPrefix ? 'pl-7 pr-3' : 'px-3'
                         }`}
                       />
@@ -279,18 +279,18 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
 
         {/* Custom rules */}
         <div className="space-y-3 mb-8">
-          <p className="text-xs font-medium text-[#94A3B8] uppercase tracking-wider">Custom Rules</p>
+          <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Custom Rules</p>
           <input
             value={custom1}
             onChange={e => setCustom1(e.target.value)}
             placeholder="Custom rule name (optional)"
-            className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-[#94A3B8]/40 focus:outline-none focus:border-[#4ADE80]/40"
+            className="w-full bg-[var(--border)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)]/40 focus:outline-none focus:border-[#4ADE80]/40"
           />
           <input
             value={custom2}
             onChange={e => setCustom2(e.target.value)}
             placeholder="Custom rule name (optional)"
-            className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-[#94A3B8]/40 focus:outline-none focus:border-[#4ADE80]/40"
+            className="w-full bg-[var(--border)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)]/40 focus:outline-none focus:border-[#4ADE80]/40"
           />
         </div>
 
@@ -301,7 +301,7 @@ function OnboardingModal({ onComplete }: { onComplete: (rules: ProgressRule[]) =
           className={`w-full py-3.5 rounded-2xl text-sm font-semibold transition-all duration-200 ${
             totalSelected > 0
               ? 'bg-gradient-to-r from-[#4ADE80] to-[#22C55E] text-[#050810] hover:shadow-[0_0_30px_rgba(74,222,128,0.3)] hover:scale-[1.01] active:scale-[0.99]'
-              : 'bg-white/[0.06] text-[#94A3B8] cursor-not-allowed'
+              : 'bg-[var(--border)] text-[var(--text-muted)] cursor-not-allowed'
           }`}
         >
           {totalSelected > 0 ? `Start Tracking (${totalSelected} rule${totalSelected !== 1 ? 's' : ''})` : 'Select at least 1 rule'}
@@ -349,7 +349,7 @@ function RuleEditor({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{backdropFilter:'blur(16px)', background:'rgba(0,0,0,0.7)'}}>
       <div
         className="w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl"
-        style={{background:'#0c1120', border:'1px solid rgba(255,255,255,0.07)'}}
+        style={{background:'var(--bg-primary)', border:'1px solid var(--border)'}}
         onClick={e => e.stopPropagation()}
       >
         {/* Top accent bar */}
@@ -358,12 +358,12 @@ function RuleEditor({
         {/* Header */}
         <div className="flex items-center justify-between px-7 pt-6 pb-5">
           <div>
-            <h2 className="text-base font-bold text-white tracking-tight">Rule Maker</h2>
-            <p className="text-xs text-[#94A3B8] mt-0.5">Define your trading discipline rules</p>
+            <h2 className="text-base font-bold text-[var(--text-primary)] tracking-tight">Rule Maker</h2>
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">Define your trading discipline rules</p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[#64748B] hover:text-white hover:bg-white/10 transition-all"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--border)] transition-all"
           >
             <X className="w-4 h-4" />
           </button>
@@ -375,13 +375,13 @@ function RuleEditor({
             {editRules.map(rule => {
               const Icon = RULE_TYPE_ICONS[rule.type]
               return (
-                <div key={rule.id} className="flex items-center gap-3 px-4 py-3 rounded-2xl" style={{background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)'}}>
+                <div key={rule.id} className="flex items-center gap-3 px-4 py-3 rounded-2xl" style={{background:'var(--bg-secondary)', border:'1px solid var(--border)'}}>
                   <div className="w-7 h-7 rounded-xl bg-[#4ADE80]/10 flex items-center justify-center flex-shrink-0">
                     <Icon className="w-3.5 h-3.5 text-[#4ADE80]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">{rule.name}</p>
-                    <p className="text-xs text-[#64748B] mt-0.5">{rule.condition}</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">{rule.name}</p>
+                    <p className="text-xs text-[var(--text-secondary)] mt-0.5">{rule.condition}</p>
                   </div>
                   <button onClick={() => removeRule(rule.id)} className="w-6 h-6 rounded-lg flex items-center justify-center text-[#FF453A]/40 hover:text-[#FF453A] hover:bg-[#FF453A]/10 transition-all">
                     <Trash2 className="w-3.5 h-3.5" />
@@ -393,18 +393,18 @@ function RuleEditor({
         )}
         {editRules.length === 0 && (
           <div className="px-7 pb-4">
-            <div className="py-6 rounded-2xl text-center" style={{background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.05)'}}>
-              <p className="text-sm text-[#64748B]">No rules yet — add one below</p>
+            <div className="py-6 rounded-2xl text-center" style={{background:'var(--bg-secondary)', border:'1px solid var(--border)'}}>
+              <p className="text-sm text-[var(--text-secondary)]">No rules yet — add one below</p>
             </div>
           </div>
         )}
 
         {/* Divider */}
-        <div className="mx-7 border-t border-white/[0.05] mb-5" />
+        <div className="mx-7 border-t border-[var(--border)] mb-5" />
 
         {/* Add rule section */}
         <div className="px-7 pb-6 space-y-3">
-          <p className="text-[11px] font-semibold text-[#64748B] uppercase tracking-widest">Add Rule</p>
+          <p className="text-[11px] font-semibold text-[var(--text-secondary)] uppercase tracking-widest">Add Rule</p>
 
           {/* Rule type — pill selector */}
           <div className="flex flex-wrap gap-2">
@@ -415,7 +415,7 @@ function RuleEditor({
                 className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
                 style={newType === k
                   ? {background:'rgba(74,222,128,0.15)', border:'1px solid rgba(74,222,128,0.4)', color:'#4ADE80'}
-                  : {background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', color:'#64748B'}
+                  : {background:'rgba(255,255,255,0.04)', border:'1px solid var(--border)', color:'#64748B'}
                 }
               >
                 {v}
@@ -427,15 +427,15 @@ function RuleEditor({
             value={newName}
             onChange={e => setNewName(e.target.value)}
             placeholder="Rule name (optional)"
-            className="w-full rounded-2xl px-4 py-3 text-sm text-white placeholder-[#475569] focus:outline-none transition-all"
-            style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}
+            className="w-full rounded-2xl px-4 py-3 text-sm text-[var(--text-primary)] placeholder-[#475569] focus:outline-none transition-all"
+            style={{background:'rgba(255,255,255,0.04)', border:'1px solid var(--border)'}}
           />
           <input
             value={newCondition}
             onChange={e => setNewCondition(e.target.value)}
             placeholder={newType === 'start_time' ? 'e.g. 09:30' : newType.includes('loss') ? 'e.g. $100' : 'Condition...'}
-            className="w-full rounded-2xl px-4 py-3 text-sm text-white placeholder-[#475569] focus:outline-none transition-all"
-            style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)'}}
+            className="w-full rounded-2xl px-4 py-3 text-sm text-[var(--text-primary)] placeholder-[#475569] focus:outline-none transition-all"
+            style={{background:'rgba(255,255,255,0.04)', border:'1px solid var(--border)'}}
           />
           <button
             onClick={addRule}
@@ -448,10 +448,10 @@ function RuleEditor({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-7 py-5" style={{borderTop:'1px solid rgba(255,255,255,0.05)'}}>
+        <div className="flex items-center justify-end gap-3 px-7 py-5" style={{borderTop:'1px solid var(--border)'}}>
           <button
             onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-[#64748B] hover:text-white rounded-xl hover:bg-white/[0.05] transition-all"
+            className="px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-xl hover:bg-[var(--border)] transition-all"
           >
             Cancel
           </button>
@@ -612,8 +612,8 @@ export default function ProgressPage() {
           <Target className="w-5 h-5 text-[#4ADE80]" />
         </div>
         <div>
-          <h1 className="text-xl font-semibold text-white">Progress Tracker</h1>
-          <p className="text-sm text-[#94A3B8]">Track your trading discipline</p>
+          <h1 className="text-xl font-semibold text-[var(--text-primary)]">Progress Tracker</h1>
+          <p className="text-sm text-[var(--text-muted)]">Track your trading discipline</p>
         </div>
       </div>
 
@@ -627,16 +627,16 @@ export default function ProgressPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={`${GLASS} p-4 sm:p-5`}>
             <div className="flex items-center gap-2 mb-3">
               <Flame className="w-4 h-4 text-orange-400" />
-              <span className="text-xs font-medium text-[#94A3B8] uppercase tracking-wider">Current Streak</span>
+              <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Current Streak</span>
             </div>
-            <div className="text-3xl font-bold text-white">{streak}</div>
-            <div className="text-sm text-[#94A3B8]">{streak === 1 ? 'day' : 'days'}</div>
+            <div className="text-3xl font-bold text-[var(--text-primary)]">{streak}</div>
+            <div className="text-sm text-[var(--text-muted)]">{streak === 1 ? 'day' : 'days'}</div>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={`${GLASS} p-4 sm:p-5`}>
             <div className="flex items-center gap-2 mb-2">
               <Gauge className="w-4 h-4 text-blue-400" />
-              <span className="text-xs font-medium text-[#94A3B8] uppercase tracking-wider">Current Period Score</span>
+              <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Current Period Score</span>
             </div>
             <SemiCircleGauge value={periodScore} />
           </motion.div>
@@ -644,10 +644,10 @@ export default function ProgressPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className={`${GLASS} p-4 sm:p-5`}>
             <div className="flex items-center gap-2 mb-3">
               <Target className="w-4 h-4 text-[#4ADE80]" />
-              <span className="text-xs font-medium text-[#94A3B8] uppercase tracking-wider">Today&apos;s Progress</span>
+              <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Today&apos;s Progress</span>
             </div>
-            <div className="text-3xl font-bold text-white">{todayChecked}/{todayTotal}</div>
-            <div className="w-full h-2 rounded-full bg-white/[0.06] mt-3 overflow-hidden">
+            <div className="text-3xl font-bold text-[var(--text-primary)]">{todayChecked}/{todayTotal}</div>
+            <div className="w-full h-2 rounded-full bg-[var(--border)] mt-3 overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${todayPct}%` }}
@@ -660,15 +660,15 @@ export default function ProgressPage() {
 
         {/* Center: Daily Checklist */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={`lg:col-span-4 ${GLASS} p-6`}>
-          <h2 className="text-lg font-semibold text-white mb-1">Daily checklist, {formatDate(new Date())}</h2>
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-1">Daily checklist, {formatDate(new Date())}</h2>
           {rules.length > 0 && (
-            <p className="text-xs font-medium text-[#94A3B8] uppercase tracking-wider mb-4">Automated Rules ({rules.length})</p>
+            <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-4">Automated Rules ({rules.length})</p>
           )}
           <div className="space-y-3">
             {rules.length === 0 && todayTotal === 0 ? (
               <div className="text-center py-8">
-                <AlertTriangle className="w-8 h-8 text-[#94A3B8]/40 mx-auto mb-2" />
-                <p className="text-sm text-[#94A3B8]">No rules set up yet</p>
+                <AlertTriangle className="w-8 h-8 text-[var(--text-muted)]/40 mx-auto mb-2" />
+                <p className="text-sm text-[var(--text-muted)]">No rules set up yet</p>
                 <button onClick={() => setEditOpen(true)} className="mt-3 text-sm text-[#4ADE80] hover:text-[#4ADE80]/80 transition-colors">
                   Add your first rule
                 </button>
@@ -679,23 +679,23 @@ export default function ProgressPage() {
                   const Icon = RULE_TYPE_ICONS[rule.type]
                   return (
                     <div key={rule.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                      <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center flex-shrink-0">
-                        <Icon className="w-4 h-4 text-[#94A3B8]" />
+                      <div className="w-8 h-8 rounded-lg bg-[var(--border)] flex items-center justify-center flex-shrink-0">
+                        <Icon className="w-4 h-4 text-[var(--text-muted)]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate">{rule.name}</p>
-                        <p className="text-xs text-[#94A3B8]">{getRuleProgress(rule)}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)] truncate">{rule.name}</p>
+                        <p className="text-xs text-[var(--text-muted)]">{getRuleProgress(rule)}</p>
                       </div>
-                      <Circle className="w-4 h-4 text-[#94A3B8]/40" />
+                      <Circle className="w-4 h-4 text-[var(--text-muted)]/40" />
                     </div>
                   )
                 })}
                 {todayChecklist?.items.map(item => (
                   <div key={item.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                    <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center flex-shrink-0">
-                      {item.checked ? <CheckCircle2 className="w-4 h-4 text-[#4ADE80]" /> : <Circle className="w-4 h-4 text-[#94A3B8]/40" />}
+                    <div className="w-8 h-8 rounded-lg bg-[var(--border)] flex items-center justify-center flex-shrink-0">
+                      {item.checked ? <CheckCircle2 className="w-4 h-4 text-[#4ADE80]" /> : <Circle className="w-4 h-4 text-[var(--text-muted)]/40" />}
                     </div>
-                    <p className="text-sm text-white flex-1 truncate">{item.text}</p>
+                    <p className="text-sm text-[var(--text-primary)] flex-1 truncate">{item.text}</p>
                   </div>
                 ))}
               </>
@@ -712,12 +712,12 @@ export default function ProgressPage() {
           {/* Header */}
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-sm font-bold text-white">Consistency Heatmap</h2>
-              <p className="text-xs text-[#64748B] mt-0.5">Rule follow-through · last 13 weeks</p>
+              <h2 className="text-sm font-bold text-[var(--text-primary)]">Consistency Heatmap</h2>
+              <p className="text-xs text-[var(--text-secondary)] mt-0.5">Rule follow-through · last 13 weeks</p>
             </div>
-            <div className="flex items-center gap-1 text-[10px] text-[#64748B]">
+            <div className="flex items-center gap-1 text-[10px] text-[var(--text-secondary)]">
               <span>Less</span>
-              {['bg-white/[0.06]','bg-[#14532d]','bg-[#166534]','bg-[#16a34a]','bg-[#22c55e]','bg-[#4ade80]'].map((col, i) => (
+              {['bg-[var(--border)]','bg-[#14532d]','bg-[#166534]','bg-[#16a34a]','bg-[#22c55e]','bg-[#4ade80]'].map((col, i) => (
                 <div key={i} className={`w-[10px] h-[10px] rounded-[2px] ${col}`} />
               ))}
               <span>More</span>
@@ -785,15 +785,15 @@ export default function ProgressPage() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/[0.05]">
+          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-[var(--border)]">
             {[
               { value: streak, label: 'Day streak' },
               { value: allChecklists.length, label: 'Days tracked' },
               { value: allChecklists.filter(c => (c.items?.filter(i => i.checked).length ?? 0) === (c.items?.length ?? 0) && (c.items?.length ?? 0) > 0).length, label: 'Perfect days' },
             ].map((s, i) => (
-              <div key={i} className="text-center py-2 rounded-2xl" style={{background:'rgba(255,255,255,0.03)'}}>
-                <p className="text-xl font-bold text-white">{s.value}</p>
-                <p className="text-[10px] text-[#64748B] mt-0.5">{s.label}</p>
+              <div key={i} className="text-center py-2 rounded-2xl" style={{background:'var(--bg-secondary)'}}>
+                <p className="text-xl font-bold text-[var(--text-primary)]">{s.value}</p>
+                <p className="text-[10px] text-[var(--text-secondary)] mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>
@@ -803,10 +803,10 @@ export default function ProgressPage() {
       {/* Bottom: Rules table */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className={`${GLASS} p-4 sm:p-6`}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-white">Current rules</h2>
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Current rules</h2>
           <button
             onClick={() => setEditOpen(true)}
-            className="flex items-center gap-2 text-sm text-[#94A3B8] hover:text-white bg-white/[0.04] hover:bg-white/[0.08] px-3 py-2 rounded-xl border border-white/[0.06] transition-colors"
+            className="flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] bg-[var(--border)] hover:bg-[var(--border)] px-3 py-2 rounded-xl border border-[var(--border)] transition-colors"
           >
             <Pencil className="w-3.5 h-3.5" />
             Edit rules
@@ -815,18 +815,18 @@ export default function ProgressPage() {
 
         {rules.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-sm text-[#94A3B8]">No rules configured. Click &quot;Edit rules&quot; to add some.</p>
+            <p className="text-sm text-[var(--text-muted)]">No rules configured. Click &quot;Edit rules&quot; to add some.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/[0.06]">
-                  <th className="text-left text-xs font-medium text-[#94A3B8] uppercase tracking-wider py-3 px-2">Rule</th>
-                  <th className="text-left text-xs font-medium text-[#94A3B8] uppercase tracking-wider py-3 px-2">Condition</th>
-                  <th className="text-left text-xs font-medium text-[#94A3B8] uppercase tracking-wider py-3 px-2">Rule Streak</th>
-                  <th className="text-left text-xs font-medium text-[#94A3B8] uppercase tracking-wider py-3 px-2">Avg Performance</th>
-                  <th className="text-left text-xs font-medium text-[#94A3B8] uppercase tracking-wider py-3 px-2">Follow Rate</th>
+                <tr className="border-b border-[var(--border)]">
+                  <th className="text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider py-3 px-2">Rule</th>
+                  <th className="text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider py-3 px-2">Condition</th>
+                  <th className="text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider py-3 px-2">Rule Streak</th>
+                  <th className="text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider py-3 px-2">Avg Performance</th>
+                  <th className="text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider py-3 px-2">Follow Rate</th>
                 </tr>
               </thead>
               <tbody>
@@ -836,13 +836,13 @@ export default function ProgressPage() {
                     <tr key={rule.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
                       <td className="py-3 px-2">
                         <div className="flex items-center gap-2">
-                          <Icon className="w-4 h-4 text-[#94A3B8]" />
-                          <span className="text-sm text-white">{rule.name}</span>
+                          <Icon className="w-4 h-4 text-[var(--text-muted)]" />
+                          <span className="text-sm text-[var(--text-primary)]">{rule.name}</span>
                         </div>
                       </td>
-                      <td className="py-3 px-2 text-sm text-[#94A3B8]">{getConditionDisplay(rule)}</td>
-                      <td className="py-3 px-2 text-sm text-white">0 days</td>
-                      <td className="py-3 px-2 text-sm text-[#94A3B8]">--</td>
+                      <td className="py-3 px-2 text-sm text-[var(--text-muted)]">{getConditionDisplay(rule)}</td>
+                      <td className="py-3 px-2 text-sm text-[var(--text-primary)]">0 days</td>
+                      <td className="py-3 px-2 text-sm text-[var(--text-muted)]">--</td>
                       <td className="py-3 px-2">
                         <span className={`text-sm font-medium ${getFollowRateColor(0)}`}>--</span>
                       </td>

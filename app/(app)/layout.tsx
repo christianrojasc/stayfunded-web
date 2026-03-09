@@ -31,7 +31,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <p style={{ color: 'var(--text-secondary)' }} className="text-sm text-center max-w-md">{authError}</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-2 px-4 py-2 rounded-xl text-sm font-medium text-white bg-[#4ADE80]/20 hover:bg-[#4ADE80]/30 border border-[#4ADE80]/30 transition-colors"
+          className="mt-2 px-4 py-2 rounded-xl text-sm font-medium text-[var(--text-primary)] bg-[#4ADE80]/20 hover:bg-[#4ADE80]/30 border border-[#4ADE80]/30 transition-colors"
         >
           Try Again
         </button>

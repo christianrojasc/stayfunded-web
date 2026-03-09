@@ -158,7 +158,7 @@ export default function WeeklyReportCard() {
   }
 
   return (
-    <div className="rounded-2xl p-5 space-y-4" style={{ background: '#0c1120', border: '1px solid rgba(255,255,255,0.08)' }}>
+    <div className="rounded-2xl p-5 space-y-4" style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)' }}>
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between"
@@ -168,15 +168,15 @@ export default function WeeklyReportCard() {
             <Award size={18} className="text-[#4ADE80]" />
           </div>
           <div className="text-left">
-            <h3 className="text-sm font-bold text-white">Weekly Report Card</h3>
-            <p className="text-xs text-[#64748B]">Week of {weekLabel}</p>
+            <h3 className="text-sm font-bold text-[var(--text-primary)]">Weekly Report Card</h3>
+            <p className="text-xs text-[var(--text-secondary)]">Week of {weekLabel}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-lg font-bold" style={{ color: overallGrade.color }}>
             {overallGrade.grade}
           </span>
-          {expanded ? <ChevronUp size={16} className="text-[#64748B]" /> : <ChevronDown size={16} className="text-[#64748B]" />}
+          {expanded ? <ChevronUp size={16} className="text-[var(--text-secondary)]" /> : <ChevronDown size={16} className="text-[var(--text-secondary)]" />}
         </div>
       </button>
 
@@ -185,8 +185,8 @@ export default function WeeklyReportCard() {
           {/* Daily grades row */}
           <div className="flex items-center justify-between gap-2">
             {weekDays.map(d => (
-              <div key={d.date} className="flex-1 text-center py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                <div className="text-xs text-[#64748B] mb-1">{d.dayName}</div>
+              <div key={d.date} className="flex-1 text-center py-2 rounded-xl" style={{ background: 'var(--border)' }}>
+                <div className="text-xs text-[var(--text-secondary)] mb-1">{d.dayName}</div>
                 <div className="text-sm font-bold" style={{ color: d.grade.color }}>
                   {d.hasRulesData ? d.grade.grade : '-'}
                 </div>
@@ -197,7 +197,7 @@ export default function WeeklyReportCard() {
           {/* Stats */}
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2 text-[#94A3B8]">
-              <Calendar size={14} className="text-[#64748B] flex-shrink-0" />
+              <Calendar size={14} className="text-[var(--text-secondary)] flex-shrink-0" />
               <span>Most broken rule: {mostBroken}</span>
             </div>
             {totalCost < 0 && (

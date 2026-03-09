@@ -215,7 +215,7 @@ export default function SettingsPage() {
   ]
 
   return (
-    <div className="space-y-8 animate-fade-in max-w-2xl mx-auto">
+    <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
       {/* Header */}
       <div>
         <h1 className="text-xl font-bold text-[var(--text-primary)]">Settings</h1>

@@ -52,23 +52,25 @@ function AccountHealthCard() {
   // Calculate distance from drawdown floor
   const currentBalance = selected.startingBalance + totalPnl
   const isTrailing = selected.drawdownType === 'trailing'
-  // Trailing floor: once it reaches startingBalance + 100, it locks (can't go back down)
-  // but keeps trailing UP if you keep profiting
+  // Trailing floor trails up with HWM, but CAPS at startingBalance + 100
+  // Once it locks at that level, it stops trailing — you've secured break-even
   const trailingLockLevel = selected.startingBalance + 100
   let drawdownFloor = selected.startingBalance - selected.maxLossLimit
   let floorLocked = false
   if (isTrailing && accountTrades.length > 0) {
     let hwm = selected.startingBalance
     let runningBal = selected.startingBalance
-    let maxFloorReached = selected.startingBalance - selected.maxLossLimit
     for (const t of accountTrades) {
       runningBal += t.pnl - (t.fees || 0)
       if (runningBal > hwm) hwm = runningBal
-      const currentFloor = hwm - selected.maxLossLimit
-      maxFloorReached = Math.max(maxFloorReached, currentFloor)
     }
-    drawdownFloor = maxFloorReached
-    floorLocked = maxFloorReached >= trailingLockLevel
+    const trailingFloor = hwm - selected.maxLossLimit
+    if (trailingFloor >= trailingLockLevel) {
+      drawdownFloor = trailingLockLevel
+      floorLocked = true
+    } else {
+      drawdownFloor = trailingFloor
+    }
   }
   const distanceFromDrawdown = currentBalance - drawdownFloor
 

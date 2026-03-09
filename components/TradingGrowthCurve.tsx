@@ -104,9 +104,12 @@ function buildEquityCurve(
       highWaterMark = Math.max(highWaterMark, balance)
     }
 
-    const floor = isTrailing
+    // Trailing floor caps at startingBalance + 100 (locks at break-even)
+    const trailingLock = startingBalance + 100
+    const rawFloor = isTrailing
       ? highWaterMark - maxLossLimit
       : startingBalance - maxLossLimit
+    const floor = isTrailing && rawFloor >= trailingLock ? trailingLock : rawFloor
 
     points.push({
       date,

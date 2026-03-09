@@ -51,8 +51,12 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Suppress the 'use client' hydration warnings in dev
   reactStrictMode: true,
+
+  // Tree-shake heavy dependencies
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'recharts', 'date-fns', 'framer-motion'],
+  },
 
   async headers() {
     // Disable CSP headers when serving over HTTP (Safari blocks CSS/JS with strict CSP on non-HTTPS).

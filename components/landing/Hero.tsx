@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, BarChart2, Shield, TrendingUp, Activity } from "lucide-react";
-import { GLSLHills } from '@/components/ui/glsl-hills';
+import dynamic from 'next/dynamic'
+const GLSLHills = dynamic(() => import('@/components/ui/glsl-hills').then(m => m.GLSLHills), { ssr: false })
 
 export function Hero() {
   return (

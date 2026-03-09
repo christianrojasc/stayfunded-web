@@ -66,15 +66,15 @@ export default function ProGate({ feature, children, mode = 'blur', label }: Pro
   return (
     <>
       <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
-      <div className="relative">
+      <div className="relative h-full">
         {/* Blurred content */}
-        <div className="pointer-events-none select-none" style={{ filter: 'blur(6px)', opacity: 0.5 }}>
+        <div className="pointer-events-none select-none h-full" style={{ filter: 'blur(6px)', opacity: 0.5 }}>
           {children}
         </div>
 
         {/* Overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-[var(--bg-primary)]/60 backdrop-blur-sm rounded-2xl">
-          <div className="flex flex-col items-center gap-4 p-8 mt-8">
+          <div className="flex flex-col items-center gap-4 p-8">
             <div className="w-12 h-12 rounded-xl bg-[#4ADE80]/10 flex items-center justify-center">
               <Lock className="w-5 h-5 text-[#4ADE80]" />
             </div>

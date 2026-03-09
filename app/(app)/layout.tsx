@@ -24,7 +24,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (authError) {
     return (
-      <div style={{ background: 'var(--bg-primary)', minHeight: '100vh' }} className="flex flex-col items-center justify-center gap-4 px-4">
+      <div style={{ background: '#050810', minHeight: '100vh' }} className="flex flex-col items-center justify-center gap-4 px-4">
         <div className="w-12 h-12 rounded-2xl bg-red-500/20 flex items-center justify-center">
           <AlertCircle className="w-6 h-6 text-red-400" />
         </div>
@@ -41,7 +41,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (loading || !user) {
     return (
-      <div style={{ background: 'var(--bg-primary)', minHeight: '100vh' }} className="flex flex-col items-center justify-center gap-4">
+      <div style={{ background: '#050810', minHeight: '100vh' }} className="flex flex-col items-center justify-center gap-4">
         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-600 to-green-400 flex items-center justify-center shadow-lg shadow-green-500/30 animate-pulse">
           <TrendingUp className="w-6 h-6 text-white" strokeWidth={2.5} />
         </div>

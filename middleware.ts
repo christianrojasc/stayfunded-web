@@ -13,6 +13,8 @@ const PROTECTED_PREFIXES = [
   '/calendar',
   '/settings',
   '/prop-firms',
+  '/insights',
+  '/progress',
 ]
 
 export async function middleware(request: NextRequest) {

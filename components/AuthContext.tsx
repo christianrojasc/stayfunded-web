@@ -40,7 +40,7 @@ const AuthContext = createContext<AuthContextValue>({
 const PROTECTED_ROUTES = [
   '/dashboard', '/trades', '/accounts', '/analytics',
   '/journal', '/import', '/checklist', '/calendar',
-  '/settings', '/prop-firms',
+  '/settings', '/prop-firms', '/insights', '/progress',
 ]
 
 function isProtectedRoute(pathname: string): boolean {

@@ -4,14 +4,17 @@ import { useAuth } from '@/components/AuthContext'
 import { supabase } from '@/lib/supabase'
 
 export function useSubscription() {
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const [plan, setPlan] = useState<string>('free')
-  const [loading, setLoading] = useState(true)
+  const [planLoading, setPlanLoading] = useState(true)
 
   useEffect(() => {
+    // Wait for auth to finish loading before deciding plan
+    if (authLoading) return
+
     if (!user) {
       setPlan('free')
-      setLoading(false)
+      setPlanLoading(false)
       return
     }
 
@@ -22,11 +25,11 @@ export function useSubscription() {
         .eq('id', user!.id)
         .single()
       setPlan(data?.plan || 'free')
-      setLoading(false)
+      setPlanLoading(false)
     }
 
     fetchPlan()
-  }, [user])
+  }, [user, authLoading])
 
-  return { plan, isPro: plan === 'pro', loading }
+  return { plan, isPro: plan === 'pro', loading: authLoading || planLoading }
 }

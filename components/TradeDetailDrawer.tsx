@@ -12,6 +12,7 @@ import dynamic from 'next/dynamic'
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
+import ProGate from '@/components/ProGate'
 
 const TradeCandleChart = dynamic(() => import('@/components/TradeCandleChart'), {
   ssr: false,
@@ -393,6 +394,7 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
           </div>
 
           <div className="flex-1 overflow-hidden">
+            <ProGate feature="dashboard_charts" mode="blur" label="Trade Charts">
             {tab === 'chart' && (
               <TradeCandleChart trade={trade} />
             )}
@@ -413,6 +415,7 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
                 </div>
               </div>
             )}
+            </ProGate>
           </div>
         </div>
       </div>

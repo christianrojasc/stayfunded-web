@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeContext'
 import { AuthProvider } from '@/components/AuthContext'
+import HelpChat from '@/components/HelpChat'
 
 export const metadata: Metadata = {
   title: 'StayFunded — Trading Journal',
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <AuthProvider>
             {children}
+            <HelpChat />
           </AuthProvider>
         </ThemeProvider>
       </body>

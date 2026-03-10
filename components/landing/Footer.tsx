@@ -13,10 +13,10 @@ const links = {
     { label: "TopStep", href: "/prop-firms-overview" },
     { label: "Take Profit Trader", href: "/prop-firms-overview" },
   ],
-  Resources: [
+  Company: [
+    { label: "About Us", href: "/about" },
+    { label: "Contact", href: "/contact" },
     { label: "Get Started", href: "/login" },
-    { label: "Import Trades", href: "/login" },
-    { label: "Contact", href: "mailto:hello@stayfunded.app" },
   ],
   Legal: [
     { label: "Privacy Policy", href: "/privacy" },
@@ -65,8 +65,16 @@ export function Footer() {
           ))}
         </div>
 
+        {/* Trust signals */}
+        <div className="border-t border-white/5 pt-8 pb-6 flex flex-wrap items-center justify-center gap-6 text-xs text-gray-600">
+          <span className="flex items-center gap-1.5">📍 Based in Miami, FL</span>
+          <span className="flex items-center gap-1.5">🔒 256-bit SSL Encrypted</span>
+          <span className="flex items-center gap-1.5">💳 Payments via Stripe</span>
+          <span className="flex items-center gap-1.5">🛡️ SOC 2 Compliant Hosting</span>
+        </div>
+
         {/* Bottom bar */}
-        <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-gray-600 text-sm">
             &copy; {new Date().getFullYear()} StayFunded. All rights reserved.
           </p>

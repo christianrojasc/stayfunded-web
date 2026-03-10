@@ -12,6 +12,7 @@ const links = [
   { label: "iOS App", href: "/ios-app" },
   { label: "Prop Firms", href: "/prop-firms-overview" },
   { label: "Pricing", href: "/pricing" },
+  { label: "About", href: "/about" },
 ];
 
 export function Navbar() {

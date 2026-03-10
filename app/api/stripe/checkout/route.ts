@@ -27,7 +27,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid price' }, { status: 400 })
     }
 
-    const origin = req.headers.get('origin') || 'https://stayfunded.app'
+    const ALLOWED_ORIGINS = new Set([
+      'https://stayfunded.app',
+      'http://localhost:3000',
+      'http://localhost:3005',
+    ])
+    const rawOrigin = req.headers.get('origin') || ''
+    const origin = ALLOWED_ORIGINS.has(rawOrigin) ? rawOrigin : 'https://stayfunded.app'
 
     // 3. Use server-authenticated user identity — never trust client-provided userId
     const session = await stripe.checkout.sessions.create({
@@ -42,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('Checkout error:', err)
+    return NextResponse.json({ error: 'Checkout failed' }, { status: 500 })
   }
 }

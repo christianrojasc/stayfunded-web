@@ -32,7 +32,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No subscription found' }, { status: 400 })
     }
 
-    const origin = req.headers.get('origin') || 'https://stayfunded.app'
+    const ALLOWED_ORIGINS = new Set([
+      'https://stayfunded.app',
+      'http://localhost:3000',
+      'http://localhost:3005',
+    ])
+    const rawOrigin = req.headers.get('origin') || ''
+    const origin = ALLOWED_ORIGINS.has(rawOrigin) ? rawOrigin : 'https://stayfunded.app'
 
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
@@ -41,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('Portal error:', err)
+    return NextResponse.json({ error: 'Portal request failed' }, { status: 500 })
   }
 }

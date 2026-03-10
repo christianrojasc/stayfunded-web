@@ -52,6 +52,20 @@ export async function POST(req: NextRequest) {
 
   let activeTicketId = ticketId
 
+  // Verify ticket ownership if ticketId was provided
+  if (activeTicketId) {
+    const { data: ticket } = await adminSupabase
+      .from('support_tickets')
+      .select('id')
+      .eq('id', activeTicketId)
+      .eq('user_id', user.id)
+      .single()
+
+    if (!ticket) {
+      return NextResponse.json({ error: 'Ticket not found' }, { status: 404 })
+    }
+  }
+
   // Create new ticket if none provided
   if (!activeTicketId) {
     const { data: ticket, error: ticketErr } = await adminSupabase
@@ -65,7 +79,7 @@ export async function POST(req: NextRequest) {
       .select('id')
       .single()
 
-    if (ticketErr) return NextResponse.json({ error: ticketErr.message }, { status: 500 })
+    if (ticketErr) return NextResponse.json({ error: 'Failed to create ticket' }, { status: 500 })
     activeTicketId = ticket.id
   }
 
@@ -83,7 +97,7 @@ export async function POST(req: NextRequest) {
     .select()
     .single()
 
-  if (msgErr) return NextResponse.json({ error: msgErr.message }, { status: 500 })
+  if (msgErr) return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
 
   // Update ticket timestamp
   await adminSupabase

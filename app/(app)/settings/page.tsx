@@ -715,10 +715,10 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <HardDrive size={16} className="text-[var(--text-secondary)]" />
-              <p className="text-sm font-medium text-[var(--text-primary)]">Local Storage</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Cloud Storage</p>
             </div>
             <p className="text-sm text-[var(--text-secondary)]">
-              All data is stored locally in your browser. No account or server required. Clear your browser data to reset everything.
+              Your trades, accounts, and settings are securely stored in the cloud and synced across all your devices. Deleting data here is permanent.
             </p>
 
             {!showResetConfirm ? (

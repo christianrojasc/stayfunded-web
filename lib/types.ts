@@ -201,6 +201,30 @@ export const PROP_FIRM_PRESETS: PropFirmPreset[] = [
     ],
   },
 
+  // ─── Lucid Trading ────────────────────────────────────────────────────────
+  {
+    firmName: 'Lucid Trading',
+    prefixes: ['LUCID', 'LFF'],
+    description: 'EOD drawdown. One-time fee (no subscriptions). 90/10 profit split. Free activation. LucidPro, LucidFlex, and LucidDirect plans. Max 5 funded accounts.',
+    plans: [
+      // ── LucidPro Eval (higher cost, stricter drawdown, DLL included) ──
+      { planId: 'lucid-25k-pro', label: '25K Pro Eval', size: 25, evalCost: 135, activationFee: null, profitTarget: 1250, drawdown: 1000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 90, consistencyRule: '' },
+      { planId: 'lucid-50k-pro', label: '50K Pro Eval', size: 50, evalCost: 185, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: 1200, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 120, consistencyRule: '' },
+      { planId: 'lucid-100k-pro', label: '100K Pro Eval', size: 100, evalCost: 285, activationFee: null, profitTarget: 6000, drawdown: 3000, drawdownType: 'static_eod', dailyLossLimit: 1800, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 180, consistencyRule: '' },
+      { planId: 'lucid-150k-pro', label: '150K Pro Eval', size: 150, evalCost: 370, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'static_eod', dailyLossLimit: 2700, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 245, consistencyRule: '' },
+      // ── LucidFlex Eval (lower cost, no DLL, 50% consistency in eval) ──
+      { planId: 'lucid-25k-flex', label: '25K Flex Eval', size: 25, evalCost: 100, activationFee: null, profitTarget: 1250, drawdown: 1000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 60, consistencyRule: '50% consistency in eval. No consistency once funded.' },
+      { planId: 'lucid-50k-flex', label: '50K Flex Eval', size: 50, evalCost: 130, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 85, consistencyRule: '50% consistency in eval. No consistency once funded.' },
+      { planId: 'lucid-100k-flex', label: '100K Flex Eval', size: 100, evalCost: 225, activationFee: null, profitTarget: 6000, drawdown: 3000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 140, consistencyRule: '50% consistency in eval. No consistency once funded.' },
+      { planId: 'lucid-150k-flex', label: '150K Flex Eval', size: 150, evalCost: 345, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 225, consistencyRule: '50% consistency in eval. No consistency once funded.' },
+      // ── LucidDirect (straight to funded — no eval) ──
+      { planId: 'lucid-25k-direct', label: '25K Direct', size: 25, evalCost: null, activationFee: 340, profitTarget: null, drawdown: 1000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: '20% consistency rule' },
+      { planId: 'lucid-50k-direct', label: '50K Direct', size: 50, evalCost: null, activationFee: 520, profitTarget: null, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: 1200, minTradingDays: 5, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: '20% consistency rule. DLL above initial trail: 60% of peak EOD balance' },
+      { planId: 'lucid-100k-direct', label: '100K Direct', size: 100, evalCost: null, activationFee: 700, profitTarget: null, drawdown: 3500, drawdownType: 'static_eod', dailyLossLimit: 2100, minTradingDays: 5, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: '20% consistency rule. DLL above initial trail: 60% of peak EOD balance' },
+      { planId: 'lucid-150k-direct', label: '150K Direct', size: 150, evalCost: null, activationFee: 840, profitTarget: null, drawdown: 5000, drawdownType: 'static_eod', dailyLossLimit: 3000, minTradingDays: 5, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: '20% consistency rule. DLL above initial trail: 60% of peak EOD balance' },
+    ],
+  },
+
   // ─── TradeDay ─────────────────────────────────────────────────────────────
   {
     firmName: 'TradeDay',

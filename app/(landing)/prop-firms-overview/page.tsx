@@ -3,8 +3,8 @@ import { PropFirms } from "@/components/landing/PropFirms";
 import { CTA } from "@/components/landing/CTA";
 
 export const metadata: Metadata = {
-  title: "Prop Firms — StayFunded",
-  description: "StayFunded supports 20+ prop firms including Apex, TopStep, Tradeify, FTMO, and more.",
+  title: "Supported Prop Trading Firms | 20+ Firm Presets",
+  description: "Track drawdowns for Apex, Tradeify, TopStep, Take Profit Trader, and 20+ more prop firms. Auto-configured rules, trailing drawdown locks, daily loss limits. One journal for all your accounts.",
 };
 
 export default function PropFirmsOverviewPage() {

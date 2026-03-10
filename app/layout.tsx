@@ -5,11 +5,15 @@ import { AuthProvider } from '@/components/AuthContext'
 import HelpChat from '@/components/HelpChat'
 
 export const metadata: Metadata = {
-  title: 'StayFunded — Trading Journal for Prop Firm Traders',
-  description: 'Professional futures trading journal built for prop firm traders. Track drawdowns, import Tradovate CSV, analyze sessions, and stay funded. Built in Miami, FL.',
+  title: {
+    default: 'Best Trading Journal for Futures & Prop Firms | StayFunded',
+    template: '%s | StayFunded',
+  },
+  description: 'Trading journal built for prop firm traders. Track drawdowns, import Tradovate CSV, analyze session patterns, and pass evaluations. Free forever plan. 20+ prop firms supported.',
+  keywords: ['trading journal', 'prop firm', 'futures trading', 'drawdown tracker', 'Tradovate', 'Apex', 'Tradeify', 'TopStep', 'prop trading journal', 'trading analytics'],
   openGraph: {
-    title: 'StayFunded — Trading Journal for Prop Firm Traders',
-    description: 'Track drawdowns, import trades, analyze sessions, and stay funded. The journal built by prop traders, for prop traders.',
+    title: 'Best Trading Journal for Futures & Prop Firms | StayFunded',
+    description: 'Track drawdowns, import trades, analyze session patterns, and stay funded. The journal built by prop traders, for prop traders. Free forever.',
     url: 'https://stayfunded.app',
     siteName: 'StayFunded',
     type: 'website',
@@ -19,6 +23,7 @@ export const metadata: Metadata = {
     site: '@StayFundedApp',
     creator: '@StayFundedApp',
   },
+  metadataBase: new URL('https://stayfunded.app'),
 }
 
 // Structured Data — Organization + Founder (E-E-A-T)

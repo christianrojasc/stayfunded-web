@@ -39,8 +39,8 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.2, ease: [0.21, 1.11, 0.81, 0.99] }}
           className="text-[clamp(2.4rem,7vw,6rem)] font-bold leading-[1.05] tracking-[-0.03em] text-white mb-6 font-display"
         >
-          <span className="block text-white">Stop Blowing</span>
-          <span className="block gradient-text-animated">Prop Accounts.</span>
+          <span className="block text-white">The Trading Journal That</span>
+          <span className="block gradient-text-animated">Keeps You Funded.</span>
         </motion.h1>
 
         {/* Subtitle */}

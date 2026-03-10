@@ -3,8 +3,8 @@ import { Pricing } from "@/components/landing/Pricing";
 import { CTA } from "@/components/landing/CTA";
 
 export const metadata: Metadata = {
-  title: "Pricing — StayFunded",
-  description: "Start free. Upgrade when you're ready. No credit card required.",
+  title: "Pricing | Free Trading Journal for Prop Traders",
+  description: "Start free forever — dashboard, journal, analytics, calendar, CSV import, and up to 3 accounts. Upgrade to Pro ($14/mo) for unlimited accounts, AI insights, and trade charts. No credit card required.",
 };
 
 export default function PricingPage() {

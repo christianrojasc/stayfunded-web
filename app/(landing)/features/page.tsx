@@ -3,8 +3,8 @@ import { Features } from "@/components/landing/Features";
 import { CTA } from "@/components/landing/CTA";
 
 export const metadata: Metadata = {
-  title: "Features — StayFunded",
-  description: "Everything you need to stay funded. Real-time drawdown tracking, trade journaling, equity curves, and prop firm compliance built in.",
+  title: "Trading Journal Features | Advanced Analytics for Prop Traders",
+  description: "Real-time drawdown tracking, Tradovate CSV import, session-aware P&L, equity curves, daily checklists, and prop firm compliance. Everything a funded trader needs — free.",
 };
 
 export default function FeaturesPage() {

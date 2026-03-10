@@ -3,8 +3,8 @@ import { HowItWorks } from "@/components/landing/HowItWorks";
 import { CTA } from "@/components/landing/CTA";
 
 export const metadata: Metadata = {
-  title: "How It Works — StayFunded",
-  description: "From CSV import to real-time drawdown alerts in minutes. See how StayFunded works.",
+  title: "How StayFunded Works | Import Trades & Track Drawdowns in Minutes",
+  description: "Import your Tradovate CSV, set your prop firm rules, and get real-time drawdown tracking, session-aware analytics, and daily accountability. Setup takes 2 minutes.",
 };
 
 export default function HowItWorksPage() {

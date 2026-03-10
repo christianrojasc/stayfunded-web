@@ -266,7 +266,7 @@ function FirmSearchSelect({
   )
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className={`relative ${open ? 'pb-64' : ''}`}>
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
@@ -279,7 +279,7 @@ function FirmSearchSelect({
       </button>
 
       {open && (
-        <div className="absolute top-full mt-1 left-0 right-0 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl shadow-xl z-50 max-h-72 flex flex-col">
+        <div className="absolute top-full mt-1 left-0 right-0 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl shadow-xl z-[60] max-h-64 flex flex-col">
           {/* Search */}
           <div className="p-2 border-b border-[var(--border)]">
             <div className="relative">

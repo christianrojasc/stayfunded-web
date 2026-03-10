@@ -33,7 +33,10 @@ export async function POST(req: NextRequest) {
       'http://localhost:3005',
     ])
     const rawOrigin = req.headers.get('origin') || ''
-    const origin = ALLOWED_ORIGINS.has(rawOrigin) ? rawOrigin : 'https://stayfunded.app'
+    if (!ALLOWED_ORIGINS.has(rawOrigin)) {
+      return NextResponse.json({ error: 'Invalid origin' }, { status: 403 })
+    }
+    const origin = rawOrigin
 
     // 3. Use server-authenticated user identity — never trust client-provided userId
     const session = await stripe.checkout.sessions.create({

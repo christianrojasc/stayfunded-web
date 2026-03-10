@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api/stripe/webhook') || // Stripe webhook must be public (comes from Stripe servers)
-    pathname.includes('.')
+    /\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|eot|map|json)$/i.test(pathname)
   ) {
     return NextResponse.next()
   }

@@ -53,11 +53,10 @@ function LoginPageInner() {
     if (!email.trim()) { setError('Enter your email.'); return }
     setLoading(true)
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      await supabase.auth.resetPasswordForEmail(email.trim(), {
         redirectTo: `${window.location.origin}/login`,
       })
-      if (error) setError(error.message)
-      else setSuccess('Reset link sent! Check your inbox.')
+      setSuccess('If that email is registered, a reset link has been sent.')
     } finally { setLoading(false) }
   }
 
@@ -72,7 +71,7 @@ function LoginPageInner() {
       if (mode === 'signin') {
         const { error } = await signIn(email, password)
         if (error) {
-          setError(error.message.includes('Invalid') ? 'Incorrect email or password.' : error.message)
+          setError('Incorrect email or password.')
           setFailed(f => f + 1); setCooldown(true); setTimeout(() => setCooldown(false), 2000)
         } else {
           setStep('success')
@@ -82,7 +81,7 @@ function LoginPageInner() {
       } else {
         const { error } = await signUp(email, password, displayName.trim() || undefined)
         if (error) {
-          setError(error.message.includes('already registered') ? 'Account already exists. Try signing in.' : error.message)
+          setError('Unable to create account. Please try again or sign in.')
           setFailed(f => f + 1); setCooldown(true); setTimeout(() => setCooldown(false), 2000)
         } else {
           setSuccess('Account created! Check your email to confirm, then sign in.')

@@ -38,7 +38,10 @@ export async function POST(req: NextRequest) {
       'http://localhost:3005',
     ])
     const rawOrigin = req.headers.get('origin') || ''
-    const origin = ALLOWED_ORIGINS.has(rawOrigin) ? rawOrigin : 'https://stayfunded.app'
+    if (!ALLOWED_ORIGINS.has(rawOrigin)) {
+      return NextResponse.json({ error: 'Invalid origin' }, { status: 403 })
+    }
+    const origin = rawOrigin
 
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,

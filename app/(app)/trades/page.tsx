@@ -364,10 +364,10 @@ export default function TradesPage() {
                       <span className="font-mono font-bold text-xs bg-[var(--bg-secondary)] px-2 py-0.5 rounded-lg text-[var(--text-primary)]">{t.symbol}</span>
                     </td>
                     <td>
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${
                         t.side === 'Long' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'
                       }`}>
-                        {t.side === 'Long' ? <TrendingUp className="inline w-3 h-3 mr-0.5" /> : <TrendingDown className="inline w-3 h-3 mr-0.5" />}
+                        {t.side === 'Long' ? <TrendingUp className="w-3 h-3 flex-shrink-0" /> : <TrendingDown className="w-3 h-3 flex-shrink-0" />}
                         {t.side}
                       </span>
                     </td>

@@ -279,9 +279,10 @@ function FirmSearchSelect({
       </button>
 
       {open && (
-        <div className="absolute top-full mt-1 left-0 right-0 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl shadow-xl z-[60] max-h-64 flex flex-col">
+        <div className="absolute top-full mt-1 left-0 right-0 bg-[#0D1117] border border-[rgba(255,255,255,0.08)] rounded-xl shadow-2xl z-[60] max-h-64 flex flex-col"
+          style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.6)' }}>
           {/* Search */}
-          <div className="p-2 border-b border-[var(--border)]">
+          <div className="p-2 border-b border-[rgba(255,255,255,0.06)]">
             <div className="relative">
               <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
               <input
@@ -299,7 +300,7 @@ function FirmSearchSelect({
                 key={firm.firmName}
                 type="button"
                 onClick={() => { onChange(firm); setOpen(false); setQuery('') }}
-                className="w-full text-left px-3 py-2 hover:bg-[var(--bg-secondary)] transition-colors flex items-center justify-between group"
+                className="w-full text-left px-3 py-2.5 hover:bg-white/5 transition-colors flex items-center justify-between group"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">{firm.firmName}</p>
@@ -385,89 +386,98 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[var(--bg-card)] border border-[var(--border)] rounded-none sm:rounded-2xl shadow-2xl w-full max-w-2xl min-h-screen sm:min-h-0 sm:max-h-[90vh] overflow-y-auto animate-slide-up">
-        <div className="sticky top-0 bg-[var(--bg-card)] border-b border-[var(--border)] px-5 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Briefcase size={18} className="text-[#2D8B4E]" />
-            <h2 className="font-bold text-[var(--text-primary)]">{isEdit ? 'Edit Account' : 'Add Prop Account'}</h2>
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
+      <div className="relative bg-[#0B0F1A] border border-[rgba(255,255,255,0.08)] rounded-none sm:rounded-2xl shadow-2xl w-full max-w-2xl min-h-screen sm:min-h-0 sm:max-h-[90vh] overflow-y-auto animate-slide-up"
+        style={{ boxShadow: '0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)' }}>
+        <div className="sticky top-0 bg-[#0B0F1A] border-b border-[rgba(255,255,255,0.06)] px-6 py-5 flex items-center justify-between z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #2D8B4E, #4ADE50)' }}>
+              <Briefcase size={16} className="text-white" />
+            </div>
+            <div>
+              <h2 className="font-bold text-white text-base">{isEdit ? 'Edit Account' : 'Add Prop Account'}</h2>
+              <p className="text-xs text-[#64748B] mt-0.5">Set up your prop firm evaluation or funded account</p>
+            </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]">
+          <button onClick={onClose} className="p-2 rounded-xl text-[#64748B] hover:text-white hover:bg-white/5 transition-all">
             <X size={16} />
           </button>
         </div>
 
-        <div className="p-5 space-y-5">
+        <div className="p-6 space-y-6">
           {/* Step 1: Firm */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full text-[10px] font-bold text-[var(--text-primary)] flex items-center justify-center flex-shrink-0"
+            <div className="flex items-center gap-2.5">
+              <span className="w-6 h-6 rounded-full text-[11px] font-bold text-white flex items-center justify-center flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg, #2D8B4E, #4ADE50)' }}>1</span>
-              <label className="label !mb-0">Prop Firm</label>
+              <label className="text-sm font-semibold text-white uppercase tracking-wider">Prop Firm</label>
             </div>
             <FirmSearchSelect value={selectedFirm} onChange={handleFirmChange} />
             {selectedFirm?.description && (
-              <p className="text-xs text-[var(--text-muted)] flex items-start gap-1.5">
-                <Info size={12} className="flex-shrink-0 mt-0.5" />
-                {selectedFirm.description}
-              </p>
+              <div className="flex items-start gap-2 px-3 py-2.5 rounded-xl bg-[#2D8B4E]/8 border border-[#2D8B4E]/15">
+                <Info size={13} className="flex-shrink-0 mt-0.5 text-[#4ADE80]" />
+                <p className="text-xs text-[#94A3B8] leading-relaxed">{selectedFirm.description}</p>
+              </div>
             )}
           </div>
 
           {/* Step 2: Plan */}
           {selectedFirm && (
             <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-full text-[10px] font-bold text-[var(--text-primary)] flex items-center justify-center flex-shrink-0"
+              <div className="flex items-center gap-2.5">
+                <span className="w-6 h-6 rounded-full text-[11px] font-bold text-white flex items-center justify-center flex-shrink-0"
                   style={{ background: 'linear-gradient(135deg, #2D8B4E, #4ADE50)' }}>2</span>
-                <label className="label !mb-0">Account Plan</label>
+                <label className="text-sm font-semibold text-white uppercase tracking-wider">Account Plan</label>
               </div>
-              <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-1">
+              <div className="grid grid-cols-1 gap-2 max-h-56 overflow-y-auto pr-1 scrollbar-thin">
                 {selectedFirm.plans.map(plan => (
                   <button
                     key={plan.planId}
                     type="button"
                     onClick={() => setSelectedPlan(plan)}
-                    className={`text-left p-3 rounded-xl border transition-all ${
+                    className={`text-left p-4 rounded-xl border transition-all ${
                       selectedPlan?.planId === plan.planId
-                        ? 'border-[#2D8B4E] bg-green-50/10'
-                        : 'border-[var(--border)] hover:border-[#2D8B4E]/50'
+                        ? 'border-[#2D8B4E] bg-[#2D8B4E]/10 shadow-[0_0_20px_rgba(45,139,78,0.1)]'
+                        : 'border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)] hover:border-[#2D8B4E]/40 hover:bg-[rgba(255,255,255,0.04)]'
                     }`}
                   >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                      <span className="font-semibold text-sm text-[var(--text-primary)]">{plan.label}</span>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="font-semibold text-sm text-white">{plan.label}</span>
                       <div className="flex items-center gap-2">
                         {plan.evalCost !== null && (
-                          <span className="text-xs text-[var(--text-muted)]">${plan.evalCost}/mo</span>
+                          <span className="text-xs font-medium text-[#94A3B8]">${plan.evalCost}/mo</span>
                         )}
                         {plan.activationFee !== null && (
-                          <span className="text-xs text-[var(--text-muted)]">+${plan.activationFee} activation</span>
+                          <span className="text-[11px] text-[#64748B]">+${plan.activationFee} activation</span>
                         )}
                         {selectedPlan?.planId === plan.planId && (
-                          <Check size={14} className="text-[#2D8B4E]" />
+                          <div className="w-5 h-5 rounded-full bg-[#2D8B4E] flex items-center justify-center">
+                            <Check size={12} className="text-white" />
+                          </div>
                         )}
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-2 mt-1.5">
+                    <div className="flex flex-wrap gap-1.5 mt-2.5">
                       {plan.profitTarget !== null && (
-                        <span className="text-[10px] bg-green-50/10 text-[#2D8B4E] px-2 py-0.5 rounded-full font-medium">
+                        <span className="text-[10px] bg-[#4ADE80]/10 text-[#4ADE80] px-2.5 py-1 rounded-lg font-semibold">
                           Goal: {fmtK(plan.profitTarget)}
                         </span>
                       )}
-                      <span className="text-[10px] bg-red-50/10 text-[#EF4444] px-2 py-0.5 rounded-full font-medium">
+                      <span className="text-[10px] bg-[#EF4444]/10 text-[#EF4444] px-2.5 py-1 rounded-lg font-semibold">
                         DD: {fmtK(plan.drawdown)}
                       </span>
-                      <span className="text-[10px] bg-[var(--bg-secondary)] text-[var(--text-muted)] px-2 py-0.5 rounded-full font-medium">
+                      <span className="text-[10px] bg-white/5 text-[#94A3B8] px-2.5 py-1 rounded-lg font-medium">
                         {fmtDrawdownType(plan.drawdownType)}
                       </span>
                       {plan.minTradingDays > 0 && (
-                        <span className="text-[10px] bg-[var(--bg-secondary)] text-[var(--text-muted)] px-2 py-0.5 rounded-full font-medium">
+                        <span className="text-[10px] bg-white/5 text-[#94A3B8] px-2.5 py-1 rounded-lg font-medium">
                           Min {plan.minTradingDays}d
                         </span>
                       )}
                       {plan.daysToPayout <= 1 && (
-                        <span className="text-[10px] bg-amber-50 text-amber-400 px-2 py-0.5 rounded-full font-medium">
-                          Same-day payout
+                        <span className="text-[10px] bg-amber-500/10 text-amber-400 px-2.5 py-1 rounded-lg font-semibold">
+                          ⚡ Same-day payout
                         </span>
                       )}
                     </div>
@@ -482,9 +492,9 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
             <>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full text-[10px] font-bold text-[var(--text-primary)] flex items-center justify-center flex-shrink-0"
+                  <span className="w-6 h-6 rounded-full text-[11px] font-bold text-white flex items-center justify-center flex-shrink-0"
                     style={{ background: 'linear-gradient(135deg, #2D8B4E, #4ADE50)' }}>3</span>
-                  <label className="label !mb-0">Account Details</label>
+                  <label className="text-sm font-semibold text-white uppercase tracking-wider">Account Details</label>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -532,9 +542,9 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
               {/* Step 4: Rules (pre-filled, editable) */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full text-[10px] font-bold text-[var(--text-primary)] flex items-center justify-center flex-shrink-0"
+                  <span className="w-6 h-6 rounded-full text-[11px] font-bold text-white flex items-center justify-center flex-shrink-0"
                     style={{ background: 'linear-gradient(135deg, #2D8B4E, #4ADE50)' }}>4</span>
-                  <label className="label !mb-0">Rules (auto-filled, editable)</label>
+                  <label className="text-sm font-semibold text-white uppercase tracking-wider">Rules (auto-filled)</label>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -590,11 +600,11 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                   </select>
                 </div>
                 {consistencyRule && (
-                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                    <p className="text-xs font-semibold text-amber-700 mb-1 flex items-center gap-1.5">
+                  <div className="p-3.5 bg-amber-500/8 border border-amber-500/15 rounded-xl">
+                    <p className="text-xs font-semibold text-amber-400 mb-1 flex items-center gap-1.5">
                       <AlertTriangle size={12} /> Consistency Rule
                     </p>
-                    <p className="text-xs text-amber-400">{consistencyRule}</p>
+                    <p className="text-xs text-[#94A3B8] leading-relaxed">{consistencyRule}</p>
                   </div>
                 )}
               </div>
@@ -603,15 +613,16 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-[var(--bg-card)] border-t border-[var(--border)] px-5 py-4 flex justify-end gap-3">
-          <button onClick={onClose} className="btn-secondary">Cancel</button>
+        <div className="sticky bottom-0 bg-[#0B0F1A] border-t border-[rgba(255,255,255,0.06)] px-6 py-4 flex justify-end gap-3 z-10">
+          <button onClick={onClose} className="px-5 py-2.5 rounded-xl text-sm font-medium text-[#94A3B8] bg-white/5 hover:bg-white/10 border border-[rgba(255,255,255,0.06)] transition-all">Cancel</button>
           <button
             onClick={handleSave}
             disabled={!selectedFirm || !selectedPlan}
-            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+            style={{ background: !selectedFirm || !selectedPlan ? '#2D8B4E' : 'linear-gradient(135deg, #2D8B4E, #4ADE50)' }}
           >
             <Plus size={14} />
-            Add Account
+            {isEdit ? 'Save Changes' : 'Add Account'}
           </button>
         </div>
       </div>

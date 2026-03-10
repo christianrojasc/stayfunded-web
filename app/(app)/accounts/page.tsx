@@ -503,7 +503,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="label">Nickname</label>
+                    <label className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider mb-1.5 block">Nickname</label>
                     <input
                       className="input-field"
                       placeholder="e.g. Apex 50K #1"
@@ -512,7 +512,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                     />
                   </div>
                   <div>
-                    <label className="label">Account Number</label>
+                    <label className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider mb-1.5 block">Account Number</label>
                     <input
                       className="input-field font-mono"
                       placeholder="e.g. APEX12345"
@@ -522,19 +522,19 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                   </div>
                 </div>
                 <div>
-                  <label className="label">Status</label>
+                  <label className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider mb-1.5 block">Status</label>
                   <div className="flex gap-2">
                     {(['evaluation', 'funded'] as const).map(s => (
                       <button
                         key={s}
                         type="button"
                         onClick={() => setStatus(s)}
-                        className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition-all capitalize ${
+                        className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-all capitalize ${
                           status === s
                             ? s === 'funded'
-                              ? 'bg-[#2D8B4E]/10 border-[#2D8B4E] text-[#4ADE50]'
-                              : 'bg-amber-500/10 border-amber-500 text-amber-500'
-                            : 'border-[var(--border)] text-[var(--text-muted)]'
+                              ? 'bg-[#2D8B4E]/15 border-[#2D8B4E]/50 text-[#4ADE80]'
+                              : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                            : 'border-[rgba(255,255,255,0.06)] text-[#64748B] hover:border-[rgba(255,255,255,0.12)] hover:text-[#94A3B8]'
                         }`}
                       >
                         {s}
@@ -553,7 +553,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="label">Max Loss Limit ($)</label>
+                    <label className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider mb-1.5 block">Max Loss Limit ($)</label>
                     <input
                       type="number"
                       className="input-field font-mono"
@@ -562,7 +562,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                     />
                   </div>
                   <div>
-                    <label className="label">Daily Loss Limit ($)</label>
+                    <label className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider mb-1.5 block">Daily Loss Limit ($)</label>
                     <input
                       type="number"
                       className="input-field font-mono"
@@ -572,7 +572,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                     />
                   </div>
                   <div>
-                    <label className="label">Profit Target ($)</label>
+                    <label className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider mb-1.5 block">Profit Target ($)</label>
                     <input
                       type="number"
                       className="input-field font-mono"
@@ -582,7 +582,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                     />
                   </div>
                   <div>
-                    <label className="label">Min Trading Days</label>
+                    <label className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider mb-1.5 block">Min Trading Days</label>
                     <input
                       type="number"
                       className="input-field font-mono"
@@ -592,7 +592,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                   </div>
                 </div>
                 <div>
-                  <label className="label">Drawdown Type</label>
+                  <label className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider mb-1.5 block">Drawdown Type</label>
                   <select
                     className="input-field"
                     value={drawdownType}
@@ -605,8 +605,9 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                   </select>
                 </div>
                 {consistencyRule && (
-                  <div className="p-3.5 bg-amber-500/8 border border-amber-500/15 rounded-xl">
-                    <p className="text-xs font-semibold text-amber-400 mb-1 flex items-center gap-1.5">
+                  <div className="p-3.5 rounded-xl border border-[rgba(251,191,36,0.12)]"
+                    style={{ background: 'rgba(251,191,36,0.05)' }}>
+                    <p className="text-xs font-semibold text-amber-400/90 mb-1 flex items-center gap-1.5">
                       <AlertTriangle size={12} /> Consistency Rule
                     </p>
                     <p className="text-xs text-[#94A3B8] leading-relaxed">{consistencyRule}</p>

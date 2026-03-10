@@ -242,9 +242,11 @@ function AccountCard({
 function FirmSearchSelect({
   value,
   onChange,
+  onOpenChange,
 }: {
   value: PropFirmPreset | null
   onChange: (firm: PropFirmPreset | null) => void
+  onOpenChange?: (open: boolean) => void
 }) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
@@ -252,7 +254,7 @@ function FirmSearchSelect({
 
   useEffect(() => {
     const h = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+      if (ref.current && !ref.current.contains(e.target as Node)) toggle(false)
     }
     document.addEventListener('mousedown', h)
     return () => document.removeEventListener('mousedown', h)
@@ -265,11 +267,13 @@ function FirmSearchSelect({
     [query]
   )
 
+  const toggle = (v: boolean) => { setOpen(v); onOpenChange?.(v) }
+
   return (
-    <div ref={ref} className={`relative ${open ? 'pb-64' : ''}`}>
+    <div ref={ref} className="relative">
       <button
         type="button"
-        onClick={() => setOpen(o => !o)}
+        onClick={() => toggle(!open)}
         className="input-field text-left flex items-center justify-between"
       >
         <span className={value ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}>
@@ -299,7 +303,7 @@ function FirmSearchSelect({
               <button
                 key={firm.firmName}
                 type="button"
-                onClick={() => { onChange(firm); setOpen(false); setQuery('') }}
+                onClick={() => { onChange(firm); toggle(false); setQuery('') }}
                 className="w-full text-left px-3 py-2.5 hover:bg-white/5 transition-colors flex items-center justify-between group"
               >
                 <div>
@@ -326,6 +330,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
   const isEdit = !!editAccount
   const matchedFirm = editAccount ? PROP_FIRM_PRESETS.find(f => f.firmName === editAccount.firmName) || null : null
   const [selectedFirm, setSelectedFirm] = useState<PropFirmPreset | null>(matchedFirm)
+  const [firmDropdownOpen, setFirmDropdownOpen] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<PropFirmPlan | null>(null)
   const [nickname, setNickname] = useState(editAccount?.nickname || '')
   const [accountNumber, setAccountNumber] = useState(editAccount?.accountNumber || '')
@@ -413,8 +418,8 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
                 style={{ background: 'linear-gradient(135deg, #2D8B4E, #4ADE50)' }}>1</span>
               <label className="text-sm font-semibold text-white uppercase tracking-wider">Prop Firm</label>
             </div>
-            <FirmSearchSelect value={selectedFirm} onChange={handleFirmChange} />
-            {selectedFirm?.description && (
+            <FirmSearchSelect value={selectedFirm} onChange={handleFirmChange} onOpenChange={setFirmDropdownOpen} />
+            {!firmDropdownOpen && selectedFirm?.description && (
               <div className="flex items-start gap-2 px-3 py-2.5 rounded-xl bg-[#2D8B4E]/8 border border-[#2D8B4E]/15">
                 <Info size={13} className="flex-shrink-0 mt-0.5 text-[#4ADE80]" />
                 <p className="text-xs text-[#94A3B8] leading-relaxed">{selectedFirm.description}</p>
@@ -423,7 +428,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
           </div>
 
           {/* Step 2: Plan */}
-          {selectedFirm && (
+          {!firmDropdownOpen && selectedFirm && (
             <div className="space-y-3">
               <div className="flex items-center gap-2.5">
                 <span className="w-6 h-6 rounded-full text-[11px] font-bold text-white flex items-center justify-center flex-shrink-0"
@@ -488,7 +493,7 @@ function AddAccountModal({ onClose, onSave, editAccount }: { onClose: () => void
           )}
 
           {/* Step 3: Details */}
-          {selectedPlan && (
+          {!firmDropdownOpen && selectedPlan && (
             <>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">

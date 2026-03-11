@@ -25,12 +25,18 @@ export default function UpgradeModal({ open, onClose }: Props) {
   const { user } = useAuth()
   const [loading, setLoading] = useState<string | null>(null)
   const [billing, setBilling] = useState<'monthly' | 'yearly'>('yearly')
+  const [error, setError] = useState<string | null>(null)
 
   if (!open) return null
 
   async function handleCheckout(priceId: string) {
+    setError(null)
     if (!user) {
       window.location.href = `/login?redirect=upgrade`
+      return
+    }
+    if (!priceId) {
+      setError('Price not configured')
       return
     }
     setLoading(priceId)
@@ -41,10 +47,14 @@ export default function UpgradeModal({ open, onClose }: Props) {
         body: JSON.stringify({ priceId }),
       })
       const data = await res.json()
-      if (data.url) window.location.href = data.url
-      else console.error('Checkout error:', data)
+      if (data.url) {
+        // Use assign for better mobile Safari compatibility
+        window.location.assign(data.url)
+      } else {
+        setError(data.error || 'Checkout failed')
+      }
     } catch (err) {
-      console.error('Checkout failed:', err)
+      setError('Network error — try again')
     } finally {
       setLoading(null)
     }
@@ -161,6 +171,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
               </>
             )}
           </button>
+          {error && <p className="text-center text-red-400 text-xs mt-2">{error}</p>}
           <p className="text-center text-[var(--text-muted)] text-xs mt-3">Cancel anytime · Secure checkout via Stripe</p>
         </div>
       </div>

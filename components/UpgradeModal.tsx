@@ -45,14 +45,14 @@ export default function UpgradeModal({ open, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 pb-16 sm:p-4">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md">
+      <div className="relative z-10 w-full max-w-md">
         <ShineBorder borderRadius={24} duration={6} />
-        <div className="relative z-10 w-full rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl max-h-[95vh] sm:max-h-none overflow-y-auto" style={{background:'var(--bg-primary)', border:'1px solid var(--border)'}}>
+        <div className="relative z-10 w-full rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto" style={{background:'var(--bg-primary)', border:'1px solid var(--border)'}}>
         
 
 

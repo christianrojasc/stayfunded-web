@@ -29,7 +29,10 @@ export default function UpgradeModal({ open, onClose }: Props) {
   if (!open) return null
 
   async function handleCheckout(priceId: string) {
-    if (!user) return
+    if (!user) {
+      window.location.href = `/login?redirect=upgrade`
+      return
+    }
     setLoading(priceId)
     try {
       const res = await fetch('/api/stripe/checkout', {
@@ -37,8 +40,11 @@ export default function UpgradeModal({ open, onClose }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ priceId }),
       })
-      const { url } = await res.json()
-      if (url) window.location.href = url
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+      else console.error('Checkout error:', data)
+    } catch (err) {
+      console.error('Checkout failed:', err)
     } finally {
       setLoading(null)
     }
@@ -50,7 +56,7 @@ export default function UpgradeModal({ open, onClose }: Props) {
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
         <ShineBorder borderRadius={24} duration={6} />
         <div className="relative z-10 w-full rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto" style={{background:'var(--bg-primary)', border:'1px solid var(--border)'}}>
         

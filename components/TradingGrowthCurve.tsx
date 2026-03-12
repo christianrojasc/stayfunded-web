@@ -7,7 +7,7 @@ import {
 } from 'recharts'
 import {
   TrendingUp, TrendingDown, Target, Info, Clock, CircleDot,
-  DollarSign, Activity,
+  DollarSign, Activity, Shield, BarChart2,
 } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import { useTrades } from '@/components/TradeContext'
@@ -296,6 +296,12 @@ export default function TradingGrowthCurve() {
       ? (Math.max(0, totalPnl) / selected.profitTarget) * 100
       : null
 
+    // Today's P&L and trade count
+    const todayStr = format(now, 'yyyy-MM-dd')
+    const todayTrades = accountTrades.filter(t => t.sessionDate === todayStr)
+    const todayPnl = todayTrades.reduce((s, t) => s + t.netPnl, 0)
+    const daysTradedCount = new Set(accountTrades.map(t => t.sessionDate)).size
+
     return {
       totalPnl,
       totalPnlPct,
@@ -308,8 +314,11 @@ export default function TradingGrowthCurve() {
       profitTargetRemaining,
       profitTargetPct,
       isFunded: selected?.status === 'funded',
+      todayPnl,
+      todayTrades: todayTrades.length,
+      daysTradedCount,
     }
-  }, [selected, equityPoints])
+  }, [selected, equityPoints, accountTrades, now])
 
   // Date range label
   const dateRange = useMemo(() => {
@@ -408,10 +417,10 @@ export default function TradingGrowthCurve() {
         </div>
       </div>
 
-      {/* Body: chart + KPIs */}
+      {/* Body: chart + KPIs + Account */}
       <div className="flex flex-col lg:flex-row">
-        {/* Chart (left, 80%) */}
-        <div className="flex-1 lg:w-[80%] p-5 min-h-[280px]">
+        {/* Chart (left, 60%) */}
+        <div className="flex-1 lg:w-[60%] p-5 min-h-[280px]">
           <ResponsiveContainer width="100%" height={280}>
             <AreaChart data={equityPoints} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
               <defs>
@@ -534,9 +543,9 @@ export default function TradingGrowthCurve() {
           </div>
         </div>
 
-        {/* KPI Cards (right, 20%) */}
+        {/* KPI Cards (center, 20%) */}
         {kpiData && (
-          <div className="lg:w-[20%] lg:min-w-[200px] flex flex-row lg:flex-col gap-3 p-4 lg:pl-0 lg:border-l border-[var(--border)] overflow-x-auto lg:overflow-visible">
+          <div className="lg:w-[20%] lg:min-w-[180px] flex flex-row lg:flex-col gap-3 p-4 lg:pl-0 lg:border-l border-[var(--border)] overflow-x-auto lg:overflow-visible">
             {/* 1. NET P&L */}
             <MiniKPICard
               label="Net Profit Loss"
@@ -607,6 +616,58 @@ export default function TradingGrowthCurve() {
               icon={<CircleDot size={16} className="text-blue-400" />}
               iconBg="bg-blue-400/10"
               valueColor={kpiData.maxDrawdownAmount > 0 ? 'text-red-400' : 'text-[var(--text-primary)]'}
+            />
+          </div>
+        )}
+
+        {/* Account & Daily P&L (right, 20%) */}
+        {kpiData && (
+          <div className="lg:w-[20%] lg:min-w-[180px] flex flex-row lg:flex-col gap-3 p-4 lg:pl-0 lg:border-l border-[var(--border)] overflow-x-auto lg:overflow-visible">
+            {/* Account Info */}
+            <MiniKPICard
+              label="Account"
+              value={selected?.nickname || selected?.firmName || 'All Accounts'}
+              subValue={selected ? `${selected.firmName} · ${selected.status === 'funded' ? 'Funded' : 'Evaluation'}` : `${propAccounts.length} account${propAccounts.length !== 1 ? 's' : ''}`}
+              change={null}
+              icon={<Shield size={16} className="text-indigo-400" />}
+              iconBg="bg-indigo-400/10"
+              valueColor="text-[var(--text-primary)]"
+            />
+
+            {/* Starting Balance */}
+            <MiniKPICard
+              label="Starting Balance"
+              value={fmtDollar(selected?.startingBalance ?? aggregatedStartingBalance)}
+              subValue={selected?.drawdownType === 'trailing' ? 'Trailing drawdown' : 'Static drawdown'}
+              change={null}
+              icon={<DollarSign size={16} className="text-emerald-400" />}
+              iconBg="bg-emerald-400/10"
+              valueColor="text-[var(--text-primary)]"
+            />
+
+            {/* Today's P&L */}
+            <MiniKPICard
+              label="Today's P&L"
+              value={kpiData.todayPnl !== undefined ? `${kpiData.todayPnl >= 0 ? '+' : ''}${fmtDollar(kpiData.todayPnl)}` : '$0'}
+              subValue={kpiData.todayTrades !== undefined ? `${kpiData.todayTrades} trade${kpiData.todayTrades !== 1 ? 's' : ''} today` : 'No trades today'}
+              change={null}
+              icon={kpiData.todayPnl && kpiData.todayPnl >= 0
+                ? <TrendingUp size={16} className="text-green-400" />
+                : <TrendingDown size={16} className="text-red-400" />
+              }
+              iconBg={kpiData.todayPnl && kpiData.todayPnl >= 0 ? 'bg-green-400/10' : 'bg-red-400/10'}
+              valueColor={kpiData.todayPnl && kpiData.todayPnl >= 0 ? 'text-green-400' : kpiData.todayPnl && kpiData.todayPnl < 0 ? 'text-red-400' : 'text-[var(--text-primary)]'}
+            />
+
+            {/* Days Traded */}
+            <MiniKPICard
+              label="Days Traded"
+              value={`${kpiData.daysTradedCount ?? 0}`}
+              subValue={selected?.minTradingDays ? `${Math.max(0, selected.minTradingDays - (kpiData.daysTradedCount ?? 0))} more needed` : 'No minimum'}
+              change={null}
+              icon={<BarChart2 size={16} className="text-amber-400" />}
+              iconBg="bg-amber-400/10"
+              valueColor="text-[var(--text-primary)]"
             />
           </div>
         )}

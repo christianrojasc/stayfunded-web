@@ -4,8 +4,8 @@ import ShineBorder from '@/components/ShineBorder'
 import { X, Check, Zap, ArrowRight, Loader2 } from 'lucide-react'
 import { useAuth } from '@/components/AuthContext'
 
-const PRICE_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY!
-const PRICE_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_YEARLY!
+const PRICE_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY || 'price_1T8DHOCheboU7tiQPTTAPQvv'
+const PRICE_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_YEARLY || 'price_1T8DHOCheboU7tiQR1S4s1gk'
 
 const features = [
   'Unlimited prop firm accounts',

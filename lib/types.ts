@@ -191,13 +191,19 @@ export const PROP_FIRM_PRESETS: PropFirmPreset[] = [
   {
     firmName: 'My Funded Futures',
     prefixes: ['MFFU'],
-    description: 'Static EOD drawdown. Multiple program options. Next-day payout available.',
+    description: '3 plan types: Rapid (daily payouts, subscription), Flex (no consistency, lower cost), Pro (premium features, live transition). EOD drawdown in eval, real-time in funded. No daily loss limit. $0 activation fee.',
     plans: [
-      { planId: 'mffu-50k-mini', label: '50K Mini', size: 50, evalCost: 77, activationFee: null, profitTarget: 1500, drawdown: 1000, drawdownType: 'static_eod', dailyLossLimit: 500, minTradingDays: 2, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 77, consistencyRule: 'No single trading day should exceed 30% of total profits' },
-      { planId: 'mffu-50k-std', label: '50K Standard', size: 50, evalCost: 107, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: 1000, minTradingDays: 2, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 107, consistencyRule: 'No single trading day should exceed 30% of total profits' },
-      { planId: 'mffu-50k-fast', label: '50K Fast Payout', size: 50, evalCost: 125.60, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: 1000, minTradingDays: 2, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 125.60, consistencyRule: 'No single trading day should exceed 30% of total profits' },
-      { planId: 'mffu-100k-std', label: '100K Standard', size: 100, evalCost: 214, activationFee: null, profitTarget: 6000, drawdown: 3000, drawdownType: 'static_eod', dailyLossLimit: 2000, minTradingDays: 2, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 214, consistencyRule: 'No single trading day should exceed 30% of total profits' },
-      { planId: 'mffu-150k-std', label: '150K Standard', size: 150, evalCost: 278, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'static_eod', dailyLossLimit: 3000, minTradingDays: 2, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 278, consistencyRule: 'No single trading day should exceed 30% of total profits' },
+      // ── Rapid Plan (daily payouts, 50% consistency in eval, subscription) ──
+      { planId: 'mffu-50k-rapid', label: '50K Rapid', size: 50, evalCost: 157, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 1, maxFundedAccounts: 5, resetFee: null, consistencyRule: '50% consistency in eval. No consistency once funded.' },
+      { planId: 'mffu-100k-rapid', label: '100K Rapid', size: 100, evalCost: 267, activationFee: null, profitTarget: 6000, drawdown: 3000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 1, maxFundedAccounts: 5, resetFee: null, consistencyRule: '50% consistency in eval. No consistency once funded.' },
+      { planId: 'mffu-150k-rapid', label: '150K Rapid', size: 150, evalCost: 347, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 1, maxFundedAccounts: 5, resetFee: null, consistencyRule: '50% consistency in eval. No consistency once funded.' },
+      // ── Flex Plan (no consistency in funded, lower cost, $3K payout cap) ──
+      { planId: 'mffu-25k-flex', label: '25K Flex', size: 25, evalCost: 84, activationFee: null, profitTarget: 1500, drawdown: 1000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: 'No consistency rule' },
+      { planId: 'mffu-50k-flex', label: '50K Flex', size: 50, evalCost: 107, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: null, consistencyRule: 'No consistency rule' },
+      // ── Pro Plan (premium, live transition after 3 payouts, $100K cap) ──
+      { planId: 'mffu-50k-pro', label: '50K Pro', size: 50, evalCost: 227, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 14, maxFundedAccounts: 5, resetFee: null, consistencyRule: '50% consistency in eval. No consistency once funded.' },
+      { planId: 'mffu-100k-pro', label: '100K Pro', size: 100, evalCost: 344, activationFee: null, profitTarget: 6000, drawdown: 3000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 14, maxFundedAccounts: 5, resetFee: null, consistencyRule: '50% consistency in eval. No consistency once funded.' },
+      { planId: 'mffu-150k-pro', label: '150K Pro', size: 150, evalCost: 477, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 14, maxFundedAccounts: 5, resetFee: null, consistencyRule: '50% consistency in eval. No consistency once funded.' },
     ],
   },
 

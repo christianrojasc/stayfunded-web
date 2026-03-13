@@ -125,13 +125,13 @@ export const PROP_FIRM_PRESETS: PropFirmPreset[] = [
     prefixes: ['APEX'],
     description: 'Trailing intraday drawdown. No daily loss limit. Up to 20 funded accounts.',
     plans: [
-      { planId: 'apex-25k', label: '25K', size: 25, evalCost: 18.70, activationFee: 75, profitTarget: 1500, drawdown: 1500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: '' },
-      { planId: 'apex-50k', label: '50K', size: 50, evalCost: 19.70, activationFee: 75, profitTarget: 3000, drawdown: 2500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: '' },
-      { planId: 'apex-100k', label: '100K', size: 100, evalCost: 29.70, activationFee: 75, profitTarget: 6000, drawdown: 3000, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: '' },
-      { planId: 'apex-100k-static', label: '100K Static', size: 100, evalCost: 29.70, activationFee: 75, profitTarget: 2000, drawdown: 625, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: '' },
-      { planId: 'apex-150k', label: '150K', size: 150, evalCost: 39.70, activationFee: 95, profitTarget: 9000, drawdown: 5000, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: '' },
-      { planId: 'apex-250k', label: '250K', size: 250, evalCost: 39.70, activationFee: 95, profitTarget: 15000, drawdown: 6500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: '' },
-      { planId: 'apex-300k', label: '300K', size: 300, evalCost: 39.70, activationFee: 95, profitTarget: 20000, drawdown: 7500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: '' },
+      { planId: 'apex-25k', label: '25K', size: 25, evalCost: 18.70, activationFee: 75, profitTarget: 1500, drawdown: 1500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: 'No consistency in eval. 30% once funded (no single day > 30% of total profit). Drops after 6th payout.' },
+      { planId: 'apex-50k', label: '50K', size: 50, evalCost: 19.70, activationFee: 75, profitTarget: 3000, drawdown: 2500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: 'No consistency in eval. 30% once funded (no single day > 30% of total profit). Drops after 6th payout.' },
+      { planId: 'apex-100k', label: '100K', size: 100, evalCost: 29.70, activationFee: 75, profitTarget: 6000, drawdown: 3000, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: 'No consistency in eval. 30% once funded (no single day > 30% of total profit). Drops after 6th payout.' },
+      { planId: 'apex-100k-static', label: '100K Static', size: 100, evalCost: 29.70, activationFee: 75, profitTarget: 2000, drawdown: 625, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: 'No consistency in eval. 30% once funded (no single day > 30% of total profit). Drops after 6th payout.' },
+      { planId: 'apex-150k', label: '150K', size: 150, evalCost: 39.70, activationFee: 95, profitTarget: 9000, drawdown: 5000, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: 'No consistency in eval. 30% once funded (no single day > 30% of total profit). Drops after 6th payout.' },
+      { planId: 'apex-250k', label: '250K', size: 250, evalCost: 39.70, activationFee: 95, profitTarget: 15000, drawdown: 6500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: 'No consistency in eval. 30% once funded (no single day > 30% of total profit). Drops after 6th payout.' },
+      { planId: 'apex-300k', label: '300K', size: 300, evalCost: 39.70, activationFee: 95, profitTarget: 20000, drawdown: 7500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 8, maxFundedAccounts: 20, resetFee: 50, consistencyRule: 'No consistency in eval. 30% once funded (no single day > 30% of total profit). Drops after 6th payout.' },
     ],
   },
 
@@ -167,11 +167,11 @@ export const PROP_FIRM_PRESETS: PropFirmPreset[] = [
     prefixes: ['TPT'],
     description: 'Static EOD drawdown. Same-day payout. No daily loss limit.',
     plans: [
-      { planId: 'tpt-25k', label: '25K', size: 25, evalCost: 90, activationFee: null, profitTarget: 1500, drawdown: 1500, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 100, consistencyRule: '' },
-      { planId: 'tpt-50k', label: '50K', size: 50, evalCost: 102, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 100, consistencyRule: '' },
-      { planId: 'tpt-75k', label: '75K', size: 75, evalCost: 147, activationFee: null, profitTarget: 4500, drawdown: 2500, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 100, consistencyRule: '' },
-      { planId: 'tpt-100k', label: '100K', size: 100, evalCost: 198, activationFee: null, profitTarget: 6000, drawdown: 3000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 100, consistencyRule: '' },
-      { planId: 'tpt-150k', label: '150K', size: 150, evalCost: 216, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 100, consistencyRule: '' },
+      { planId: 'tpt-25k', label: '25K', size: 25, evalCost: 90, activationFee: null, profitTarget: 1500, drawdown: 1500, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 100, consistencyRule: '50% in eval (no single day > 50% of profit target). No consistency once funded.' },
+      { planId: 'tpt-50k', label: '50K', size: 50, evalCost: 102, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 100, consistencyRule: '50% in eval (no single day > 50% of profit target). No consistency once funded.' },
+      { planId: 'tpt-75k', label: '75K', size: 75, evalCost: 147, activationFee: null, profitTarget: 4500, drawdown: 2500, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 100, consistencyRule: '50% in eval (no single day > 50% of profit target). No consistency once funded.' },
+      { planId: 'tpt-100k', label: '100K', size: 100, evalCost: 198, activationFee: null, profitTarget: 6000, drawdown: 3000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 100, consistencyRule: '50% in eval (no single day > 50% of profit target). No consistency once funded.' },
+      { planId: 'tpt-150k', label: '150K', size: 150, evalCost: 216, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 1, maxFundedAccounts: 5, resetFee: 100, consistencyRule: '50% in eval (no single day > 50% of profit target). No consistency once funded.' },
     ],
   },
 
@@ -214,10 +214,10 @@ export const PROP_FIRM_PRESETS: PropFirmPreset[] = [
     description: 'EOD drawdown. One-time fee (no subscriptions). 90/10 profit split. Free activation. LucidPro, LucidFlex, and LucidDirect plans. Max 5 funded accounts.',
     plans: [
       // ── LucidPro Eval (higher cost, stricter drawdown, DLL included) ──
-      { planId: 'lucid-25k-pro', label: '25K Pro Eval', size: 25, evalCost: 135, activationFee: null, profitTarget: 1250, drawdown: 1000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 90, consistencyRule: '' },
-      { planId: 'lucid-50k-pro', label: '50K Pro Eval', size: 50, evalCost: 185, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: 1200, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 120, consistencyRule: '' },
-      { planId: 'lucid-100k-pro', label: '100K Pro Eval', size: 100, evalCost: 285, activationFee: null, profitTarget: 6000, drawdown: 3000, drawdownType: 'static_eod', dailyLossLimit: 1800, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 180, consistencyRule: '' },
-      { planId: 'lucid-150k-pro', label: '150K Pro Eval', size: 150, evalCost: 370, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'static_eod', dailyLossLimit: 2700, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 245, consistencyRule: '' },
+      { planId: 'lucid-25k-pro', label: '25K Pro Eval', size: 25, evalCost: 135, activationFee: null, profitTarget: 1250, drawdown: 1000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 90, consistencyRule: 'No consistency in eval.' },
+      { planId: 'lucid-50k-pro', label: '50K Pro Eval', size: 50, evalCost: 185, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: 1200, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 120, consistencyRule: 'No consistency in eval.' },
+      { planId: 'lucid-100k-pro', label: '100K Pro Eval', size: 100, evalCost: 285, activationFee: null, profitTarget: 6000, drawdown: 3000, drawdownType: 'static_eod', dailyLossLimit: 1800, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 180, consistencyRule: 'No consistency in eval.' },
+      { planId: 'lucid-150k-pro', label: '150K Pro Eval', size: 150, evalCost: 370, activationFee: null, profitTarget: 9000, drawdown: 4500, drawdownType: 'static_eod', dailyLossLimit: 2700, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 245, consistencyRule: 'No consistency in eval.' },
       // ── LucidFlex Eval (lower cost, no DLL, 50% consistency in eval) ──
       { planId: 'lucid-25k-flex', label: '25K Flex Eval', size: 25, evalCost: 100, activationFee: null, profitTarget: 1250, drawdown: 1000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 60, consistencyRule: '50% consistency in eval. No consistency once funded.' },
       { planId: 'lucid-50k-flex', label: '50K Flex Eval', size: 50, evalCost: 130, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: null, minTradingDays: 1, daysToPayout: 5, maxFundedAccounts: 5, resetFee: 85, consistencyRule: '50% consistency in eval. No consistency once funded.' },
@@ -255,10 +255,10 @@ export const PROP_FIRM_PRESETS: PropFirmPreset[] = [
     prefixes: ['BLX'],
     description: 'Trailing drawdown. Competitive pricing.',
     plans: [
-      { planId: 'blx-10k', label: '10K', size: 10, evalCost: 49, activationFee: null, profitTarget: 750, drawdown: 550, drawdownType: 'trailing', dailyLossLimit: 250, minTradingDays: 1, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 49, consistencyRule: '' },
-      { planId: 'blx-25k', label: '25K', size: 25, evalCost: 59, activationFee: null, profitTarget: 1500, drawdown: 1500, drawdownType: 'trailing', dailyLossLimit: 625, minTradingDays: 1, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 59, consistencyRule: '' },
-      { planId: 'blx-50k', label: '50K', size: 50, evalCost: 79, activationFee: null, profitTarget: 3000, drawdown: 2750, drawdownType: 'trailing', dailyLossLimit: 1250, minTradingDays: 1, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 79, consistencyRule: '' },
-      { planId: 'blx-100k', label: '100K', size: 100, evalCost: 129, activationFee: null, profitTarget: 5000, drawdown: 5000, drawdownType: 'trailing', dailyLossLimit: 2500, minTradingDays: 1, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 129, consistencyRule: '' },
+      { planId: 'blx-10k', label: '10K', size: 10, evalCost: 49, activationFee: null, profitTarget: 750, drawdown: 550, drawdownType: 'trailing', dailyLossLimit: 250, minTradingDays: 1, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 49, consistencyRule: 'No consistency in eval. 40% once funded (no single day > 40% of total profit at payout).' },
+      { planId: 'blx-25k', label: '25K', size: 25, evalCost: 59, activationFee: null, profitTarget: 1500, drawdown: 1500, drawdownType: 'trailing', dailyLossLimit: 625, minTradingDays: 1, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 59, consistencyRule: 'No consistency in eval. 40% once funded (no single day > 40% of total profit at payout).' },
+      { planId: 'blx-50k', label: '50K', size: 50, evalCost: 79, activationFee: null, profitTarget: 3000, drawdown: 2750, drawdownType: 'trailing', dailyLossLimit: 1250, minTradingDays: 1, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 79, consistencyRule: 'No consistency in eval. 40% once funded (no single day > 40% of total profit at payout).' },
+      { planId: 'blx-100k', label: '100K', size: 100, evalCost: 129, activationFee: null, profitTarget: 5000, drawdown: 5000, drawdownType: 'trailing', dailyLossLimit: 2500, minTradingDays: 1, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 129, consistencyRule: 'No consistency in eval. 40% once funded (no single day > 40% of total profit at payout).' },
     ],
   },
 
@@ -312,10 +312,10 @@ export const PROP_FIRM_PRESETS: PropFirmPreset[] = [
     prefixes: ['UPROF'],
     description: 'Trailing drawdown. Competitive fees.',
     plans: [
-      { planId: 'uprof-25k', label: '25K', size: 25, evalCost: 45, activationFee: null, profitTarget: 1500, drawdown: 1500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 45, consistencyRule: '' },
-      { planId: 'uprof-50k', label: '50K', size: 50, evalCost: 79, activationFee: null, profitTarget: 3000, drawdown: 2500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 79, consistencyRule: '' },
-      { planId: 'uprof-100k', label: '100K', size: 100, evalCost: 129, activationFee: null, profitTarget: 6000, drawdown: 4000, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 129, consistencyRule: '' },
-      { planId: 'uprof-200k', label: '200K', size: 200, evalCost: 199, activationFee: null, profitTarget: 12000, drawdown: 7000, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 199, consistencyRule: '' },
+      { planId: 'uprof-25k', label: '25K', size: 25, evalCost: 45, activationFee: null, profitTarget: 1500, drawdown: 1500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 45, consistencyRule: '30% once funded (best day ≤ 30% of total profit). Min 4 profitable days for payout.' },
+      { planId: 'uprof-50k', label: '50K', size: 50, evalCost: 79, activationFee: null, profitTarget: 3000, drawdown: 2500, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 79, consistencyRule: '30% once funded (best day ≤ 30% of total profit). Min 4 profitable days for payout.' },
+      { planId: 'uprof-100k', label: '100K', size: 100, evalCost: 129, activationFee: null, profitTarget: 6000, drawdown: 4000, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 129, consistencyRule: '30% once funded (best day ≤ 30% of total profit). Min 4 profitable days for payout.' },
+      { planId: 'uprof-200k', label: '200K', size: 200, evalCost: 199, activationFee: null, profitTarget: 12000, drawdown: 7000, drawdownType: 'trailing', dailyLossLimit: null, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 199, consistencyRule: '30% once funded (best day ≤ 30% of total profit). Min 4 profitable days for payout.' },
     ],
   },
 
@@ -325,10 +325,10 @@ export const PROP_FIRM_PRESETS: PropFirmPreset[] = [
     prefixes: ['ETF'],
     description: 'Static drawdown. Straightforward rules.',
     plans: [
-      { planId: 'etf-25k', label: '25K', size: 25, evalCost: 75, activationFee: null, profitTarget: 1500, drawdown: 1500, drawdownType: 'static_eod', dailyLossLimit: 750, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 75, consistencyRule: '' },
-      { planId: 'etf-50k', label: '50K', size: 50, evalCost: 120, activationFee: null, profitTarget: 3000, drawdown: 2500, drawdownType: 'static_eod', dailyLossLimit: 1250, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 120, consistencyRule: '' },
-      { planId: 'etf-100k', label: '100K', size: 100, evalCost: 195, activationFee: null, profitTarget: 6000, drawdown: 4000, drawdownType: 'static_eod', dailyLossLimit: 2000, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 195, consistencyRule: '' },
-      { planId: 'etf-200k', label: '200K', size: 200, evalCost: 350, activationFee: null, profitTarget: 12000, drawdown: 7000, drawdownType: 'static_eod', dailyLossLimit: 3500, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 350, consistencyRule: '' },
+      { planId: 'etf-25k', label: '25K', size: 25, evalCost: 75, activationFee: null, profitTarget: 1500, drawdown: 1500, drawdownType: 'static_eod', dailyLossLimit: 750, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 75, consistencyRule: 'No consistency in eval. 40% once funded (best day ≤ 40% of total profit at payout).' },
+      { planId: 'etf-50k', label: '50K', size: 50, evalCost: 120, activationFee: null, profitTarget: 3000, drawdown: 2500, drawdownType: 'static_eod', dailyLossLimit: 1250, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 120, consistencyRule: 'No consistency in eval. 40% once funded (best day ≤ 40% of total profit at payout).' },
+      { planId: 'etf-100k', label: '100K', size: 100, evalCost: 195, activationFee: null, profitTarget: 6000, drawdown: 4000, drawdownType: 'static_eod', dailyLossLimit: 2000, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 195, consistencyRule: 'No consistency in eval. 40% once funded (best day ≤ 40% of total profit at payout).' },
+      { planId: 'etf-200k', label: '200K', size: 200, evalCost: 350, activationFee: null, profitTarget: 12000, drawdown: 7000, drawdownType: 'static_eod', dailyLossLimit: 3500, minTradingDays: 5, daysToPayout: 7, maxFundedAccounts: 5, resetFee: 350, consistencyRule: 'No consistency in eval. 40% once funded (best day ≤ 40% of total profit at payout).' },
     ],
   },
 
@@ -362,8 +362,8 @@ export const PROP_FIRM_PRESETS: PropFirmPreset[] = [
     prefixes: [],
     description: 'Configure your own rules for any firm not listed.',
     plans: [
-      { planId: 'custom-50k', label: '50K Custom', size: 50, evalCost: null, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: 1000, minTradingDays: 5, daysToPayout: 14, maxFundedAccounts: 1, resetFee: null, consistencyRule: '' },
-      { planId: 'custom-100k', label: '100K Custom', size: 100, evalCost: null, activationFee: null, profitTarget: 6000, drawdown: 4000, drawdownType: 'static_eod', dailyLossLimit: 2000, minTradingDays: 5, daysToPayout: 14, maxFundedAccounts: 1, resetFee: null, consistencyRule: '' },
+      { planId: 'custom-50k', label: '50K Custom', size: 50, evalCost: null, activationFee: null, profitTarget: 3000, drawdown: 2000, drawdownType: 'static_eod', dailyLossLimit: 1000, minTradingDays: 5, daysToPayout: 14, maxFundedAccounts: 1, resetFee: null, consistencyRule: 'Set by your firm' },
+      { planId: 'custom-100k', label: '100K Custom', size: 100, evalCost: null, activationFee: null, profitTarget: 6000, drawdown: 4000, drawdownType: 'static_eod', dailyLossLimit: 2000, minTradingDays: 5, daysToPayout: 14, maxFundedAccounts: 1, resetFee: null, consistencyRule: 'Set by your firm' },
     ],
   },
 ]

@@ -620,55 +620,50 @@ export default function TradingGrowthCurve() {
           </div>
         )}
 
-        {/* Account & Daily P&L (right, 20%) */}
-        {kpiData && (
-          <div className="lg:w-[20%] lg:min-w-[180px] flex flex-row lg:flex-col gap-3 p-4 lg:pl-0 lg:border-l border-[var(--border)] overflow-x-auto lg:overflow-visible">
-            {/* Account Info */}
-            <MiniKPICard
-              label="Account"
-              value={selected?.nickname || selected?.firmName || 'All Accounts'}
-              subValue={selected ? `${selected.firmName} · ${selected.status === 'funded' ? 'Funded' : 'Evaluation'}` : `${propAccounts.length} account${propAccounts.length !== 1 ? 's' : ''}`}
-              change={null}
-              icon={<Shield size={16} className="text-indigo-400" />}
-              iconBg="bg-indigo-400/10"
-              valueColor="text-[var(--text-primary)]"
-            />
-
-            {/* Starting Balance */}
-            <MiniKPICard
-              label="Starting Balance"
-              value={fmtDollar(selected?.startingBalance ?? aggregatedStartingBalance)}
-              subValue={selected?.drawdownType === 'trailing' ? 'Trailing drawdown' : 'Static drawdown'}
-              change={null}
-              icon={<DollarSign size={16} className="text-emerald-400" />}
-              iconBg="bg-emerald-400/10"
-              valueColor="text-[var(--text-primary)]"
-            />
-
-            {/* Today's P&L */}
-            <MiniKPICard
-              label="Today's P&L"
-              value={kpiData.todayPnl !== undefined ? `${kpiData.todayPnl >= 0 ? '+' : ''}${fmtDollar(kpiData.todayPnl)}` : '$0'}
-              subValue={kpiData.todayTrades !== undefined ? `${kpiData.todayTrades} trade${kpiData.todayTrades !== 1 ? 's' : ''} today` : 'No trades today'}
-              change={null}
-              icon={kpiData.todayPnl && kpiData.todayPnl >= 0
-                ? <TrendingUp size={16} className="text-green-400" />
-                : <TrendingDown size={16} className="text-red-400" />
-              }
-              iconBg={kpiData.todayPnl && kpiData.todayPnl >= 0 ? 'bg-green-400/10' : 'bg-red-400/10'}
-              valueColor={kpiData.todayPnl && kpiData.todayPnl >= 0 ? 'text-green-400' : kpiData.todayPnl && kpiData.todayPnl < 0 ? 'text-red-400' : 'text-[var(--text-primary)]'}
-            />
-
-            {/* Days Traded */}
-            <MiniKPICard
-              label="Days Traded"
-              value={`${kpiData.daysTradedCount ?? 0}`}
-              subValue={selected?.minTradingDays ? `${Math.max(0, selected.minTradingDays - (kpiData.daysTradedCount ?? 0))} more needed` : 'No minimum'}
-              change={null}
-              icon={<BarChart2 size={16} className="text-amber-400" />}
-              iconBg="bg-amber-400/10"
-              valueColor="text-[var(--text-primary)]"
-            />
+        {/* Account List + Daily P&L (right, 20%) */}
+        {propAccounts.length > 0 && (
+          <div className="lg:w-[20%] lg:min-w-[200px] p-4 lg:pl-0 lg:border-l border-[var(--border)] overflow-y-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-[var(--text-muted)] uppercase tracking-wider">
+                  <th className="text-left font-semibold pb-2 text-[10px]">Account</th>
+                  <th className="text-right font-semibold pb-2 text-[10px]">Balance</th>
+                  <th className="text-right font-semibold pb-2 text-[10px]">Day P&L</th>
+                </tr>
+              </thead>
+              <tbody>
+                {propAccounts.map((acc, i) => {
+                  const accTrades = trades.filter(t => t.accountId === acc.id && t.status === 'closed')
+                  const totalPnl = accTrades.reduce((s, t) => s + t.netPnl, 0)
+                  const balance = acc.startingBalance + totalPnl
+                  const todayStr = format(now, 'yyyy-MM-dd')
+                  const dayPnl = accTrades.filter(t => t.sessionDate === todayStr).reduce((s, t) => s + t.netPnl, 0)
+                  const isSelected = selected?.id === acc.id
+                  const prefix = acc.firmName?.match(/^[A-Z]+/)?.[0] || acc.firmName?.substring(0, 4) || ''
+                  return (
+                    <tr
+                      key={acc.id}
+                      className={`border-t border-[var(--border)] ${isSelected ? 'bg-[var(--bg-card)]' : ''} hover:bg-[var(--bg-card)] transition-colors`}
+                    >
+                      <td className="py-2.5 pr-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-semibold text-[var(--text-primary)] truncate max-w-[80px]">
+                            {acc.nickname || `${prefix}***`}
+                          </span>
+                          {acc.status === 'funded' && <span className="text-amber-400 text-[10px]">👑</span>}
+                        </div>
+                      </td>
+                      <td className="py-2.5 text-right font-mono font-semibold text-[var(--text-primary)]">
+                        ${balance.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </td>
+                      <td className={`py-2.5 text-right font-mono font-bold ${dayPnl > 0 ? 'text-[#4ADE80]' : dayPnl < 0 ? 'text-[#EF4444]' : 'text-[var(--text-muted)]'}`}>
+                        {dayPnl !== 0 ? `${dayPnl > 0 ? '+' : ''}$${Math.abs(dayPnl).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

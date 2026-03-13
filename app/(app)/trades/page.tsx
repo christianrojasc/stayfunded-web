@@ -76,7 +76,7 @@ export default function TradesPage() {
       return sortDir === 'asc' ? va - vb : vb - va
     })
     return t
-  }, [trades, search, filterSide, filterSymbol, sortKey, sortDir])
+  }, [accountFilteredTrades, search, filterSide, filterSymbol, sortKey, sortDir])
 
   const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
   const totalPages = Math.ceil(filtered.length / PER_PAGE)

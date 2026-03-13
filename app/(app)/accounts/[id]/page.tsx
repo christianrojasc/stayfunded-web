@@ -274,11 +274,11 @@ export default function AccountDetailPage({ params }: { params: { id: string } }
           )}
         </div>
         {account.consistencyRule && (
-          <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-            <p className="text-xs font-semibold text-amber-700 mb-0.5 flex items-center gap-1.5">
+          <div className="mt-3 p-3 rounded-xl" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+            <p className="text-xs font-semibold text-amber-400 mb-0.5 flex items-center gap-1.5">
               <AlertTriangle size={11} /> Consistency Rule
             </p>
-            <p className="text-xs text-amber-400">{account.consistencyRule}</p>
+            <p className="text-xs text-[var(--text-secondary)]">{account.consistencyRule}</p>
           </div>
         )}
       </div>

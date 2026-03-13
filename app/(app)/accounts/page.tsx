@@ -283,10 +283,10 @@ function FirmSearchSelect({
       </button>
 
       {open && (
-        <div className="absolute top-full mt-1 left-0 right-0 bg-[#0D1117] border border-[rgba(255,255,255,0.08)] rounded-xl shadow-2xl z-[60] max-h-80 flex flex-col"
-          style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.6)' }}>
+        <div className="absolute top-full mt-1 left-0 right-0 rounded-xl shadow-2xl z-[60] max-h-80 flex flex-col"
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-strong)', boxShadow: '0 20px 50px rgba(0,0,0,0.4)' }}>
           {/* Search */}
-          <div className="p-3 border-b border-[rgba(255,255,255,0.06)]">
+          <div className="p-3" style={{ borderBottom: '1px solid var(--border)' }}>
             <div className="relative">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
               <input

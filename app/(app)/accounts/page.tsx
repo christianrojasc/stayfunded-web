@@ -283,15 +283,15 @@ function FirmSearchSelect({
       </button>
 
       {open && (
-        <div className="absolute top-full mt-1 left-0 right-0 bg-[#0D1117] border border-[rgba(255,255,255,0.08)] rounded-xl shadow-2xl z-[60] max-h-64 flex flex-col"
+        <div className="absolute top-full mt-1 left-0 right-0 bg-[#0D1117] border border-[rgba(255,255,255,0.08)] rounded-xl shadow-2xl z-[60] max-h-80 flex flex-col"
           style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.6)' }}>
           {/* Search */}
-          <div className="p-2 border-b border-[rgba(255,255,255,0.06)]">
+          <div className="p-3 border-b border-[rgba(255,255,255,0.06)]">
             <div className="relative">
-              <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
               <input
                 autoFocus
-                className="input-field pl-8 py-1.5 text-xs"
+                className="input-field pl-9 py-2 text-sm"
                 placeholder="Search firm…"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
@@ -304,7 +304,7 @@ function FirmSearchSelect({
                 key={firm.firmName}
                 type="button"
                 onClick={() => { onChange(firm); toggle(false); setQuery('') }}
-                className="w-full text-left px-3 py-2.5 hover:bg-white/5 transition-colors flex items-center justify-between group"
+                className="w-full text-left px-4 py-3 hover:bg-white/5 transition-colors flex items-center justify-between group"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">{firm.firmName}</p>

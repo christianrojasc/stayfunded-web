@@ -12,7 +12,7 @@ import {
 import { format, parseISO } from 'date-fns'
 import { useTrades } from '@/components/TradeContext'
 import { useAccountFilter } from '@/components/AccountFilterContext'
-import { getSessionInfo } from '@/lib/session'
+import { getSessionInfo, getTodaySessionDate } from '@/lib/session'
 import { DrawdownType } from '@/lib/types'
 
 // ─── Formatting helpers ───────────────────────────────────────────────────────
@@ -296,8 +296,8 @@ export default function TradingGrowthCurve() {
       ? (Math.max(0, totalPnl) / selected.profitTarget) * 100
       : null
 
-    // Today's P&L and trade count
-    const todayStr = format(now, 'yyyy-MM-dd')
+    // Today's P&L and trade count (using session date, not calendar date)
+    const todayStr = getTodaySessionDate()
     const todayTrades = accountTrades.filter(t => t.sessionDate === todayStr)
     const todayPnl = todayTrades.reduce((s, t) => s + t.netPnl, 0)
     const daysTradedCount = new Set(accountTrades.map(t => t.sessionDate)).size
@@ -635,8 +635,8 @@ export default function TradingGrowthCurve() {
                 const accTrades = trades.filter(t => t.accountId === acc.id && t.status === 'closed')
                 const totalPnl = accTrades.reduce((s, t) => s + t.netPnl, 0)
                 const balance = acc.startingBalance + totalPnl
-                const todayStr = format(now, 'yyyy-MM-dd')
-                const dayPnl = accTrades.filter(t => t.sessionDate === todayStr).reduce((s, t) => s + t.netPnl, 0)
+                const sessionStr = getTodaySessionDate()
+                const dayPnl = accTrades.filter(t => t.sessionDate === sessionStr).reduce((s, t) => s + t.netPnl, 0)
                 const isSelected = selected?.id === acc.id
                 const nickname = acc.nickname || acc.firmName || 'Account'
                 const isFunded = acc.status === 'funded'

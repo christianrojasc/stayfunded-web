@@ -95,7 +95,8 @@ export function getSessionBounds(now: Date = new Date()): {
 
   const start = estWallClockToUTC(startYear, startMonth, startDay, SESSION_START_HOUR)
   const end = estWallClockToUTC(endYear, endMonth, endDay, SESSION_END_HOUR)
-  const sessionDate = `${startYear}-${String(startMonth + 1).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`
+  // Session date = the date the session ENDS (at 5PM), matching CSV parser convention
+  const sessionDate = `${endYear}-${String(endMonth + 1).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`
 
   return { start, end, sessionDate }
 }

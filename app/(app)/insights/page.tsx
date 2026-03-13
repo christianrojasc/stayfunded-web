@@ -443,8 +443,8 @@ function InsightsPageInner() {
           </h3>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={pnlDistribution} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
-              <XAxis dataKey="range" tick={{ fill: 'var(--text-muted)', fontSize: 9 }} axisLine={false} tickLine={false} interval={1} />
-              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
+              <XAxis dataKey="range" tick={{ fill: '#94A3B8', fontSize: 9 }} axisLine={false} tickLine={false} interval={1} />
+              <YAxis tick={{ fill: '#94A3B8', fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
               <Tooltip contentStyle={TT} formatter={((v: any) => [`${v} trades`, 'Count']) as any} />
               <Bar dataKey="count" radius={[3, 3, 0, 0]}>
                 {pnlDistribution.map((b, i) => (
@@ -466,8 +466,8 @@ function InsightsPageInner() {
             </h3>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={hourStats} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
-                <XAxis dataKey="hour" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
+                <XAxis dataKey="hour" tick={{ fill: '#94A3B8', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#94A3B8', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
                 <Tooltip contentStyle={TT} formatter={((v: any) => [`$${Number(v).toFixed(0)}`, 'P&L']) as any} />
                 <ReferenceLine y={0} stroke="var(--border)" />
                 <Bar dataKey="pnl" radius={[4, 4, 0, 0]}>
@@ -487,8 +487,8 @@ function InsightsPageInner() {
           </h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={dowStats} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
-              <XAxis dataKey="day" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
+              <XAxis dataKey="day" tick={{ fill: '#94A3B8', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: '#94A3B8', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
               <Tooltip contentStyle={TT} formatter={((v: any, name: any) => [name === 'pnl' ? `$${v.toFixed(0)}` : `${v}`, name === 'pnl' ? 'P&L'  : 'Trades']) as any} />
               <ReferenceLine y={0} stroke="var(--border)" />
               <Bar dataKey="pnl" radius={[4, 4, 0, 0]}>

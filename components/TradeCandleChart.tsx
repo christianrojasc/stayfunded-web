@@ -33,9 +33,11 @@ export default function TradeCandleChart({ trade }: Props) {
     let exitTs: number
 
     if (trade.entryTime && trade.exitTime) {
-      // Tradovate timestamps are CT (UTC-6). Append offset so parsing is correct.
-      const entryDate = new Date(`${trade.date}T${trade.entryTime}-06:00`)
-      const exitDate = new Date(`${trade.date}T${trade.exitTime}-06:00`)
+      // Tradovate timestamps are Central Time — CDT (-05:00) Mar-Nov, CST (-06:00) Nov-Mar
+      const month = parseInt(trade.date.split('-')[1])
+      const ctOffset = (month >= 3 && month <= 10) ? '-05:00' : '-06:00'
+      const entryDate = new Date(`${trade.date}T${trade.entryTime}${ctOffset}`)
+      const exitDate = new Date(`${trade.date}T${trade.exitTime}${ctOffset}`)
       entryTs = Math.floor(entryDate.getTime() / 1000)
       exitTs = Math.floor(exitDate.getTime() / 1000)
     } else {
@@ -45,10 +47,12 @@ export default function TradeCandleChart({ trade }: Props) {
       exitTs = Math.floor(midday.getTime() / 1000) + 3600
     }
 
-    // Pad the window — max context per interval
-    const padSeconds = iv === '1h' ? 86400 : iv === '15m' ? 43200 : iv === '5m' ? 28800 : 14400
-    const from = entryTs - padSeconds
-    const to = exitTs + padSeconds
+    // Pad: enough context around the trade, but not hours of noise
+    const tradeDuration = Math.max(exitTs - entryTs, 60) // at least 1 min
+    const contextMultiplier = iv === '1h' ? 48 : iv === '15m' ? 24 : iv === '5m' ? 16 : 10
+    const pad = Math.max(tradeDuration * contextMultiplier, iv === '1m' ? 1800 : iv === '5m' ? 3600 : iv === '15m' ? 7200 : 14400)
+    const from = entryTs - pad
+    const to = exitTs + pad
 
     try {
       const res = await fetch(`/api/candles?symbol=${encodeURIComponent(symbol)}&interval=${iv}&from=${from}&to=${to}`)
@@ -220,7 +224,20 @@ export default function TradeCandleChart({ trade }: Props) {
       }
     })
 
-    chart.timeScale().fitContent()
+    // Zoom to trade area: show entry-exit plus some context
+    if (entryCandle && exitCandle) {
+      const entryTime = entryCandle.time as number
+      const exitTime = exitCandle.time as number
+      const tradeDur = Math.max(exitTime - entryTime, 60)
+      // Show ~5x the trade duration as context on each side (min 5 min)
+      const viewPad = Math.max(tradeDur * 5, 300)
+      chart.timeScale().setVisibleRange({
+        from: (entryTime - viewPad) as Time,
+        to: (exitTime + viewPad) as Time,
+      })
+    } else {
+      chart.timeScale().fitContent()
+    }
     chartRef.current = chart
     seriesRef.current = series
     setLoading(false)
@@ -298,12 +315,16 @@ export default function TradeCandleChart({ trade }: Props) {
 function findClosestCandle(candles: CandlestickData<Time>[], date: string, time: string | undefined, price: number): CandlestickData<Time> | null {
   if (!candles.length) return null
   if (!time) {
-    // No time — find candle closest to the price
     return findByPrice(candles, price)
   }
 
-  // Try multiple timezone offsets: CT (-06:00), ET (-05:00), UTC
-  const offsets = ['-06:00', '-05:00', '-04:00', '+00:00']
+  // Tradovate times are Central Time — try CDT (-05:00) first, then CST (-06:00)
+  // DST in US: Mar second Sunday to Nov first Sunday
+  const month = parseInt(date.split('-')[1])
+  const primaryOffset = (month >= 3 && month <= 10) ? '-05:00' : '-06:00'
+  const fallbackOffset = (month >= 3 && month <= 10) ? '-06:00' : '-05:00'
+  
+  const offsets = [primaryOffset, fallbackOffset]
   let bestCandle = candles[0]
   let bestScore = Infinity
 
@@ -313,10 +334,9 @@ function findClosestCandle(candles: CandlestickData<Time>[], date: string, time:
 
     for (const c of candles) {
       const timeDiff = Math.abs((c.time as number) - target)
-      // Price match: does this candle's range contain the trade price?
       const priceInRange = price >= c.low && price <= c.high
-      // Score: prioritize price match, then time proximity
-      const score = priceInRange ? timeDiff : timeDiff + 100000
+      // Strongly prioritize price match + time proximity
+      const score = priceInRange ? timeDiff : timeDiff + 1000000
       if (score < bestScore) {
         bestScore = score
         bestCandle = c

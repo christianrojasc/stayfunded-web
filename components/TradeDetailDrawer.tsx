@@ -167,15 +167,21 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
 
         const { timestamps, quotes } = bestResult
 
-        // Parse entry/exit times to narrow search window
-        const parseHHMM = (t: string | undefined): number | null => {
+        // Parse entry/exit times to seconds for precision
+        const parseTimeToSec = (t: string | undefined): number | null => {
           if (!t) return null
           const parts = t.split(':')
           if (parts.length < 2) return null
-          return parseInt(parts[0]) * 60 + parseInt(parts[1])
+          const h = parseInt(parts[0]), m = parseInt(parts[1])
+          const s = parts.length >= 3 ? parseInt(parts[2]) : 0
+          if (isNaN(h) || isNaN(m)) return null
+          return h * 3600 + m * 60 + s
         }
-        const entryMinutes = parseHHMM(trade.entryTime)
-        const exitMinutes = parseHHMM(trade.exitTime)
+        const entrySeconds = parseTimeToSec(trade.entryTime)
+        const exitSeconds = parseTimeToSec(trade.exitTime)
+        // Convert to minutes for candle matching (1m candles)
+        const entryMinutes = entrySeconds !== null ? Math.floor(entrySeconds / 60) : null
+        const exitMinutes = exitSeconds !== null ? Math.floor(exitSeconds / 60) : null
 
         // Find entry candle: use time + price match
         let entryIdx = -1
@@ -186,8 +192,8 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
           if (entryMinutes !== null) {
             const d = new Date(timestamps[i] * 1000)
             const candleMin = d.getHours() * 60 + d.getMinutes()
-            // Allow 5 min tolerance for time match
-            if (Math.abs(candleMin - entryMinutes) > 5 && Math.abs(candleMin - entryMinutes + 1440) > 5 && Math.abs(candleMin - entryMinutes - 1440) > 5) continue
+            // Allow 1 min tolerance for time match
+            if (Math.abs(candleMin - entryMinutes) > 1 && Math.abs(candleMin - entryMinutes + 1440) > 1 && Math.abs(candleMin - entryMinutes - 1440) > 1) continue
           }
           if (trade.entryPrice >= l && trade.entryPrice <= h) {
             entryIdx = i
@@ -214,7 +220,7 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
             if (h == null || l == null) continue
             const d = new Date(timestamps[i] * 1000)
             const candleMin = d.getHours() * 60 + d.getMinutes()
-            if (Math.abs(candleMin - exitMinutes) > 5 && Math.abs(candleMin - exitMinutes + 1440) > 5 && Math.abs(candleMin - exitMinutes - 1440) > 5) continue
+            if (Math.abs(candleMin - exitMinutes) > 1 && Math.abs(candleMin - exitMinutes + 1440) > 1 && Math.abs(candleMin - exitMinutes - 1440) > 1) continue
             if (trade.exitPrice >= l && trade.exitPrice <= h) {
               exitIdx = i
               break

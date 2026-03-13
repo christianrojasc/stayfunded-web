@@ -1,5 +1,6 @@
 'use client'
 import { useSidebar } from './SidebarContext'
+import { ShootingStars } from '@/components/ui/shooting-stars'
 
 export default function MainContent({ children }: { children: React.ReactNode }) {
   const { width } = useSidebar()
@@ -15,6 +16,29 @@ export default function MainContent({ children }: { children: React.ReactNode })
         background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(13,27,62,0.3) 0%, transparent 60%)',
         zIndex: 0,
       }} />
+      {/* Shooting stars background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+        <ShootingStars
+          starColor="#4ADE80"
+          trailColor="#2D8B4E"
+          minSpeed={10}
+          maxSpeed={25}
+          minDelay={2000}
+          maxDelay={5000}
+          starWidth={12}
+          starHeight={1}
+        />
+        <ShootingStars
+          starColor="#22C55E"
+          trailColor="#166534"
+          minSpeed={8}
+          maxSpeed={20}
+          minDelay={3000}
+          maxDelay={6000}
+          starWidth={8}
+          starHeight={1}
+        />
+      </div>
       <div className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 pb-24 lg:pb-8 transition-all duration-300">
         {children}
       </div>

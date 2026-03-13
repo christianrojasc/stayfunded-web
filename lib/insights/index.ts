@@ -26,11 +26,16 @@ export function generateInsights(trades: Trade[], notes: DailyNote[]): InsightsR
       heatmap: [],
       instruments: [],
       behaviorData: {
-        revengeTradeCount: 0, revengeAvgPnl: 0,
+        revengeTradeCount: 0, revengeAvgPnl: 0, revengeTotalCost: 0,
         overtradeDays: 0, overtradeAvgPnl: 0,
         tiltEvents: 0, avgTradesPerDay: 0,
         firstTradeBias: { winRate: 0, avgPnl: 0, otherWinRate: 0, otherAvgPnl: 0 },
         lossStreakBehavior: [],
+        sizeEscalationEvents: 0, sizeEscalationAvgPnl: 0,
+        avgHoldWinners: 0, avgHoldLosers: 0,
+        ultraShortTrades: 0, rapidFireClusters: 0,
+        lateSessionPnl: 0, earlySessionPnl: 0,
+        lateSessionCount: 0, earlySessionCount: 0,
       },
     }
   }

@@ -248,7 +248,12 @@ function InsightsPageInner() {
 
     // Behavior flags
     if (behaviorData) {
-      if (behaviorData.revengeTradeCount > 2) parts.push(`You have ${behaviorData.revengeTradeCount} revenge trades averaging $${behaviorData.revengeAvgPnl.toFixed(0)} each — this is your biggest leak.`)
+      if (behaviorData.revengeTradeCount > 0) parts.push(`You have ${behaviorData.revengeTradeCount} revenge trades averaging $${behaviorData.revengeAvgPnl.toFixed(0)} each — ${behaviorData.revengeTradeCount > 2 ? 'this is your biggest leak' : 'watch this pattern'}.`)
+      if (behaviorData.sizeEscalationEvents > 0) parts.push(`${behaviorData.sizeEscalationEvents} sessions where you escalated size mid-session — bigger size often means worse decisions.`)
+      if (behaviorData.avgHoldLosers > behaviorData.avgHoldWinners * 1.5 && behaviorData.avgHoldWinners > 0) parts.push(`You hold losers ${(behaviorData.avgHoldLosers / behaviorData.avgHoldWinners).toFixed(1)}x longer than winners — flip that ratio.`)
+      if (behaviorData.ultraShortTrades > 0) parts.push(`${behaviorData.ultraShortTrades} trades held under 5 seconds — that's compulsive clicking, not strategy.`)
+      if (behaviorData.rapidFireClusters > 0) parts.push(`${behaviorData.rapidFireClusters} rapid-fire clusters (3+ trades in 2 min) — slow down.`)
+      if (behaviorData.lateSessionPnl < -100 && behaviorData.lateSessionCount >= 3) parts.push(`Late-night trading (after 10 PM) is costing you $${Math.abs(behaviorData.lateSessionPnl).toFixed(0)}.`)
       if (behaviorData.overtradeDays > 2) parts.push(`You overtrade on ${behaviorData.overtradeDays} days, which drags your average down.`)
       if (behaviorData.tiltEvents > 0) parts.push(`${behaviorData.tiltEvents} tilt events (3+ consecutive losses) detected. Consider stepping away after 2 losses.`)
     }
@@ -262,10 +267,13 @@ function InsightsPageInner() {
 
     // Recommendations
     const recs: string[] = []
+    if (behaviorData && behaviorData.revengeTradeCount > 0) recs.push('Implement a 10-minute cooldown after any losing trade — never re-enter immediately')
+    if (behaviorData && behaviorData.sizeEscalationEvents > 0) recs.push('Stick to your base position size — only scale up with a pre-planned reason')
+    if (behaviorData && behaviorData.avgHoldLosers > behaviorData.avgHoldWinners * 2 && behaviorData.avgHoldWinners > 0) recs.push('Set a hard time stop — if a trade hasn\'t worked within your average winner hold time, cut it')
+    if (behaviorData && behaviorData.lateSessionPnl < -100 && behaviorData.lateSessionCount >= 3) recs.push('Set a hard 10 PM cutoff — your late-night trading is giving back gains')
     if (bestEdges.length > 0) recs.push(`Focus on ${bestEdges[0].symbol} ${bestEdges[0].side} setups in the ${bestEdges[0].timeSlot.toLowerCase()}`)
     if (worstEdges.length > 0) recs.push(`Stop trading ${worstEdges[0].symbol} ${worstEdges[0].side} in the ${worstEdges[0].timeSlot.toLowerCase()}`)
-    if (behaviorData && behaviorData.revengeTradeCount > 0) recs.push('Implement a 10-minute cooldown after any losing trade')
-    else if (rrRatio < 1 && avgLoss > 0) recs.push('Tighten stops or let winners run longer to improve R:R')
+    if (rrRatio < 1 && avgLoss > 0 && recs.length < 4) recs.push('Tighten stops or let winners run longer to improve R:R')
 
     const bestDow = dowStats.reduce((best, d) => d.pnl > best.pnl ? d : best, dowStats[0])
     const worstDow = dowStats.reduce((worst, d) => d.pnl < worst.pnl ? d : worst, dowStats[0])
@@ -566,10 +574,50 @@ function InsightsPageInner() {
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <BehaviorStat label="Revenge Trades" value={behaviorData.revengeTradeCount} bad={behaviorData.revengeTradeCount > 0} detail={behaviorData.revengeTradeCount > 0 ? `Avg P&L: $${behaviorData.revengeAvgPnl.toFixed(0)}` : 'None detected'} />
-            <BehaviorStat label="Overtrade Days" value={behaviorData.overtradeDays} bad={behaviorData.overtradeDays > 0} detail={behaviorData.overtradeDays > 0 ? `Avg P&L: $${behaviorData.overtradeAvgPnl.toFixed(0)}` : 'None detected'} />
+            <BehaviorStat label="Size Escalation" value={behaviorData.sizeEscalationEvents} bad={behaviorData.sizeEscalationEvents > 0} detail={behaviorData.sizeEscalationEvents > 0 ? `Avg P&L: $${behaviorData.sizeEscalationAvgPnl.toFixed(0)}` : 'None detected'} />
             <BehaviorStat label="Tilt Events" value={behaviorData.tiltEvents} bad={behaviorData.tiltEvents > 0} detail="3+ consecutive losses" />
             <BehaviorStat label="Avg Trades/Day" value={behaviorData.avgTradesPerDay.toFixed(1)} bad={false} detail="Per session" />
           </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4 pt-4 border-t border-[var(--border)]">
+            <BehaviorStat
+              label="Avg Hold (Winners)"
+              value={behaviorData.avgHoldWinners > 0 ? formatHold(behaviorData.avgHoldWinners) : '—'}
+              bad={false}
+              detail="Time in winning trades"
+            />
+            <BehaviorStat
+              label="Avg Hold (Losers)"
+              value={behaviorData.avgHoldLosers > 0 ? formatHold(behaviorData.avgHoldLosers) : '—'}
+              bad={behaviorData.avgHoldLosers > behaviorData.avgHoldWinners * 1.5 && behaviorData.avgHoldWinners > 0}
+              detail={behaviorData.avgHoldLosers > behaviorData.avgHoldWinners * 1.5 && behaviorData.avgHoldWinners > 0
+                ? `${(behaviorData.avgHoldLosers / behaviorData.avgHoldWinners).toFixed(1)}x longer than winners`
+                : 'Time in losing trades'}
+            />
+            <BehaviorStat label="Ultra-Short" value={behaviorData.ultraShortTrades} bad={behaviorData.ultraShortTrades > 0} detail="Trades held ≤5 seconds" />
+            <BehaviorStat label="Rapid-Fire" value={behaviorData.rapidFireClusters} bad={behaviorData.rapidFireClusters > 0} detail="3+ trades in 2 min" />
+          </div>
+          {(behaviorData.lateSessionCount >= 3 && behaviorData.earlySessionCount >= 3) && (
+            <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-[var(--border)]">
+              <div className="rounded-xl p-4" style={{ background: behaviorData.earlySessionPnl >= 0 ? 'rgba(74,222,128,0.06)' : 'rgba(255,69,58,0.06)', border: `1px solid ${behaviorData.earlySessionPnl >= 0 ? 'rgba(74,222,128,0.15)' : 'rgba(255,69,58,0.15)'}` }}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-[var(--text-muted)]">Before 10 PM</span>
+                  <span className="text-[10px] text-[var(--text-muted)]">{behaviorData.earlySessionCount} trades</span>
+                </div>
+                <span className={`text-lg font-bold ${behaviorData.earlySessionPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+                  {behaviorData.earlySessionPnl >= 0 ? '+' : ''}${behaviorData.earlySessionPnl.toFixed(0)}
+                </span>
+              </div>
+              <div className="rounded-xl p-4" style={{ background: behaviorData.lateSessionPnl >= 0 ? 'rgba(74,222,128,0.06)' : 'rgba(255,69,58,0.06)', border: `1px solid ${behaviorData.lateSessionPnl >= 0 ? 'rgba(74,222,128,0.15)' : 'rgba(255,69,58,0.15)'}` }}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-[var(--text-muted)]">After 10 PM</span>
+                  <span className="text-[10px] text-[var(--text-muted)]">{behaviorData.lateSessionCount} trades</span>
+                </div>
+                <span className={`text-lg font-bold ${behaviorData.lateSessionPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#FF453A]'}`}>
+                  {behaviorData.lateSessionPnl >= 0 ? '+' : ''}${behaviorData.lateSessionPnl.toFixed(0)}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -725,6 +773,14 @@ function WhatIfCard({ scenario }: { scenario: WhatIfScenario }) {
       </div>
     </div>
   )
+}
+
+function formatHold(seconds: number): string {
+  if (seconds < 60) return `${Math.round(seconds)}s`
+  if (seconds < 3600) return `${Math.round(seconds / 60)}m`
+  const h = Math.floor(seconds / 3600)
+  const m = Math.round((seconds % 3600) / 60)
+  return m > 0 ? `${h}h ${m}m` : `${h}h`
 }
 
 function BehaviorStat({ label, value, bad, detail }: { label: string; value: number | string; bad: boolean; detail: string }) {

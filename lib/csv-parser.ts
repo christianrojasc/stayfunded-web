@@ -129,12 +129,14 @@ function getFuturesSessionDate(dateStr: string): string {
     let month = get('month') - 1  // 0-indexed
     let day   = get('day')
 
-    // Trades at or after 6 PM ET belong to the NEXT calendar day's session
-    if (estHour >= 18) {
-      const next = new Date(Date.UTC(year, month, day + 1))
-      year  = next.getUTCFullYear()
-      month = next.getUTCMonth()
-      day   = next.getUTCDate()
+    // Session starts at 6PM ET on day N, session date = day N.
+    // Trades BEFORE 6PM ET belong to the PREVIOUS day's session (started 6PM yesterday).
+    // Trades AT or AFTER 6PM ET belong to TODAY's session (started 6PM today).
+    if (estHour < 18) {
+      const prev = new Date(Date.UTC(year, month, day - 1))
+      year  = prev.getUTCFullYear()
+      month = prev.getUTCMonth()
+      day   = prev.getUTCDate()
     }
 
     // Skip to Monday if the resulting session date falls on a weekend

@@ -14,129 +14,172 @@ import NewAccountWizard from '@/components/NewAccountWizard'
 
 type Step = 'upload' | 'wizard' | 'preview' | 'done'
 
+interface FileBundle {
+  fileName: string
+  parsed: ParseResult
+  linkedAccountId: string | null
+  autoMatched: boolean
+  selected: Set<string>
+  duplicateCount: number
+}
+
 export default function ImportPage() {
   const { trades: existingTrades, importBatch } = useTrades()
   const { accounts, refresh: refreshAccounts } = useAccountFilter()
   const [step, setStep] = useState<Step>('upload')
   const [dragging, setDragging] = useState(false)
-  const [fileName, setFileName] = useState('')
-  const [parsed, setParsed] = useState<ParseResult | null>(null)
-  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [bundles, setBundles] = useState<FileBundle[]>([])
   const [importing, setImporting] = useState(false)
   const [importCount, setImportCount] = useState(0)
-  const [linkedAccountId, setLinkedAccountId] = useState<string | null>(null)
-  const [duplicateCount, setDuplicateCount] = useState(0)
 
-  const processFile = async (text: string, name: string) => {
-    setFileName(name)
-    const result = parseTradovateCSV(text)
+  // Wizard state (for unmatched accounts)
+  const [wizardQueue, setWizardQueue] = useState<number[]>([])
+  const [wizardIndex, setWizardIndex] = useState(0)
 
-    // Deduplicate: filter out trades whose orderId already exists
+  const processFiles = async (files: File[]) => {
+    const propAccounts = await dl.getPropAccounts()
     const existingOrderIds = new Set(
       existingTrades.filter(t => t.orderId).map(t => t.orderId!)
     )
-    const newTrades: Trade[] = []
-    let dupes = 0
-    for (const t of result.trades) {
-      if (t.orderId && existingOrderIds.has(t.orderId)) {
-        dupes++
-      } else {
-        newTrades.push(t)
+
+    const newBundles: FileBundle[] = []
+
+    for (const file of files) {
+      const text = await file.text()
+      const result = parseTradovateCSV(text)
+
+      // Deduplicate
+      const newTrades: Trade[] = []
+      let dupes = 0
+      for (const t of result.trades) {
+        if (t.orderId && existingOrderIds.has(t.orderId)) {
+          dupes++
+        } else {
+          newTrades.push(t)
+          // Also add to existing set so cross-file dupes are caught
+          if (t.orderId) existingOrderIds.add(t.orderId)
+        }
       }
+      result.trades = newTrades
+
+      // Auto-match account
+      let linkedAccountId: string | null = null
+      let autoMatched = false
+      if (result.detectedAccountNumber) {
+        const match = propAccounts.find(
+          a => a.accountNumber &&
+            result.detectedAccountNumber &&
+            a.accountNumber.toLowerCase() === result.detectedAccountNumber.toLowerCase()
+        )
+        if (match) {
+          linkedAccountId = match.id
+          autoMatched = true
+        }
+      }
+
+      newBundles.push({
+        fileName: file.name,
+        parsed: result,
+        linkedAccountId,
+        autoMatched,
+        selected: new Set(result.trades.map(t => t.id)),
+        duplicateCount: dupes,
+      })
     }
-    setDuplicateCount(dupes)
-    result.trades = newTrades
 
-    setParsed(result)
-    setSelected(new Set(result.trades.map(t => t.id)))
+    setBundles(newBundles)
 
-    // Check for matching existing PropAccount (case-insensitive, exact match)
-    if (result.detectedAccountNumber) {
-      const propAccounts = await dl.getPropAccounts()
-      const match = propAccounts.find(
-        a =>
-          a.accountNumber &&
-          result.detectedAccountNumber &&
-          a.accountNumber.toLowerCase() === result.detectedAccountNumber.toLowerCase()
-      )
-      if (match) {
-        // Account already exists — link it and skip wizard
-        setLinkedAccountId(match.id)
-        setStep('preview')
-      } else {
-        // No matching account — show wizard
-        setStep('wizard')
-      }
+    // Check if any files need a new account (unmatched)
+    const unmatchedIdxs = newBundles
+      .map((b, i) => (!b.linkedAccountId && b.parsed.detectedAccountNumber) ? i : -1)
+      .filter(i => i !== -1)
+
+    if (unmatchedIdxs.length > 0) {
+      setWizardQueue(unmatchedIdxs)
+      setWizardIndex(0)
+      setStep('wizard')
     } else {
       setStep('preview')
     }
   }
 
   const handleWizardCreated = (account: PropAccount) => {
-    setLinkedAccountId(account.id)
+    // Link the current wizard bundle to the new account
+    const idx = wizardQueue[wizardIndex]
+    setBundles(prev => {
+      const next = [...prev]
+      next[idx] = { ...next[idx], linkedAccountId: account.id, autoMatched: true }
+      return next
+    })
     refreshAccounts()
-    setStep('preview')
+    advanceWizard()
   }
 
   const handleWizardSkip = () => {
-    setStep('preview')
+    advanceWizard()
   }
 
   const handleWizardClose = () => {
-    // Cancel the whole import
-    reset()
+    advanceWizard()
   }
 
-  const handleFile = (file: File) => {
-    const reader = new FileReader()
-    // processFile is async; fire-and-forget here — state updates will arrive
-    // once the promise resolves. The UI shows a loading spinner during processing.
-    reader.onload = e => { processFile(e.target?.result as string, file.name) }
-    reader.readAsText(file)
+  const advanceWizard = () => {
+    if (wizardIndex < wizardQueue.length - 1) {
+      setWizardIndex(prev => prev + 1)
+    } else {
+      setStep('preview')
+    }
+  }
+
+  const handleFiles = (fileList: FileList) => {
+    const csvFiles = Array.from(fileList).filter(f => f.name.endsWith('.csv'))
+    if (csvFiles.length > 0) processFiles(csvFiles)
   }
 
   const onDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setDragging(false)
-    const file = e.dataTransfer.files[0]
-    if (file?.name.endsWith('.csv')) handleFile(file)
-  }, [])
+    handleFiles(e.dataTransfer.files)
+  }, [existingTrades])
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) handleFile(file)
+    if (e.target.files) handleFiles(e.target.files)
   }
 
-  const toggleSelect = (id: string) => {
-    setSelected(s => {
-      const n = new Set(s)
-      if (n.has(id)) n.delete(id)
-      else n.add(id)
-      return n
+  const updateBundleAccount = (idx: number, accountId: string | null) => {
+    setBundles(prev => {
+      const next = [...prev]
+      next[idx] = { ...next[idx], linkedAccountId: accountId, autoMatched: false }
+      return next
     })
   }
 
+  const totalTrades = bundles.reduce((s, b) => s + b.selected.size, 0)
+  const totalDupes = bundles.reduce((s, b) => s + b.duplicateCount, 0)
+
   const doImport = async () => {
-    if (!parsed) return
     setImporting(true)
-    const toImport = parsed.trades
-      .filter(t => selected.has(t.id))
-      .map(t => linkedAccountId ? { ...t, accountId: linkedAccountId } : t)
-    await new Promise(r => setTimeout(r, 400))
-    await importBatch(toImport)
-    setImportCount(toImport.length)
+    let count = 0
+    for (const bundle of bundles) {
+      const toImport = bundle.parsed.trades
+        .filter(t => bundle.selected.has(t.id))
+        .map(t => bundle.linkedAccountId ? { ...t, accountId: bundle.linkedAccountId } : t)
+      if (toImport.length > 0) {
+        await importBatch(toImport)
+        count += toImport.length
+      }
+    }
+    setImportCount(count)
     setImporting(false)
     setStep('done')
   }
 
   const reset = () => {
     setStep('upload')
-    setParsed(null)
-    setSelected(new Set())
-    setFileName('')
+    setBundles([])
     setImportCount(0)
-    setLinkedAccountId(null)
-    setDuplicateCount(0)
+    setWizardQueue([])
+    setWizardIndex(0)
   }
 
   if (step === 'done') {
@@ -147,11 +190,13 @@ export default function ImportPage() {
         </div>
         <div>
           <h2 className="text-2xl font-bold text-[var(--text-primary)]">Import Complete!</h2>
-          <p className="text-[var(--text-muted)] mt-2">{importCount} trades imported from <strong>{fileName}</strong></p>
+          <p className="text-[var(--text-muted)] mt-2">
+            {importCount} trades imported from {bundles.length} file{bundles.length !== 1 ? 's' : ''}
+          </p>
         </div>
         <div className="flex gap-3 justify-center">
           <button onClick={reset} className="btn-secondary">
-            <Upload size={15} /> Import Another File
+            <Upload size={15} /> Import More Files
           </button>
           <a href="/dashboard" className="btn-primary">
             <ChevronRight size={15} /> View Dashboard
@@ -165,18 +210,25 @@ export default function ImportPage() {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="page-title">Import Trades</h1>
-        <p className="text-sm text-[var(--text-muted)] mt-0.5">Import your trade history from Tradovate</p>
+        <p className="text-sm text-[var(--text-muted)] mt-0.5">
+          Import your trade history from Tradovate — drop multiple files to auto-match accounts
+        </p>
       </div>
 
-      {/* New Account Wizard — shown as overlay when new account detected */}
-      {step === 'wizard' && parsed && (
-        <NewAccountWizard
-          detectedFirm={parsed.detectedFirm ?? null}
-          detectedAccountNumber={parsed.detectedAccountNumber ?? null}
-          onCreated={handleWizardCreated}
-          onSkip={handleWizardSkip}
-          onClose={handleWizardClose}
-        />
+      {/* New Account Wizard */}
+      {step === 'wizard' && wizardQueue.length > 0 && bundles[wizardQueue[wizardIndex]] && (
+        <div>
+          <div className="text-xs text-[var(--text-muted)] mb-2">
+            New account detected ({wizardIndex + 1} of {wizardQueue.length})
+          </div>
+          <NewAccountWizard
+            detectedFirm={bundles[wizardQueue[wizardIndex]].parsed.detectedFirm ?? null}
+            detectedAccountNumber={bundles[wizardQueue[wizardIndex]].parsed.detectedAccountNumber ?? null}
+            onCreated={handleWizardCreated}
+            onSkip={handleWizardSkip}
+            onClose={handleWizardClose}
+          />
+        </div>
       )}
 
       {step === 'upload' && (
@@ -195,7 +247,7 @@ export default function ImportPage() {
               onDrop={onDrop}
               onClick={() => document.getElementById('csv-input')?.click()}
             >
-              <input id="csv-input" type="file" accept=".csv" className="hidden" onChange={onFileChange} />
+              <input id="csv-input" type="file" accept=".csv" className="hidden" onChange={onFileChange} multiple />
               <div className="flex flex-col items-center gap-4">
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${
                   dragging ? 'scale-110' : ''
@@ -203,8 +255,8 @@ export default function ImportPage() {
                   <Upload size={32} className="text-[var(--text-primary)]" />
                 </div>
                 <div>
-                  <p className="font-bold text-[var(--text-primary)] text-lg">Drop your CSV here</p>
-                  <p className="text-[var(--text-secondary)] text-sm mt-1">or click to browse your files</p>
+                  <p className="font-bold text-[var(--text-primary)] text-lg">Drop your CSVs here</p>
+                  <p className="text-[var(--text-secondary)] text-sm mt-1">Drop multiple files at once — accounts are auto-detected</p>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs text-[var(--text-secondary)]" style={{background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)'}}>
                   <FileText size={13} />
@@ -219,16 +271,26 @@ export default function ImportPage() {
             <div className="glass-card p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Info size={16} className="text-[#2D8B4E]" />
-                <h3 className="font-bold text-[var(--text-primary)] text-sm">Supported Formats</h3>
+                <h3 className="font-bold text-[var(--text-primary)] text-sm">Multi-Account Import</h3>
               </div>
               <div className="space-y-3">
                 <div className="p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]">
-                  <p className="text-xs font-bold text-[var(--text-primary)] mb-0.5">Tradovate Account Statement</p>
-                  <p className="text-[11px] text-[var(--text-secondary)]">Reports → Account Statement → Export CSV</p>
+                  <p className="text-xs font-bold text-[var(--text-primary)] mb-1">🔍 Auto-Detection</p>
+                  <p className="text-[11px] text-[var(--text-secondary)]">
+                    Each CSV is scanned for account numbers. Trades are automatically matched to your prop accounts.
+                  </p>
                 </div>
                 <div className="p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]">
-                  <p className="text-xs font-bold text-[var(--text-primary)] mb-0.5">Tradovate Trades Export</p>
-                  <p className="text-[11px] text-[var(--text-secondary)]">Reports → Fills → Export CSV</p>
+                  <p className="text-xs font-bold text-[var(--text-primary)] mb-1">📁 Multiple Files</p>
+                  <p className="text-[11px] text-[var(--text-secondary)]">
+                    Select or drop 5 CSVs from 5 accounts — they'll sort themselves out.
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]">
+                  <p className="text-xs font-bold text-[var(--text-primary)] mb-1">🔄 Deduplication</p>
+                  <p className="text-[11px] text-[var(--text-secondary)]">
+                    Duplicate trades are automatically filtered — even across files.
+                  </p>
                 </div>
               </div>
             </div>
@@ -258,9 +320,9 @@ export default function ImportPage() {
         </div>
       )}
 
-      {step === 'preview' && parsed && (
+      {step === 'preview' && bundles.length > 0 && (
         <div className="space-y-4 animate-slide-up">
-          {/* Summary */}
+          {/* Global Summary */}
           <div className="glass-card p-5">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
               <div className="flex items-center gap-4">
@@ -268,173 +330,131 @@ export default function ImportPage() {
                   <FileText size={20} className="text-[#2D8B4E]" />
                 </div>
                 <div>
-                  <p className="font-bold text-[var(--text-primary)]">{fileName}</p>
+                  <p className="font-bold text-[var(--text-primary)]">
+                    {bundles.length} file{bundles.length !== 1 ? 's' : ''} ready
+                  </p>
                   <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-                    {parsed.trades.length} new trades
-                    {duplicateCount > 0 && ` · ${duplicateCount} duplicates skipped`}
-                    {parsed.skipped > 0 && ` · ${parsed.skipped} rows skipped`}
-                    {parsed.errors.length > 0 && ` · ${parsed.errors.length} errors`}
+                    {totalTrades} trades to import
+                    {totalDupes > 0 && ` · ${totalDupes} duplicates skipped`}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold text-[var(--text-muted)]">
-                  {selected.size} / {parsed.trades.length} selected
-                </span>
                 <button onClick={reset} className="btn-secondary text-xs py-1.5">
                   <X size={13} /> Cancel
                 </button>
                 <button
                   onClick={doImport}
-                  disabled={selected.size === 0 || importing}
+                  disabled={totalTrades === 0 || importing}
                   className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {importing ? <RefreshCw size={14} className="animate-spin" /> : <Download size={14} />}
-                  Import {selected.size} Trades
+                  Import All ({totalTrades})
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Account Detection Banner */}
-          {parsed.detectedFirm && (
-            <div className="p-4 bg-[#2D8B4E]/5 border border-[#2D8B4E]/30 rounded-xl flex items-start gap-3">
-              <Briefcase size={16} className="text-[#2D8B4E] flex-shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-[#2D8B4E] mb-1">
-                  Detected: {parsed.detectedFirm}
-                  {parsed.detectedAccountNumber && ` — ${parsed.detectedAccountNumber}`}
-                </p>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs text-[var(--text-muted)]">Link to account:</span>
-                  <select
-                    className="input-field text-xs py-1 max-w-[200px]"
-                    value={linkedAccountId || ''}
-                    onChange={e => setLinkedAccountId(e.target.value || null)}
-                  >
-                    <option value="">Don't link</option>
-                    {accounts.map(a => (
-                      <option key={a.id} value={a.id}>
-                        {a.nickname || a.firmName} ({a.firmName})
-                      </option>
-                    ))}
-                  </select>
-                  {linkedAccountId && (
-                    <span className="text-xs text-[#4ADE50] flex items-center gap-1 font-semibold">
-                      <CheckCircle size={12} /> Will link {selected.size} trades
-                    </span>
-                  )}
+          {/* Per-File Cards */}
+          {bundles.map((bundle, idx) => {
+            const totalPnl = bundle.parsed.trades
+              .filter(t => bundle.selected.has(t.id))
+              .reduce((s, t) => s + t.netPnl, 0)
+            const matchedAccount = accounts.find(a => a.id === bundle.linkedAccountId)
+
+            return (
+              <div key={idx} className="glass-card overflow-hidden">
+                {/* File header */}
+                <div className="p-4 border-b border-[var(--border)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <FileText size={16} className="text-[#2D8B4E] flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="font-bold text-[var(--text-primary)] text-sm truncate">{bundle.fileName}</p>
+                      <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">
+                        {bundle.selected.size} trades · {' '}
+                        <span className={totalPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#EF4444]'}>
+                          {formatPnl(totalPnl)}
+                        </span>
+                        {bundle.duplicateCount > 0 && ` · ${bundle.duplicateCount} dupes skipped`}
+                        {bundle.parsed.detectedAccountNumber && (
+                          <span className="text-[var(--text-muted)]"> · Acct: {bundle.parsed.detectedAccountNumber}</span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Account matcher */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {bundle.autoMatched && matchedAccount ? (
+                      <span className="text-xs text-[#4ADE80] flex items-center gap-1 font-semibold px-3 py-1.5 rounded-lg bg-[#4ADE80]/10">
+                        <CheckCircle size={12} />
+                        {matchedAccount.nickname || matchedAccount.firmName}
+                      </span>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Link2 size={12} className="text-[var(--text-muted)]" />
+                        <select
+                          className="input-field text-xs py-1.5 max-w-[180px]"
+                          value={bundle.linkedAccountId || ''}
+                          onChange={e => updateBundleAccount(idx, e.target.value || null)}
+                        >
+                          <option value="">Link to account...</option>
+                          {accounts.map(a => (
+                            <option key={a.id} value={a.id}>
+                              {a.nickname || a.firmName}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Compact trade preview (first 5) */}
+                <div className="overflow-x-auto max-h-[200px] overflow-y-auto">
+                  <table className="w-full trade-table text-xs">
+                    <thead className="sticky top-0 z-10">
+                      <tr>
+                        <th>Date</th>
+                        <th>Symbol</th>
+                        <th>Side</th>
+                        <th>Qty</th>
+                        <th>Entry</th>
+                        <th>Exit</th>
+                        <th>Net P&L</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bundle.parsed.trades.slice(0, 5).map(t => (
+                        <tr key={t.id}>
+                          <td className="text-[var(--text-muted)]">{t.date}</td>
+                          <td><span className="font-mono font-bold bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded">{t.symbol}</span></td>
+                          <td>
+                            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${
+                              t.side === 'Long' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'
+                            }`}>{t.side}</span>
+                          </td>
+                          <td className="font-mono">{t.contracts}</td>
+                          <td className="font-mono">{t.entryPrice.toFixed(2)}</td>
+                          <td className="font-mono">{t.exitPrice.toFixed(2)}</td>
+                          <td className={`font-mono font-bold ${t.netPnl >= 0 ? 'text-[#4ADE80]' : 'text-[#EF4444]'}`}>
+                            {formatPnl(t.netPnl)}
+                          </td>
+                        </tr>
+                      ))}
+                      {bundle.parsed.trades.length > 5 && (
+                        <tr>
+                          <td colSpan={7} className="text-center text-[var(--text-muted)] text-[11px] py-2">
+                            +{bundle.parsed.trades.length - 5} more trades
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* No account match — show link option anyway */}
-          {!parsed.detectedFirm && accounts.length > 0 && (
-            <div className="p-3 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl flex items-center gap-3">
-              <Link2 size={14} className="text-[var(--text-muted)] flex-shrink-0" />
-              <span className="text-xs text-[var(--text-muted)]">Link trades to account:</span>
-              <select
-                className="input-field text-xs py-1 max-w-[200px]"
-                value={linkedAccountId || ''}
-                onChange={e => setLinkedAccountId(e.target.value || null)}
-              >
-                <option value="">Don't link</option>
-                {accounts.map(a => (
-                  <option key={a.id} value={a.id}>
-                    {a.nickname || a.firmName}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Errors */}
-          {parsed.errors.length > 0 && (
-            <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
-              <AlertCircle size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-xs font-semibold text-amber-700 mb-1">{parsed.errors.length} rows had issues (skipped)</p>
-                {parsed.errors.slice(0, 3).map((e, i) => (
-                  <p key={i} className="text-xs text-amber-600">{e}</p>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Toggle all */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setSelected(new Set(parsed.trades.map(t => t.id)))}
-              className="text-xs text-[#2D8B4E] hover:underline font-medium"
-            >Select all</button>
-            <span className="text-[var(--text-muted)]">·</span>
-            <button
-              onClick={() => setSelected(new Set())}
-              className="text-xs text-[var(--text-secondary)] hover:underline font-medium"
-            >Deselect all</button>
-          </div>
-
-          {/* Preview table */}
-          <div className="glass-card overflow-hidden">
-            <div className="overflow-x-auto max-h-[480px] overflow-y-auto">
-              <table className="w-full trade-table">
-                <thead className="sticky top-0 z-10">
-                  <tr>
-                    <th className="w-10">
-                      <input
-                        type="checkbox"
-                        checked={selected.size === parsed.trades.length}
-                        onChange={e => e.target.checked ? setSelected(new Set(parsed.trades.map(t => t.id))) : setSelected(new Set())}
-                        className="rounded"
-                      />
-                    </th>
-                    <th>Date</th>
-                    <th>Symbol</th>
-                    <th>Side</th>
-                    <th>Qty</th>
-                    <th>Entry</th>
-                    <th>Net P&L</th>
-                    <th>Fees</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {parsed.trades.map(t => (
-                    <tr key={t.id} className={!selected.has(t.id) ? 'opacity-40' : ''}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={selected.has(t.id)}
-                          onChange={() => toggleSelect(t.id)}
-                          className="rounded"
-                          onClick={e => e.stopPropagation()}
-                        />
-                      </td>
-                      <td className="text-[var(--text-muted)] font-medium">{t.date}</td>
-                      <td>
-                        <span className="font-mono font-bold text-xs bg-[var(--bg-secondary)] px-2 py-0.5 rounded-lg">{t.symbol}</span>
-                      </td>
-                      <td>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                          t.side === 'Long'
-                            ? 'bg-green-500/15 text-green-400'
-                            : 'bg-red-500/15 text-red-400'
-                        }`}>{t.side}</span>
-                      </td>
-                      <td className="font-mono">{t.contracts}</td>
-                      <td className="font-mono">{t.entryPrice.toFixed(2)}</td>
-                      <td>
-                        <span className={`font-mono font-bold text-sm ${t.netPnl >= 0 ? 'text-[#2D8B4E]' : 'text-[#EF4444]'}`}>
-                          {formatPnl(t.netPnl)}
-                        </span>
-                      </td>
-                      <td className="font-mono text-[var(--text-secondary)] text-xs">${t.fees.toFixed(2)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+            )
+          })}
         </div>
       )}
     </div>

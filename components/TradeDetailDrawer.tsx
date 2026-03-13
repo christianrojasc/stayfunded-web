@@ -167,23 +167,69 @@ export default function TradeDetailDrawer({ trade, onClose }: Props) {
 
         const { timestamps, quotes } = bestResult
 
-        // Find entry candle: first candle whose range contains entry price
+        // Parse entry/exit times to narrow search window
+        const parseHHMM = (t: string | undefined): number | null => {
+          if (!t) return null
+          const parts = t.split(':')
+          if (parts.length < 2) return null
+          return parseInt(parts[0]) * 60 + parseInt(parts[1])
+        }
+        const entryMinutes = parseHHMM(trade.entryTime)
+        const exitMinutes = parseHHMM(trade.exitTime)
+
+        // Find entry candle: use time + price match
         let entryIdx = -1
         for (let i = 0; i < timestamps.length; i++) {
           const h = quotes?.high?.[i]; const l = quotes?.low?.[i]
-          if (h != null && l != null && trade.entryPrice >= l && trade.entryPrice <= h) {
+          if (h == null || l == null) continue
+          // Check if candle time is close to entry time
+          if (entryMinutes !== null) {
+            const d = new Date(timestamps[i] * 1000)
+            const candleMin = d.getHours() * 60 + d.getMinutes()
+            // Allow 5 min tolerance for time match
+            if (Math.abs(candleMin - entryMinutes) > 5 && Math.abs(candleMin - entryMinutes + 1440) > 5 && Math.abs(candleMin - entryMinutes - 1440) > 5) continue
+          }
+          if (trade.entryPrice >= l && trade.entryPrice <= h) {
             entryIdx = i
             break
           }
         }
 
-        // Find exit candle: last candle whose range contains exit price (after entry)
+        // If time-based search failed, fall back to price-only
+        if (entryIdx === -1) {
+          for (let i = 0; i < timestamps.length; i++) {
+            const h = quotes?.high?.[i]; const l = quotes?.low?.[i]
+            if (h != null && l != null && trade.entryPrice >= l && trade.entryPrice <= h) {
+              entryIdx = i
+              break
+            }
+          }
+        }
+
+        // Find exit candle: use time + price match (search forward from entry)
         let exitIdx = -1
-        for (let i = timestamps.length - 1; i >= Math.max(entryIdx, 0); i--) {
-          const h = quotes?.high?.[i]; const l = quotes?.low?.[i]
-          if (h != null && l != null && trade.exitPrice >= l && trade.exitPrice <= h) {
-            exitIdx = i
-            break
+        if (exitMinutes !== null && entryIdx >= 0) {
+          for (let i = entryIdx; i < timestamps.length; i++) {
+            const h = quotes?.high?.[i]; const l = quotes?.low?.[i]
+            if (h == null || l == null) continue
+            const d = new Date(timestamps[i] * 1000)
+            const candleMin = d.getHours() * 60 + d.getMinutes()
+            if (Math.abs(candleMin - exitMinutes) > 5 && Math.abs(candleMin - exitMinutes + 1440) > 5 && Math.abs(candleMin - exitMinutes - 1440) > 5) continue
+            if (trade.exitPrice >= l && trade.exitPrice <= h) {
+              exitIdx = i
+              break
+            }
+          }
+        }
+
+        // Fallback: search forward from entry for exit price
+        if (exitIdx === -1 && entryIdx >= 0) {
+          for (let i = entryIdx + 1; i < timestamps.length; i++) {
+            const h = quotes?.high?.[i]; const l = quotes?.low?.[i]
+            if (h != null && l != null && trade.exitPrice >= l && trade.exitPrice <= h) {
+              exitIdx = i
+              break
+            }
           }
         }
 

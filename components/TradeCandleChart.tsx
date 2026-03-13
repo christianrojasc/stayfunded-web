@@ -127,8 +127,14 @@ export default function TradeCandleChart({ trade }: Props) {
         borderColor: theme === 'light' ? '#cbd5e1' : '#1e293b',
       },
       crosshair: {
-        vertLine: { color: theme === 'light' ? '#94a3b8' : '#475569' },
-        horzLine: { color: theme === 'light' ? '#94a3b8' : '#475569' },
+        vertLine: {
+          color: theme === 'light' ? '#94a3b8' : '#475569',
+          labelBackgroundColor: theme === 'light' ? '#334155' : '#334155',
+        },
+        horzLine: {
+          color: theme === 'light' ? '#94a3b8' : '#475569',
+          labelBackgroundColor: theme === 'light' ? '#334155' : '#334155',
+        },
       },
     })
 

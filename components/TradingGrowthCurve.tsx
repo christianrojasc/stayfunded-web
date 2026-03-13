@@ -622,48 +622,71 @@ export default function TradingGrowthCurve() {
 
         {/* Account List + Daily P&L (right, 20%) */}
         {propAccounts.length > 0 && (
-          <div className="lg:w-[20%] lg:min-w-[200px] p-4 lg:pl-0 lg:border-l border-[var(--border)] overflow-y-auto">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="text-[var(--text-muted)] uppercase tracking-wider">
-                  <th className="text-left font-semibold pb-2 text-[10px]">Account</th>
-                  <th className="text-right font-semibold pb-2 text-[10px]">Balance</th>
-                  <th className="text-right font-semibold pb-2 text-[10px]">Day P&L</th>
-                </tr>
-              </thead>
-              <tbody>
-                {propAccounts.map((acc, i) => {
-                  const accTrades = trades.filter(t => t.accountId === acc.id && t.status === 'closed')
-                  const totalPnl = accTrades.reduce((s, t) => s + t.netPnl, 0)
-                  const balance = acc.startingBalance + totalPnl
-                  const todayStr = format(now, 'yyyy-MM-dd')
-                  const dayPnl = accTrades.filter(t => t.sessionDate === todayStr).reduce((s, t) => s + t.netPnl, 0)
-                  const isSelected = selected?.id === acc.id
-                  const prefix = acc.firmName?.match(/^[A-Z]+/)?.[0] || acc.firmName?.substring(0, 4) || ''
-                  return (
-                    <tr
-                      key={acc.id}
-                      className={`border-t border-[var(--border)] ${isSelected ? 'bg-[var(--bg-card)]' : ''} hover:bg-[var(--bg-card)] transition-colors`}
-                    >
-                      <td className="py-2.5 pr-2">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-semibold text-[var(--text-primary)] truncate max-w-[80px]">
-                            {acc.nickname || `${prefix}***`}
-                          </span>
-                          {acc.status === 'funded' && <span className="text-amber-400 text-[10px]">👑</span>}
-                        </div>
-                      </td>
-                      <td className="py-2.5 text-right font-mono font-semibold text-[var(--text-primary)]">
+          <div className="lg:w-[22%] lg:min-w-[240px] lg:border-l border-[var(--border)] flex flex-col">
+            {/* Header */}
+            <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Accounts</span>
+              <span className="text-[10px] font-mono text-[var(--text-muted)]">{propAccounts.length} total</span>
+            </div>
+
+            {/* Scrollable list */}
+            <div className="flex-1 overflow-y-auto px-3 pb-3 space-y-1.5">
+              {propAccounts.map((acc) => {
+                const accTrades = trades.filter(t => t.accountId === acc.id && t.status === 'closed')
+                const totalPnl = accTrades.reduce((s, t) => s + t.netPnl, 0)
+                const balance = acc.startingBalance + totalPnl
+                const todayStr = format(now, 'yyyy-MM-dd')
+                const dayPnl = accTrades.filter(t => t.sessionDate === todayStr).reduce((s, t) => s + t.netPnl, 0)
+                const isSelected = selected?.id === acc.id
+                const nickname = acc.nickname || acc.firmName || 'Account'
+                const isFunded = acc.status === 'funded'
+
+                return (
+                  <div
+                    key={acc.id}
+                    className={`rounded-xl px-3 py-2.5 transition-all cursor-default ${
+                      isSelected
+                        ? 'bg-[#4ADE80]/5 border border-[#4ADE80]/20'
+                        : 'bg-[var(--bg-card)] border border-transparent hover:border-[var(--border)]'
+                    }`}
+                  >
+                    {/* Row 1: Name + Status */}
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                          dayPnl > 0 ? 'bg-[#4ADE80]' : dayPnl < 0 ? 'bg-[#EF4444]' : 'bg-[var(--text-muted)]'
+                        }`} />
+                        <span className="text-[11px] font-bold text-[var(--text-primary)] truncate">
+                          {nickname}
+                        </span>
+                      </div>
+                      <span className={`text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded ${
+                        isFunded
+                          ? 'bg-amber-400/10 text-amber-400'
+                          : 'bg-blue-400/10 text-blue-400'
+                      }`}>
+                        {isFunded ? 'Funded' : 'Eval'}
+                      </span>
+                    </div>
+
+                    {/* Row 2: Balance + Day P&L */}
+                    <div className="flex items-baseline justify-between">
+                      <span className="text-sm font-mono font-bold text-[var(--text-primary)]">
                         ${balance.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                      </td>
-                      <td className={`py-2.5 text-right font-mono font-bold ${dayPnl > 0 ? 'text-[#4ADE80]' : dayPnl < 0 ? 'text-[#EF4444]' : 'text-[var(--text-muted)]'}`}>
-                        {dayPnl !== 0 ? `${dayPnl > 0 ? '+' : ''}$${Math.abs(dayPnl).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+                      </span>
+                      <span className={`text-[11px] font-mono font-bold ${
+                        dayPnl > 0 ? 'text-[#4ADE80]' : dayPnl < 0 ? 'text-[#EF4444]' : 'text-[var(--text-muted)]'
+                      }`}>
+                        {dayPnl !== 0
+                          ? `${dayPnl > 0 ? '+' : '-'}$${Math.abs(dayPnl).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                          : '—'
+                        }
+                      </span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         )}
       </div>

@@ -146,7 +146,7 @@ function tradeToRow(userId: string, trade: Trade): Omit<TradeRow, 'user_id'> & {
   return {
     id: trade.id,
     user_id: userId,
-    account_id: trade.accountId ?? null,
+    account_id: (trade.accountId && /^[0-9a-f-]{36}$/i.test(trade.accountId)) ? trade.accountId : null,
     date: trade.date,
     session_date: trade.sessionDate,
     symbol: trade.symbol,
@@ -314,7 +314,24 @@ export async function deleteAllPropAccounts(userId: string): Promise<void> {
 export async function importTrades(userId: string, trades: Trade[]): Promise<void> {
   if (!trades.length) return
 
-  const rows = trades.map(t => tradeToRow(userId, t))
+  // Validate account_ids exist before inserting (prevent FK violations)
+  const accountIds = [...new Set(trades.map(t => t.accountId).filter(Boolean))]
+  let validAccountIds = new Set<string>()
+  if (accountIds.length > 0) {
+    const { data } = await supabase
+      .from('prop_accounts')
+      .select('id')
+      .in('id', accountIds)
+    validAccountIds = new Set((data ?? []).map(a => a.id))
+  }
+
+  const rows = trades.map(t => {
+    const cleaned = { ...t }
+    if (cleaned.accountId && !validAccountIds.has(cleaned.accountId)) {
+      cleaned.accountId = undefined
+    }
+    return tradeToRow(userId, cleaned)
+  })
 
   // Upsert on id — if same id exists it will update
   const { error } = await supabase

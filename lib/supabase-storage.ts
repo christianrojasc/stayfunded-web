@@ -321,7 +321,10 @@ export async function importTrades(userId: string, trades: Trade[]): Promise<voi
     .from('trades')
     .upsert(rows, { onConflict: 'id' })
 
-  if (error) console.error('[supabase] importTrades:', error)
+  if (error) {
+    console.error('[supabase] importTrades:', error)
+    throw new Error(`Failed to save trades: ${error.message}`)
+  }
 }
 
 // ── Prop Accounts ────────────────────────────────────────────────────────────

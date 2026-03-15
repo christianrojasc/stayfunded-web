@@ -157,21 +157,29 @@ export default function ImportPage() {
   const totalTrades = bundles.reduce((s, b) => s + b.selected.size, 0)
   const totalDupes = bundles.reduce((s, b) => s + b.duplicateCount, 0)
 
+  const [importError, setImportError] = useState<string | null>(null)
+
   const doImport = async () => {
     setImporting(true)
+    setImportError(null)
     let count = 0
-    for (const bundle of bundles) {
-      const toImport = bundle.parsed.trades
-        .filter(t => bundle.selected.has(t.id))
-        .map(t => bundle.linkedAccountId ? { ...t, accountId: bundle.linkedAccountId } : t)
-      if (toImport.length > 0) {
-        await importBatch(toImport)
-        count += toImport.length
+    try {
+      for (const bundle of bundles) {
+        const toImport = bundle.parsed.trades
+          .filter(t => bundle.selected.has(t.id))
+          .map(t => bundle.linkedAccountId ? { ...t, accountId: bundle.linkedAccountId } : t)
+        if (toImport.length > 0) {
+          await importBatch(toImport)
+          count += toImport.length
+        }
       }
+      setImportCount(count)
+      setStep('done')
+    } catch (err: any) {
+      setImportError(err?.message || 'Failed to save trades. Please try again.')
+    } finally {
+      setImporting(false)
     }
-    setImportCount(count)
-    setImporting(false)
-    setStep('done')
   }
 
   const reset = () => {
@@ -352,6 +360,12 @@ export default function ImportPage() {
                   Import All ({totalTrades})
                 </button>
               </div>
+              {importError && (
+                <div className="mt-3 p-3 rounded-xl text-sm text-red-400 flex items-start gap-2" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                  <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+                  <span>{importError}</span>
+                </div>
+              )}
             </div>
           </div>
 
